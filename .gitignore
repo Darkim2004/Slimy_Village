@@ -1,0 +1,29 @@
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+[Aa]rtifacts/
+
+# IDE / OS
+.vs/
+*.csproj
+*.sln
+*.user
+*.userprefs
+.idea/
+*.unityproj
+.DS_Store
+Thumbs.db
+
+# Crash/Profiler
+sysinfo.txt
+*.stacktrace
+*.dmp
+
+# Per-user Unity settings
+UserSettings/
