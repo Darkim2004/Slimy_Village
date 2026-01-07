@@ -20,8 +20,54 @@ public class WorldGenTilemap : MonoBehaviour
     public int seed = 12345;
     public Vector2 offset; // useful to "move" the world without changing seed
 
+    // -----------------------
+    // NEW: Ocean palette bands (shallow/deep palettes)
+    // -----------------------
+    [Serializable]
+    public class PaletteBand
+    {
+        public string name;
+        [Range(0f, 1f)] public float minInclusive = 0f;
+        [Range(0f, 1f)] public float maxExclusive = 1f;
+
+        [Header("Tiles for this band (variants)")]
+        public TileBase[] tiles;
+
+        [Header("Clustering inside this band")]
+        [Tooltip("Lower = bigger patches. Higher = smaller patches.")]
+        public float clusterScale = 1.2f;
+
+        [Range(0f, 1f)]
+        [Tooltip("0 = no clustering (pure hashed pick). 1 = strong clustering.")]
+        public float clusterStrength = 0.85f;
+
+        [Tooltip("Salt to avoid repeating patterns between bands")]
+        public int salt = 1000;
+    }
+
+    [Header("Ocean Palettes (bands by depth)")]
+    [Tooltip("Depth 0 = near shore / shallow, Depth 1 = deep. Bands choose which tile palette to use.")]
+    public PaletteBand[] oceanBands;
+
+    [Header("Ocean Depth Source")]
+    [Tooltip("Use heightMap to derive depth: shallow near seaLevel, deep where height is very low.")]
+    public bool oceanDepthFromHeight = true;
+
+    [Tooltip("Optional extra noise to vary depth patterns in the ocean (adds variety).")]
+    public bool oceanDepthAddNoise = false;
+
+    [Range(0f, 1f)]
+    [Tooltip("If oceanDepthAddNoise is true, this is how much noise blends in (0 = only height, 1 = only noise).")]
+    public float oceanDepthNoiseBlend = 0.35f;
+
+    [Tooltip("Lower = bigger deep/shallow regions if using noise depth.")]
+    public float oceanDepthNoiseScale = 1.2f;
+
+    // -----------------------
+    // Existing: simple tile variants for other ground types + decor
+    // -----------------------
     [Header("Tiles - Ground Variants (at least 1 each)")]
-    public TileBase[] oceanTiles;
+    public TileBase[] oceanTiles;   // fallback if oceanBands not set
     public TileBase[] plainsTiles;
     public TileBase[] desertTiles;
 
@@ -104,6 +150,18 @@ public class WorldGenTilemap : MonoBehaviour
         float[,] biomeMap = GenerateNoiseMap(width, height, biomeScale, biomeOctaves, biomePersistence, biomeLacunarity, worldOffset + new Vector2(777, 333), seed + 1);
         float[,] decorMap = GenerateNoiseMap(width, height, decorScale, 2, 0.5f, 2f, worldOffset + new Vector2(999, 111), seed + 2);
 
+        // Optional extra ocean depth noise (only used if oceanDepthAddNoise)
+        float[,] oceanDepthNoiseMap = null;
+        if (oceanDepthAddNoise)
+        {
+            oceanDepthNoiseMap = GenerateNoiseMap(
+                width, height,
+                oceanDepthNoiseScale,
+                2, 0.5f, 2f,
+                worldOffset + new Vector2(5000, 6000), seed + 99
+            );
+        }
+
         // --- FLOWERS: patch + scatter (soft density) ---
         float[,] flowerPatchMap = GenerateNoiseMap(width, height, flowerPatchScale, 2, 0.5f, 2f, worldOffset + new Vector2(2001, 3001), seed + 10);
         float[,] flowerScatterMap = GenerateNoiseMap(width, height, flowerScatterScale, 2, 0.5f, 2f, worldOffset + new Vector2(2002, 3002), seed + 11);
@@ -120,90 +178,150 @@ public class WorldGenTilemap : MonoBehaviour
         TileData[,] data = new TileData[width, height];
 
         for (int y = 0; y < height; y++)
-        for (int x = 0; x < width; x++)
-        {
-            float h = heightMap[x, y];
-
-            if (h < seaLevel)
+            for (int x = 0; x < width; x++)
             {
-                data[x, y] = new TileData { ground = GroundType.Ocean, decor = DecorType.None };
-                continue;
+                float h = heightMap[x, y];
+
+                if (h < seaLevel)
+                {
+                    data[x, y] = new TileData { ground = GroundType.Ocean, decor = DecorType.None };
+                    continue;
+                }
+
+                float b = biomeMap[x, y];
+                GroundType g = (b >= desertThreshold) ? GroundType.Desert : GroundType.Plains;
+
+                data[x, y] = new TileData { ground = g, decor = DecorType.None };
             }
-
-            float b = biomeMap[x, y];
-            GroundType g = (b >= desertThreshold) ? GroundType.Desert : GroundType.Plains;
-
-            data[x, y] = new TileData { ground = g, decor = DecorType.None };
-        }
 
         // Decor pass (patch-aware)
         for (int y = 0; y < height; y++)
-        for (int x = 0; x < width; x++)
-        {
-            if (data[x, y].ground == GroundType.Ocean) continue;
-
-            if (avoidDecorNearOcean && IsAdjacentToOcean(data, x, y))
-                continue;
-
-            DecorType d = PickDecorPatched(
-                data[x, y].ground,
-                x, y,
-                flowerPatchMap, flowerScatterMap,
-                treePatchMap, treeScatterMap,
-                cactusPatchMap, cactusScatterMap,
-                decorMap
-            );
-
-            if (d == DecorType.Tree || d == DecorType.Cactus)
+            for (int x = 0; x < width; x++)
             {
-                if (avoidDecorClumps && HasNearbySameDecor(data, x, y, d, clumpRadius))
-                    d = DecorType.None;
-            }
+                if (data[x, y].ground == GroundType.Ocean) continue;
 
-            data[x, y].decor = d;
-        }
+                if (avoidDecorNearOcean && IsAdjacentToOcean(data, x, y))
+                    continue;
+
+                DecorType d = PickDecorPatched(
+                    data[x, y].ground,
+                    x, y,
+                    flowerPatchMap, flowerScatterMap,
+                    treePatchMap, treeScatterMap,
+                    cactusPatchMap, cactusScatterMap,
+                    decorMap
+                );
+
+                if (d == DecorType.Tree || d == DecorType.Cactus)
+                {
+                    if (avoidDecorClumps && HasNearbySameDecor(data, x, y, d, clumpRadius))
+                        d = DecorType.None;
+                }
+
+                data[x, y].decor = d;
+            }
 
         // Render
         groundTilemap.ClearAllTiles();
         decorTilemap.ClearAllTiles();
 
-        // Optional: speed up mass painting
         groundTilemap.CompressBounds();
         decorTilemap.CompressBounds();
 
         for (int y = 0; y < height; y++)
-        for (int x = 0; x < width; x++)
-        {
-            Vector3Int cell = new Vector3Int(x, y, 0);
-
-            // ground (variant)
-            TileBase groundTile = data[x, y].ground switch
+            for (int x = 0; x < width; x++)
             {
-                GroundType.Ocean  => PickVariant(oceanTiles,  x, y, 101),
-                GroundType.Plains => PickVariant(plainsTiles, x, y, 102),
-                GroundType.Desert => PickVariant(desertTiles, x, y, 103),
-                _                 => PickVariant(plainsTiles, x, y, 102)
-            };
-            groundTilemap.SetTile(cell, groundTile);
+                Vector3Int cell = new Vector3Int(x, y, 0);
 
-            // decor (variant)
-            TileBase decorTile = data[x, y].decor switch
-            {
-                DecorType.Tree   => PickVariant(treeTiles,   x, y, 201),
-                DecorType.Flower => PickVariant(flowerTiles, x, y, 202),
-                DecorType.Cactus => PickVariant(cactusTiles, x, y, 203),
-                DecorType.Rock   => PickVariant(rockTiles,   x, y, 204),
-                _ => null
-            };
-            if (decorTile != null)
-                decorTilemap.SetTile(cell, decorTile);
-        }
+                // ground
+                TileBase groundTile;
+                if (data[x, y].ground == GroundType.Ocean)
+                {
+                    float depth01 = ComputeOceanDepth01(heightMap[x, y], oceanDepthNoiseMap, x, y);
+                    groundTile = PickOceanTile(depth01, x, y);
+
+                    // Fallback if bands not configured
+                    if (groundTile == null)
+                        groundTile = PickVariant(oceanTiles, x, y, 101);
+                }
+                else
+                {
+                    groundTile = data[x, y].ground switch
+                    {
+                        GroundType.Plains => PickVariant(plainsTiles, x, y, 102),
+                        GroundType.Desert => PickVariant(desertTiles, x, y, 103),
+                        _ => PickVariant(plainsTiles, x, y, 102)
+                    };
+                }
+
+                groundTilemap.SetTile(cell, groundTile);
+
+                // decor (variant)
+                TileBase decorTile = data[x, y].decor switch
+                {
+                    DecorType.Tree => PickVariant(treeTiles, x, y, 201),
+                    DecorType.Flower => PickVariant(flowerTiles, x, y, 202),
+                    DecorType.Cactus => PickVariant(cactusTiles, x, y, 203),
+                    DecorType.Rock => PickVariant(rockTiles, x, y, 204),
+                    _ => null
+                };
+                if (decorTile != null)
+                    decorTilemap.SetTile(cell, decorTile);
+            }
     }
 
     public void Clear()
     {
         if (groundTilemap != null) groundTilemap.ClearAllTiles();
         if (decorTilemap != null) decorTilemap.ClearAllTiles();
+    }
+
+    // -----------------------
+    // Ocean depth + palette picking
+    // -----------------------
+    private float ComputeOceanDepth01(float heightVal01, float[,] oceanNoiseMap, int x, int y)
+    {
+        // Only meaningful in ocean cells (heightVal01 < seaLevel), but safe anyway.
+        float fromHeight = 0f;
+
+        if (oceanDepthFromHeight)
+        {
+            // height near seaLevel => shallow(0), height very low => deep(1)
+            fromHeight = Mathf.InverseLerp(seaLevel, 0f, heightVal01);
+        }
+
+        if (oceanDepthAddNoise && oceanNoiseMap != null)
+        {
+            float n = oceanNoiseMap[x, y]; // 0..1
+            float t = Mathf.Clamp01(oceanDepthNoiseBlend);
+            return oceanDepthFromHeight ? Mathf.Lerp(fromHeight, n, t) : n;
+        }
+
+        return oceanDepthFromHeight ? fromHeight : 0f;
+    }
+
+    private TileBase PickOceanTile(float depth01, int x, int y)
+    {
+        if (oceanBands == null || oceanBands.Length == 0) return null;
+
+        PaletteBand band = null;
+        for (int i = 0; i < oceanBands.Length; i++)
+        {
+            var b = oceanBands[i];
+            if (b == null) continue;
+
+            if (depth01 >= b.minInclusive && depth01 < b.maxExclusive)
+            {
+                band = b;
+                break;
+            }
+        }
+
+        // fallback: last band
+        if (band == null) band = oceanBands[oceanBands.Length - 1];
+        if (band == null) return null;
+
+        return PickClusteredVariant(band.tiles, x, y, band.salt, band.clusterScale, band.clusterStrength);
     }
 
     // -----------------------
@@ -231,6 +349,32 @@ public class WorldGenTilemap : MonoBehaviour
 
         int idx = Hash(x, y, salt) % variants.Length;
         return variants[idx];
+    }
+
+    // NEW: clustered variant selection (for ocean palettes)
+    private TileBase PickClusteredVariant(TileBase[] variants, int x, int y, int salt, float clusterScale, float clusterStrength)
+    {
+        if (variants == null || variants.Length == 0) return null;
+        if (variants.Length == 1) return variants[0];
+
+        float r = (Hash(x, y, salt) % 100000) / 100000f; // 0..1 (deterministic)
+        float c = ClusterValue(x, y, clusterScale, salt); // 0..1
+        float mixed = Mathf.Lerp(r, c, Mathf.Clamp01(clusterStrength));
+
+        int idx = Mathf.FloorToInt(mixed * variants.Length);
+        if (idx >= variants.Length) idx = variants.Length - 1;
+        return variants[idx];
+    }
+
+    private float ClusterValue(int x, int y, float scale, int salt)
+    {
+        if (scale <= 0f) scale = 0.0001f;
+
+        // Use offset so moving the world also moves clusters
+        float sx = (x + offset.x + salt * 0.001f) / 100f * scale;
+        float sy = (y + offset.y + salt * 0.001f) / 100f * scale;
+
+        return Mathf.PerlinNoise(sx, sy);
     }
 
     private bool HasAny(TileBase[] variants) => variants != null && variants.Length > 0;
@@ -307,7 +451,6 @@ public class WorldGenTilemap : MonoBehaviour
     // -----------------------
     private bool IsAdjacentToOcean(TileData[,] data, int x, int y)
     {
-        // 4-neighborhood; you can extend to 8 if you prefer
         return IsOcean(data, x + 1, y) ||
                IsOcean(data, x - 1, y) ||
                IsOcean(data, x, y + 1) ||
@@ -323,12 +466,12 @@ public class WorldGenTilemap : MonoBehaviour
     private bool HasNearbySameDecor(TileData[,] data, int x, int y, DecorType d, int radius)
     {
         for (int yy = y - radius; yy <= y + radius; yy++)
-        for (int xx = x - radius; xx <= x + radius; xx++)
-        {
-            if (xx == x && yy == y) continue;
-            if (xx < 0 || yy < 0 || xx >= width || yy >= height) continue;
-            if (data[xx, yy].decor == d) return true;
-        }
+            for (int xx = x - radius; xx <= x + radius; xx++)
+            {
+                if (xx == x && yy == y) continue;
+                if (xx < 0 || yy < 0 || xx >= width || yy >= height) continue;
+                if (data[xx, yy].decor == d) return true;
+            }
         return false;
     }
 
@@ -382,34 +525,34 @@ public class WorldGenTilemap : MonoBehaviour
         float maxVal = float.MinValue;
 
         for (int y = 0; y < height; y++)
-        for (int x = 0; x < width; x++)
-        {
-            float amplitude = 1f;
-            float frequency = 1f;
-            float noiseValue = 0f;
-
-            for (int i = 0; i < octaves; i++)
+            for (int x = 0; x < width; x++)
             {
-                float sampleX = (x / (float)width) * scale * frequency + octaveOffsets[i].x;
-                float sampleY = (y / (float)height) * scale * frequency + octaveOffsets[i].y;
+                float amplitude = 1f;
+                float frequency = 1f;
+                float noiseValue = 0f;
 
-                float perlin = Mathf.PerlinNoise(sampleX, sampleY) * 2f - 1f; // [-1,1]
-                noiseValue += perlin * amplitude;
+                for (int i = 0; i < octaves; i++)
+                {
+                    float sampleX = (x / (float)width) * scale * frequency + octaveOffsets[i].x;
+                    float sampleY = (y / (float)height) * scale * frequency + octaveOffsets[i].y;
 
-                amplitude *= persistence;
-                frequency *= lacunarity;
+                    float perlin = Mathf.PerlinNoise(sampleX, sampleY) * 2f - 1f; // [-1,1]
+                    noiseValue += perlin * amplitude;
+
+                    amplitude *= persistence;
+                    frequency *= lacunarity;
+                }
+
+                if (noiseValue < minVal) minVal = noiseValue;
+                if (noiseValue > maxVal) maxVal = noiseValue;
+
+                map[x, y] = noiseValue;
             }
-
-            if (noiseValue < minVal) minVal = noiseValue;
-            if (noiseValue > maxVal) maxVal = noiseValue;
-
-            map[x, y] = noiseValue;
-        }
 
         // Normalize to [0,1]
         for (int y = 0; y < height; y++)
-        for (int x = 0; x < width; x++)
-            map[x, y] = Mathf.InverseLerp(minVal, maxVal, map[x, y]);
+            for (int x = 0; x < width; x++)
+                map[x, y] = Mathf.InverseLerp(minVal, maxVal, map[x, y]);
 
         return map;
     }
@@ -419,8 +562,14 @@ public class WorldGenTilemap : MonoBehaviour
         if (groundTilemap == null) throw new Exception("Assign Ground Tilemap in inspector.");
         if (decorTilemap == null) throw new Exception("Assign Decor Tilemap in inspector.");
 
-        if (!HasAny(oceanTiles) || !HasAny(plainsTiles) || !HasAny(desertTiles))
-            throw new Exception("Assign ground tile arrays (at least 1 each): oceanTiles, plainsTiles, desertTiles.");
+        // Plains/Desert still required
+        if (!HasAny(plainsTiles) || !HasAny(desertTiles))
+            throw new Exception("Assign ground tile arrays (at least 1 each): plainsTiles, desertTiles.");
+
+        // Ocean must exist either via bands or fallback array
+        bool hasOceanBands = oceanBands != null && oceanBands.Length > 0;
+        if (!hasOceanBands && !HasAny(oceanTiles))
+            throw new Exception("Assign oceanTiles OR configure oceanBands (with tiles inside each band).");
     }
 }
 
