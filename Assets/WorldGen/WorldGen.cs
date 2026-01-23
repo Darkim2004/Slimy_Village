@@ -77,6 +77,10 @@ public class WorldGenTilemap : MonoBehaviour
     public TileBase[] cactusTiles;
     public TileBase[] rockTiles;
 
+    [Header("Tiles - Minor Decor Variants (white noise)")]
+    public TileBase[] grassTiles;   // Plains minor decor
+    public TileBase[] pebbleTiles;  // Desert minor decor
+
     [Header("Height Noise (Ocean vs Land)")]
     [Tooltip("Higher = more detail; lower = larger blobs")]
     public float heightScale = 6f;
@@ -103,16 +107,20 @@ public class WorldGenTilemap : MonoBehaviour
     [Range(0f, 1f)] public float cactusChance = 0.07f;
     [Range(0f, 1f)] public float rockChance = 0.05f;
 
+    [Header("Minor Decor Chances (white noise)")]
+    [Range(0f, 1f)] public float grassChance = 0.18f;
+    [Range(0f, 1f)] public float pebbleChance = 0.12f;
+
     [Header("Flower Patches (Plains)")]
     public float flowerPatchScale = 1.6f;                 // basso = macchie grandi
     [Range(0f, 1f)] public float flowerPatchMin = 0.65f;  // da qui in su inizia ad apparire
-    [Range(0f, 1f)] public float flowerBaseChance = 0.18f;// densità massima al centro patch
+    [Range(0f, 1f)] public float flowerBaseChance = 0.18f;// densitï¿½ massima al centro patch
     public float flowerScatterScale = 18f;                // alto = dettagli piccoli nello scatter
 
     [Header("Tree Patches (Plains)")]
     public float treePatchScale = 1.2f;
     [Range(0f, 1f)] public float treePatchThreshold = 0.72f; // alto = poche patch
-    [Range(0f, 1f)] public float treeInPatchChance = 0.10f;  // densità dentro patch
+    [Range(0f, 1f)] public float treeInPatchChance = 0.10f;  // densitï¿½ dentro patch
     public float treeScatterScale = 14f;
 
     [Header("Cactus Patches (Desert)")]
@@ -132,7 +140,7 @@ public class WorldGenTilemap : MonoBehaviour
     public int clumpRadius = 1;
 
     private enum GroundType { Ocean, Plains, Desert }
-    private enum DecorType { None, Tree, Flower, Cactus, Rock }
+    private enum DecorType { None, Tree, Flower, Cactus, Rock, Grass, Pebble }
 
     private struct TileData
     {
@@ -263,6 +271,8 @@ public class WorldGenTilemap : MonoBehaviour
                     DecorType.Flower => PickVariant(flowerTiles, x, y, 202),
                     DecorType.Cactus => PickVariant(cactusTiles, x, y, 203),
                     DecorType.Rock => PickVariant(rockTiles, x, y, 204),
+                    DecorType.Grass => PickVariant(grassTiles, x, y, 205),
+                    DecorType.Pebble => PickVariant(pebbleTiles, x, y, 206),
                     _ => null
                 };
                 if (decorTile != null)
@@ -342,6 +352,11 @@ public class WorldGenTilemap : MonoBehaviour
         }
     }
 
+    private float White01(int x, int y, int salt)
+    {
+        return (Hash(x, y, salt) % 100000) / 100000f;
+    }
+
     private TileBase PickVariant(TileBase[] variants, int x, int y, int salt)
     {
         if (variants == null || variants.Length == 0) return null;
@@ -417,6 +432,14 @@ public class WorldGenTilemap : MonoBehaviour
                     return DecorType.Flower;
             }
 
+            // MINOR: GRASS (white noise)
+            if (HasAny(grassTiles))
+            {
+                float w = White01(x, y, 9001);
+                if (w < grassChance)
+                    return DecorType.Grass;
+            }
+
             return DecorType.None;
         }
 
@@ -438,6 +461,14 @@ public class WorldGenTilemap : MonoBehaviour
             {
                 float v = fallbackDecorMap[x, y];
                 if (v < rockChance) return DecorType.Rock;
+            }
+
+            // MINOR: PEBBLES (white noise)
+            if (HasAny(pebbleTiles))
+            {
+                float w = White01(x, y, 9002);
+                if (w < pebbleChance)
+                    return DecorType.Pebble;
             }
 
             return DecorType.None;
