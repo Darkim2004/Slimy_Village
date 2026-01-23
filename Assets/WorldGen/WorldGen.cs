@@ -69,19 +69,16 @@ public class WorldGenTilemap : MonoBehaviour
     [Header("Tiles - Ground Variants (at least 1 each)")]
     public TileBase[] oceanTiles;   // fallback if oceanBands not set
     public TileBase[] plainsTiles;
-    public TileBase[] desertTiles;
+    public TileBase[] snomyTiles;
 
     // -----------------------
     // Tiles - Decor (tile-based)
     // -----------------------
     [Header("Tiles - Decor Variants (tile-based)")]
     public TileBase[] flowerTiles;
-    public TileBase[] cactusTiles;
-    public TileBase[] rockTiles;
 
     [Header("Tiles - Minor Decor Variants (white noise)")]
     public TileBase[] grassTiles;   // Plains minor decor
-    public TileBase[] pebbleTiles;  // Desert minor decor
 
     // -----------------------
     // Prefabs - Props (y-sorted)
@@ -89,6 +86,9 @@ public class WorldGenTilemap : MonoBehaviour
     [Header("Prefabs - Props (Y-sorted)")]
     [Tooltip("Prefab per alberi (SpriteRenderer + tuo YSort sul prefab).")]
     public GameObject treePrefab;
+
+    [Tooltip("Prefab per alberi innevati (SpriteRenderer + tuo YSort sul prefab).")]
+    public GameObject snowTreePrefab;
 
     [Tooltip("Prefab per rocce grandi (spawnate con regole dedicate).")]
     public GameObject rockPrefab;
@@ -98,6 +98,9 @@ public class WorldGenTilemap : MonoBehaviour
 
     [Tooltip("Offset di spawn per alberi (per correggere pivot/ancoraggio).")]
     public Vector3 treeSpawnOffset = Vector3.zero;
+
+    [Tooltip("Offset di spawn per alberi innevati (per correggere pivot/ancoraggio).")]
+    public Vector3 snowTreeSpawnOffset = Vector3.zero;
 
     [Tooltip("Offset di spawn per rocce prefab (per quando le implementerai).")]
     public Vector3 rockSpawnOffset = Vector3.zero;
@@ -117,6 +120,19 @@ public class WorldGenTilemap : MonoBehaviour
 
     [Tooltip("Intervallo di scala applicato all'albero (es. 0.95..1.05).")]
     public Vector2 treeScaleRange = new Vector2(0.95f, 1.05f);
+
+    [Header("Snow Tree Variants (Option A)")]
+    [Tooltip("Se assegnato, lo script sostituisce la sprite del prefab innevato con una di queste varianti (deterministico).")]
+    public Sprite[] snowTreeVariantSprites;
+
+    [Tooltip("Se true, applica flipX deterministico per variare l'aspetto (alberi innevati).")]
+    public bool snowTreeAllowFlipX = true;
+
+    [Tooltip("Se true, applica una scala deterministica nell'intervallo sotto (alberi innevati).")]
+    public bool snowTreeAllowScale = true;
+
+    [Tooltip("Intervallo di scala applicato all'albero innevato (es. 0.95..1.05).")]
+    public Vector2 snowTreeScaleRange = new Vector2(0.95f, 1.05f);
 
     [Header("Rock Prefab Variants (Option A)")]
     [Tooltip("Se assegnato, lo script sostituisce la sprite del prefab con una di queste varianti (deterministico).")]
@@ -139,26 +155,18 @@ public class WorldGenTilemap : MonoBehaviour
     [Range(1.2f, 4f)] public float heightLacunarity = 2f;
     [Range(0f, 1f)] public float seaLevel = 0.45f;
 
-    [Header("Biome Noise (Plains vs Desert)")]
+    [Header("Biome Noise (Plains vs Snomy)")]
     [Tooltip("Lower = larger biomes. Usually lower than heightScale.")]
     public float biomeScale = 2f;
     [Range(1, 10)] public int biomeOctaves = 3;
     [Range(0.1f, 0.9f)] public float biomePersistence = 0.5f;
     [Range(1.2f, 4f)] public float biomeLacunarity = 2f;
-    [Range(0f, 1f)] public float desertThreshold = 0.65f;
-
-    [Header("Decor Noise (fallback / rocks)")]
-    [Tooltip("Higher = more variation in decor placement")]
-    public float decorScale = 12f;
+    [Range(0f, 1f)] public float snomyThreshold = 0.65f;
 
     [Header("Decor Density")]
     [Range(0f, 1f)]
-    [Tooltip("Chance per rocce tile nel deserto (fallback semplice).")]
-    public float rockChance = 0.05f;
-
-    [Header("Minor Decor Chances (white noise)")]
-    [Range(0f, 1f)] public float grassChance = 0.18f;
-    [Range(0f, 1f)] public float pebbleChance = 0.12f;
+    [Tooltip("Chance per erba tile nelle plains (fallback semplice).")]
+    public float grassChance = 0.18f;
 
     [Header("Flower Patches (Plains)")]
     public float flowerPatchScale = 1.6f;                 // basso = macchie grandi
@@ -172,13 +180,13 @@ public class WorldGenTilemap : MonoBehaviour
     [Range(0f, 1f)] public float treeInPatchChance = 0.10f;  // densità dentro patch
     public float treeScatterScale = 14f;
 
-    [Header("Cactus Patches (Desert)")]
-    public float cactusPatchScale = 1.3f;
-    [Range(0f, 1f)] public float cactusPatchThreshold = 0.70f;
-    [Range(0f, 1f)] public float cactusInPatchChance = 0.10f;
-    public float cactusScatterScale = 14f;
+    [Header("Snow Tree Patches (Snomy)")]
+    public float snowTreePatchScale = 1.2f;
+    [Range(0f, 1f)] public float snowTreePatchThreshold = 0.72f; // alto = poche patch
+    [Range(0f, 1f)] public float snowTreeInPatchChance = 0.10f;  // densità dentro patch
+    public float snowTreeScatterScale = 14f;
 
-    [Header("Big Rock Patches (Desert)")]
+    [Header("Big Rock Patches (Plains)")]
     [Tooltip("Basso = macchie grandi di rocce prefab.")]
     public float rockPrefabPatchScale = 1.1f;
     [Range(0f, 1f)] public float rockPrefabPatchThreshold = 0.78f;
@@ -189,14 +197,14 @@ public class WorldGenTilemap : MonoBehaviour
     [Tooltip("If true, do not place decor on cells adjacent to ocean (nice for shorelines).")]
     public bool avoidDecorNearOcean = true;
 
-    [Tooltip("If true, prevents too many trees/cactus touching each other (simple neighborhood check).")]
+    [Tooltip("If true, prevents too many trees touching each other (simple neighborhood check).")]
     public bool avoidDecorClumps = true;
 
     [Range(0, 2)]
     public int clumpRadius = 1;
 
-    private enum GroundType { Ocean, Plains, Desert }
-    private enum DecorType { None, Tree, BigRock, Flower, Cactus, Rock, Grass, Pebble }
+    private enum GroundType { Ocean, Plains, Snomy }
+    private enum DecorType { None, Tree, SnowTree, BigRock, Flower, Grass }
 
     private struct TileData
     {
@@ -213,8 +221,6 @@ public class WorldGenTilemap : MonoBehaviour
 
         float[,] heightMap = GenerateNoiseMap(width, height, heightScale, heightOctaves, heightPersistence, heightLacunarity, worldOffset, seed);
         float[,] biomeMap = GenerateNoiseMap(width, height, biomeScale, biomeOctaves, biomePersistence, biomeLacunarity, worldOffset + new Vector2(777, 333), seed + 1);
-        float[,] decorMap = GenerateNoiseMap(width, height, decorScale, 2, 0.5f, 2f, worldOffset + new Vector2(999, 111), seed + 2);
-
         // Optional extra ocean depth noise (only used if oceanDepthAddNoise)
         float[,] oceanDepthNoiseMap = null;
         if (oceanDepthAddNoise)
@@ -235,9 +241,9 @@ public class WorldGenTilemap : MonoBehaviour
         float[,] treePatchMap = GenerateNoiseMap(width, height, treePatchScale, 2, 0.5f, 2f, worldOffset + new Vector2(2011, 3011), seed + 20);
         float[,] treeScatterMap = GenerateNoiseMap(width, height, treeScatterScale, 2, 0.5f, 2f, worldOffset + new Vector2(2012, 3012), seed + 21);
 
-        // --- CACTUS: patch mask + scatter ---
-        float[,] cactusPatchMap = GenerateNoiseMap(width, height, cactusPatchScale, 2, 0.5f, 2f, worldOffset + new Vector2(2021, 3021), seed + 30);
-        float[,] cactusScatterMap = GenerateNoiseMap(width, height, cactusScatterScale, 2, 0.5f, 2f, worldOffset + new Vector2(2022, 3022), seed + 31);
+        // --- SNOW TREES: patch mask + scatter ---
+        float[,] snowTreePatchMap = GenerateNoiseMap(width, height, snowTreePatchScale, 2, 0.5f, 2f, worldOffset + new Vector2(2111, 3111), seed + 22);
+        float[,] snowTreeScatterMap = GenerateNoiseMap(width, height, snowTreeScatterScale, 2, 0.5f, 2f, worldOffset + new Vector2(2112, 3112), seed + 23);
 
         // --- BIG ROCKS: patch mask + scatter ---
         float[,] rockPatchMap = GenerateNoiseMap(width, height, rockPrefabPatchScale, 2, 0.5f, 2f, worldOffset + new Vector2(2031, 3031), seed + 40);
@@ -258,7 +264,7 @@ public class WorldGenTilemap : MonoBehaviour
             }
 
             float b = biomeMap[x, y];
-            GroundType g = (b >= desertThreshold) ? GroundType.Desert : GroundType.Plains;
+            GroundType g = (b >= snomyThreshold) ? GroundType.Snomy : GroundType.Plains;
 
             data[x, y] = new TileData { ground = g, decor = DecorType.None };
         }
@@ -277,12 +283,11 @@ public class WorldGenTilemap : MonoBehaviour
                 x, y,
                 flowerPatchMap, flowerScatterMap,
                 treePatchMap, treeScatterMap,
-                cactusPatchMap, cactusScatterMap,
-                rockPatchMap, rockScatterMap,
-                decorMap
+                snowTreePatchMap, snowTreeScatterMap,
+                rockPatchMap, rockScatterMap
             );
 
-            if (d == DecorType.Tree || d == DecorType.Cactus || d == DecorType.BigRock)
+            if (d == DecorType.Tree || d == DecorType.SnowTree || d == DecorType.BigRock)
             {
                 if (avoidDecorClumps && HasNearbySameDecor(data, x, y, d, clumpRadius))
                     d = DecorType.None;
@@ -316,7 +321,7 @@ public class WorldGenTilemap : MonoBehaviour
                 groundTile = data[x, y].ground switch
                 {
                     GroundType.Plains => PickVariant(plainsTiles, x, y, 102),
-                    GroundType.Desert => PickVariant(desertTiles, x, y, 103),
+                    GroundType.Snomy => PickVariant(snomyTiles, x, y, 103),
                     _ => PickVariant(plainsTiles, x, y, 102)
                 };
             }
@@ -330,20 +335,22 @@ public class WorldGenTilemap : MonoBehaviour
                 continue; // non mettere tile albero
             }
 
+            if (data[x, y].decor == DecorType.SnowTree)
+            {
+                SpawnSnowTreePrefab(cell);
+                continue; // non mettere tile albero
+            }
+
             if (data[x, y].decor == DecorType.BigRock)
             {
                 SpawnRockPrefab(cell);
                 continue; // non mettere tile roccia grande
             }
 
-            // (Per ora le Rock restano tile-based. rockPrefab è pronto ma non usato.)
             TileBase decorTile = data[x, y].decor switch
             {
                 DecorType.Flower => PickVariant(flowerTiles, x, y, 202),
-                DecorType.Cactus => PickVariant(cactusTiles, x, y, 203),
-                DecorType.Rock => PickVariant(rockTiles, x, y, 204),
                 DecorType.Grass => PickVariant(grassTiles, x, y, 205),
-                DecorType.Pebble => PickVariant(pebbleTiles, x, y, 206),
                 _ => null
             };
 
@@ -387,7 +394,6 @@ public class WorldGenTilemap : MonoBehaviour
             sr.flipX = flip;
         }
 
-        // 3) scala deterministica (±5% o quello che imposti)
         if (treeAllowScale)
         {
             float minS = Mathf.Min(treeScaleRange.x, treeScaleRange.y);
@@ -396,6 +402,45 @@ public class WorldGenTilemap : MonoBehaviour
             maxS = Mathf.Max(minS, maxS);
 
             float t = White01(cell.x, cell.y, 9999); // 0..1
+            float s = Mathf.Lerp(minS, maxS, t);
+
+            go.transform.localScale = new Vector3(s, s, 1f);
+        }
+    }
+
+    private void SpawnSnowTreePrefab(Vector3Int cell)
+    {
+        if (snowTreePrefab == null) return;
+
+        Vector3 pos = groundTilemap.GetCellCenterWorld(cell) + snowTreeSpawnOffset;
+        Transform parent = propsParent != null ? propsParent : transform;
+
+        GameObject go = Instantiate(snowTreePrefab, pos, Quaternion.identity, parent);
+
+        // 1) scegli variante sprite (Option A)
+        SpriteRenderer sr = go.GetComponentInChildren<SpriteRenderer>();
+        if (sr != null && snowTreeVariantSprites != null && snowTreeVariantSprites.Length > 0)
+        {
+            int idx = Hash(cell.x, cell.y, 27777) % snowTreeVariantSprites.Length;
+            sr.sprite = snowTreeVariantSprites[idx];
+        }
+
+        // 2) flipX deterministico
+        if (sr != null && snowTreeAllowFlipX)
+        {
+            bool flip = (Hash(cell.x, cell.y, 28888) & 1) == 1;
+            sr.flipX = flip;
+        }
+
+        // 3) scala deterministica
+        if (snowTreeAllowScale)
+        {
+            float minS = Mathf.Min(snowTreeScaleRange.x, snowTreeScaleRange.y);
+            float maxS = Mathf.Max(snowTreeScaleRange.x, snowTreeScaleRange.y);
+            minS = Mathf.Max(0.01f, minS);
+            maxS = Mathf.Max(minS, maxS);
+
+            float t = White01(cell.x, cell.y, 29999); // 0..1
             float s = Mathf.Lerp(minS, maxS, t);
 
             go.transform.localScale = new Vector3(s, s, 1f);
@@ -411,7 +456,6 @@ public class WorldGenTilemap : MonoBehaviour
 
         GameObject go = Instantiate(rockPrefab, pos, Quaternion.identity, parent);
 
-        // 1) scegli variante sprite (Option A)
         SpriteRenderer sr = go.GetComponentInChildren<SpriteRenderer>();
         if (sr != null && rockVariantSprites != null && rockVariantSprites.Length > 0)
         {
@@ -445,7 +489,6 @@ public class WorldGenTilemap : MonoBehaviour
     {
         Transform parent = propsParent != null ? propsParent : null;
         if (parent == null) return;
-
         for (int i = parent.childCount - 1; i >= 0; i--)
         {
 #if UNITY_EDITOR
@@ -571,9 +614,8 @@ public class WorldGenTilemap : MonoBehaviour
         int x, int y,
         float[,] flowerPatchMap, float[,] flowerScatterMap,
         float[,] treePatchMap, float[,] treeScatterMap,
-        float[,] cactusPatchMap, float[,] cactusScatterMap,
-        float[,] rockPatchMap, float[,] rockScatterMap,
-        float[,] fallbackDecorMap
+        float[,] snowTreePatchMap, float[,] snowTreeScatterMap,
+        float[,] rockPatchMap, float[,] rockScatterMap
     )
     {
         // 1) PLAINS
@@ -623,42 +665,17 @@ public class WorldGenTilemap : MonoBehaviour
             return DecorType.None;
         }
 
-        // 2) DESERT
-        if (ground == GroundType.Desert)
+        // 2) SNOMY
+        if (ground == GroundType.Snomy)
         {
-            // CACTUS: patch mask + scatter
-            if (HasAny(cactusTiles))
+            // SNOW TREES: patch mask + scatter (solo se hai assegnato il prefab)
+            if (snowTreePrefab != null)
             {
-                float patch = cactusPatchMap[x, y];
-                float scatter = cactusScatterMap[x, y];
+                float patch = snowTreePatchMap[x, y];
+                float scatter = snowTreeScatterMap[x, y];
 
-                if (patch > cactusPatchThreshold && scatter < cactusInPatchChance)
-                    return DecorType.Cactus;
-            }
-
-            // BIG ROCKS: patch mask + scatter (prefab)
-            if (rockPrefab != null)
-            {
-                float patch = rockPatchMap[x, y];
-                float scatter = rockScatterMap[x, y];
-
-                if (patch > rockPrefabPatchThreshold && scatter < rockPrefabInPatchChance)
-                    return DecorType.BigRock;
-            }
-
-            // ROCK: fallback (tile-based)
-            if (HasAny(rockTiles))
-            {
-                float v = fallbackDecorMap[x, y];
-                if (v < rockChance) return DecorType.Rock;
-            }
-
-            // MINOR: PEBBLES (white noise)
-            if (HasAny(pebbleTiles))
-            {
-                float w = White01(x, y, 9002);
-                if (w < pebbleChance)
-                    return DecorType.Pebble;
+                if (patch > snowTreePatchThreshold && scatter < snowTreeInPatchChance)
+                    return DecorType.SnowTree;
             }
 
             return DecorType.None;
@@ -763,8 +780,8 @@ public class WorldGenTilemap : MonoBehaviour
         if (groundTilemap == null) throw new Exception("Assign Ground Tilemap in inspector.");
         if (decorTilemap == null) throw new Exception("Assign Decor Tilemap in inspector.");
 
-        if (!HasAny(plainsTiles) || !HasAny(desertTiles))
-            throw new Exception("Assign ground tile arrays (at least 1 each): plainsTiles, desertTiles.");
+        if (!HasAny(plainsTiles) || !HasAny(snomyTiles))
+            throw new Exception("Assign ground tile arrays (at least 1 each): plainsTiles, snomyTiles.");
 
         bool hasOceanBands = oceanBands != null && oceanBands.Length > 0;
         if (!hasOceanBands && !HasAny(oceanTiles))
