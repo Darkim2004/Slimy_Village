@@ -44,5 +44,8 @@ TagManager:
   - name: Decorations
     uniqueID: 2646982583
     locked: 0
+  - name: Entities
+    uniqueID: 978398353
+    locked: 0
   m_RenderingLayers:
   - Default
