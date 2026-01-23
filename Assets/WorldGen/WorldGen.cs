@@ -9,8 +9,7 @@ using UnityEditor;
 public class WorldGenTilemap : MonoBehaviour
 {
     [Header("Tilemaps (same Grid)")]
-    [SerializeField] private Tilemap groundTilemapA;
-    [SerializeField] private Tilemap groundTilemapB;
+    [SerializeField] private Tilemap groundTilemap;
     [SerializeField] private Tilemap decorTilemap;
 
     [Header("World Size (prototype, no chunks yet)")]
@@ -22,7 +21,7 @@ public class WorldGenTilemap : MonoBehaviour
     public Vector2 offset; // useful to "move" the world without changing seed
 
     // -----------------------
-    // NEW: Ocean palette bands (shallow/deep palettes)
+    // Ocean palette bands (shallow/deep palettes)
     // -----------------------
     [Serializable]
     public class PaletteBand
@@ -65,15 +64,17 @@ public class WorldGenTilemap : MonoBehaviour
     public float oceanDepthNoiseScale = 1.2f;
 
     // -----------------------
-    // Existing: simple tile variants for other ground types + decor
+    // Tiles - Ground
     // -----------------------
     [Header("Tiles - Ground Variants (at least 1 each)")]
     public TileBase[] oceanTiles;   // fallback if oceanBands not set
     public TileBase[] plainsTiles;
     public TileBase[] desertTiles;
 
-    [Header("Tiles - Decor Variants (optional)")]
-    public TileBase[] treeTiles;
+    // -----------------------
+    // Tiles - Decor (tile-based)
+    // -----------------------
+    [Header("Tiles - Decor Variants (tile-based)")]
     public TileBase[] flowerTiles;
     public TileBase[] cactusTiles;
     public TileBase[] rockTiles;
@@ -81,6 +82,54 @@ public class WorldGenTilemap : MonoBehaviour
     [Header("Tiles - Minor Decor Variants (white noise)")]
     public TileBase[] grassTiles;   // Plains minor decor
     public TileBase[] pebbleTiles;  // Desert minor decor
+
+    // -----------------------
+    // Prefabs - Props (y-sorted)
+    // -----------------------
+    [Header("Prefabs - Props (Y-sorted)")]
+    [Tooltip("Prefab per alberi (SpriteRenderer + tuo YSort sul prefab).")]
+    public GameObject treePrefab;
+
+    [Tooltip("Prefab per rocce grandi (spawnate con regole dedicate).")]
+    public GameObject rockPrefab;
+
+    [Tooltip("Parent opzionale dove mettere tutti i props spawnati (consigliato: Empty 'Props').")]
+    public Transform propsParent;
+
+    [Tooltip("Offset di spawn per alberi (per correggere pivot/ancoraggio).")]
+    public Vector3 treeSpawnOffset = Vector3.zero;
+
+    [Tooltip("Offset di spawn per rocce prefab (per quando le implementerai).")]
+    public Vector3 rockSpawnOffset = Vector3.zero;
+
+    // -----------------------
+    // NEW: Tree variants + anti-monotony
+    // -----------------------
+    [Header("Tree Variants (Option A)")]
+    [Tooltip("Se assegnato, lo script sostituisce la sprite del prefab con una di queste varianti (deterministico).")]
+    public Sprite[] treeVariantSprites;
+
+    [Tooltip("Se true, applica flipX deterministico per variare l'aspetto.")]
+    public bool treeAllowFlipX = true;
+
+    [Tooltip("Se true, applica una scala deterministica nell'intervallo sotto (per evitare monotonia).")]
+    public bool treeAllowScale = true;
+
+    [Tooltip("Intervallo di scala applicato all'albero (es. 0.95..1.05).")]
+    public Vector2 treeScaleRange = new Vector2(0.95f, 1.05f);
+
+    [Header("Rock Prefab Variants (Option A)")]
+    [Tooltip("Se assegnato, lo script sostituisce la sprite del prefab con una di queste varianti (deterministico).")]
+    public Sprite[] rockVariantSprites;
+
+    [Tooltip("Se true, applica flipX deterministico per variare l'aspetto.")]
+    public bool rockAllowFlipX = true;
+
+    [Tooltip("Se true, applica una scala deterministica nell'intervallo sotto (per evitare monotonia).")]
+    public bool rockAllowScale = true;
+
+    [Tooltip("Intervallo di scala applicato alla roccia (es. 0.9..1.1).")]
+    public Vector2 rockScaleRange = new Vector2(0.9f, 1.1f);
 
     [Header("Height Noise (Ocean vs Land)")]
     [Tooltip("Higher = more detail; lower = larger blobs")]
@@ -98,15 +147,14 @@ public class WorldGenTilemap : MonoBehaviour
     [Range(1.2f, 4f)] public float biomeLacunarity = 2f;
     [Range(0f, 1f)] public float desertThreshold = 0.65f;
 
-    [Header("Decor Noise")]
+    [Header("Decor Noise (fallback / rocks)")]
     [Tooltip("Higher = more variation in decor placement")]
     public float decorScale = 12f;
 
-    [Header("Decor Density (0..1) - legacy (not used by patched spawns)")]
-    [Range(0f, 1f)] public float treeChance = 0.08f;
-    [Range(0f, 1f)] public float flowerChance = 0.12f;
-    [Range(0f, 1f)] public float cactusChance = 0.07f;
-    [Range(0f, 1f)] public float rockChance = 0.05f;
+    [Header("Decor Density")]
+    [Range(0f, 1f)]
+    [Tooltip("Chance per rocce tile nel deserto (fallback semplice).")]
+    public float rockChance = 0.05f;
 
     [Header("Minor Decor Chances (white noise)")]
     [Range(0f, 1f)] public float grassChance = 0.18f;
@@ -130,6 +178,13 @@ public class WorldGenTilemap : MonoBehaviour
     [Range(0f, 1f)] public float cactusInPatchChance = 0.10f;
     public float cactusScatterScale = 14f;
 
+    [Header("Big Rock Patches (Desert)")]
+    [Tooltip("Basso = macchie grandi di rocce prefab.")]
+    public float rockPrefabPatchScale = 1.1f;
+    [Range(0f, 1f)] public float rockPrefabPatchThreshold = 0.78f;
+    [Range(0f, 1f)] public float rockPrefabInPatchChance = 0.06f;
+    public float rockPrefabScatterScale = 12f;
+
     [Header("Rules")]
     [Tooltip("If true, do not place decor on cells adjacent to ocean (nice for shorelines).")]
     public bool avoidDecorNearOcean = true;
@@ -141,7 +196,7 @@ public class WorldGenTilemap : MonoBehaviour
     public int clumpRadius = 1;
 
     private enum GroundType { Ocean, Plains, Desert }
-    private enum DecorType { None, Tree, Flower, Cactus, Rock, Grass, Pebble }
+    private enum DecorType { None, Tree, BigRock, Flower, Cactus, Rock, Grass, Pebble }
 
     private struct TileData
     {
@@ -152,6 +207,7 @@ public class WorldGenTilemap : MonoBehaviour
     public void Generate()
     {
         ValidateRefs();
+        ClearSpawnedProps();
 
         Vector2 worldOffset = offset;
 
@@ -183,113 +239,221 @@ public class WorldGenTilemap : MonoBehaviour
         float[,] cactusPatchMap = GenerateNoiseMap(width, height, cactusPatchScale, 2, 0.5f, 2f, worldOffset + new Vector2(2021, 3021), seed + 30);
         float[,] cactusScatterMap = GenerateNoiseMap(width, height, cactusScatterScale, 2, 0.5f, 2f, worldOffset + new Vector2(2022, 3022), seed + 31);
 
+        // --- BIG ROCKS: patch mask + scatter ---
+        float[,] rockPatchMap = GenerateNoiseMap(width, height, rockPrefabPatchScale, 2, 0.5f, 2f, worldOffset + new Vector2(2031, 3031), seed + 40);
+        float[,] rockScatterMap = GenerateNoiseMap(width, height, rockPrefabScatterScale, 2, 0.5f, 2f, worldOffset + new Vector2(2032, 3032), seed + 41);
+
         // Build tile data first (so rules can look around)
         TileData[,] data = new TileData[width, height];
 
         for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
+        for (int x = 0; x < width; x++)
+        {
+            float h = heightMap[x, y];
+
+            if (h < seaLevel)
             {
-                float h = heightMap[x, y];
-
-                if (h < seaLevel)
-                {
-                    data[x, y] = new TileData { ground = GroundType.Ocean, decor = DecorType.None };
-                    continue;
-                }
-
-                float b = biomeMap[x, y];
-                GroundType g = (b >= desertThreshold) ? GroundType.Desert : GroundType.Plains;
-
-                data[x, y] = new TileData { ground = g, decor = DecorType.None };
+                data[x, y] = new TileData { ground = GroundType.Ocean, decor = DecorType.None };
+                continue;
             }
+
+            float b = biomeMap[x, y];
+            GroundType g = (b >= desertThreshold) ? GroundType.Desert : GroundType.Plains;
+
+            data[x, y] = new TileData { ground = g, decor = DecorType.None };
+        }
 
         // Decor pass (patch-aware)
         for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
+        for (int x = 0; x < width; x++)
+        {
+            if (data[x, y].ground == GroundType.Ocean) continue;
+
+            if (avoidDecorNearOcean && IsAdjacentToOcean(data, x, y))
+                continue;
+
+            DecorType d = PickDecorPatched(
+                data[x, y].ground,
+                x, y,
+                flowerPatchMap, flowerScatterMap,
+                treePatchMap, treeScatterMap,
+                cactusPatchMap, cactusScatterMap,
+                rockPatchMap, rockScatterMap,
+                decorMap
+            );
+
+            if (d == DecorType.Tree || d == DecorType.Cactus || d == DecorType.BigRock)
             {
-                if (data[x, y].ground == GroundType.Ocean) continue;
-
-                if (avoidDecorNearOcean && IsAdjacentToOcean(data, x, y))
-                    continue;
-
-                DecorType d = PickDecorPatched(
-                    data[x, y].ground,
-                    x, y,
-                    flowerPatchMap, flowerScatterMap,
-                    treePatchMap, treeScatterMap,
-                    cactusPatchMap, cactusScatterMap,
-                    decorMap
-                );
-
-                if (d == DecorType.Tree || d == DecorType.Cactus)
-                {
-                    if (avoidDecorClumps && HasNearbySameDecor(data, x, y, d, clumpRadius))
-                        d = DecorType.None;
-                }
-
-                data[x, y].decor = d;
+                if (avoidDecorClumps && HasNearbySameDecor(data, x, y, d, clumpRadius))
+                    d = DecorType.None;
             }
+
+            data[x, y].decor = d;
+        }
 
         // Render
-        groundTilemapA.ClearAllTiles();
-        groundTilemapB.ClearAllTiles();
+        groundTilemap.ClearAllTiles();
         decorTilemap.ClearAllTiles();
 
-        groundTilemapA.CompressBounds();
-        groundTilemapB.CompressBounds();
-        decorTilemap.CompressBounds();
-
         for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
+        for (int x = 0; x < width; x++)
+        {
+            Vector3Int cell = new Vector3Int(x, y, 0);
+
+            // --- ground ---
+            TileBase groundTile;
+            if (data[x, y].ground == GroundType.Ocean)
             {
-                Vector3Int cell = new Vector3Int(x, y, 0);
+                float depth01 = ComputeOceanDepth01(heightMap[x, y], oceanDepthNoiseMap, x, y);
+                groundTile = PickOceanTile(depth01, x, y);
 
-                // ground
-                TileBase groundTile;
-                if (data[x, y].ground == GroundType.Ocean)
-                {
-                    float depth01 = ComputeOceanDepth01(heightMap[x, y], oceanDepthNoiseMap, x, y);
-                    groundTile = PickOceanTile(depth01, x, y);
-
-                    // Fallback if bands not configured
-                    if (groundTile == null)
-                        groundTile = PickVariant(oceanTiles, x, y, 101);
-                }
-                else
-                {
-                    groundTile = data[x, y].ground switch
-                    {
-                        GroundType.Plains => PickVariant(plainsTiles, x, y, 102),
-                        GroundType.Desert => PickVariant(desertTiles, x, y, 103),
-                        _ => PickVariant(plainsTiles, x, y, 102)
-                    };
-                }
-
-                // NEW: checkerboard ground split (prevents chunk sorting overlap artifacts)
-                Tilemap targetGround = (((x + y) & 1) == 0) ? groundTilemapA : groundTilemapB;
-                targetGround.SetTile(cell, groundTile);
-
-                // decor (variant)
-                TileBase decorTile = data[x, y].decor switch
-                {
-                    DecorType.Tree => PickVariant(treeTiles, x, y, 201),
-                    DecorType.Flower => PickVariant(flowerTiles, x, y, 202),
-                    DecorType.Cactus => PickVariant(cactusTiles, x, y, 203),
-                    DecorType.Rock => PickVariant(rockTiles, x, y, 204),
-                    DecorType.Grass => PickVariant(grassTiles, x, y, 205),
-                    DecorType.Pebble => PickVariant(pebbleTiles, x, y, 206),
-                    _ => null
-                };
-                if (decorTile != null)
-                    decorTilemap.SetTile(cell, decorTile);
+                // Fallback if bands not configured
+                if (groundTile == null)
+                    groundTile = PickVariant(oceanTiles, x, y, 101);
             }
+            else
+            {
+                groundTile = data[x, y].ground switch
+                {
+                    GroundType.Plains => PickVariant(plainsTiles, x, y, 102),
+                    GroundType.Desert => PickVariant(desertTiles, x, y, 103),
+                    _ => PickVariant(plainsTiles, x, y, 102)
+                };
+            }
+
+            groundTilemap.SetTile(cell, groundTile);
+
+            // --- decor / props ---
+            if (data[x, y].decor == DecorType.Tree)
+            {
+                SpawnTreePrefab(cell);
+                continue; // non mettere tile albero
+            }
+
+            if (data[x, y].decor == DecorType.BigRock)
+            {
+                SpawnRockPrefab(cell);
+                continue; // non mettere tile roccia grande
+            }
+
+            // (Per ora le Rock restano tile-based. rockPrefab è pronto ma non usato.)
+            TileBase decorTile = data[x, y].decor switch
+            {
+                DecorType.Flower => PickVariant(flowerTiles, x, y, 202),
+                DecorType.Cactus => PickVariant(cactusTiles, x, y, 203),
+                DecorType.Rock => PickVariant(rockTiles, x, y, 204),
+                DecorType.Grass => PickVariant(grassTiles, x, y, 205),
+                DecorType.Pebble => PickVariant(pebbleTiles, x, y, 206),
+                _ => null
+            };
+
+            if (decorTile != null)
+                decorTilemap.SetTile(cell, decorTile);
+        }
+
+        // CompressBounds DOPO aver piazzato le tile
+        groundTilemap.CompressBounds();
+        decorTilemap.CompressBounds();
     }
 
     public void Clear()
     {
-        if (groundTilemapA != null) groundTilemapA.ClearAllTiles();
-        if (groundTilemapB != null) groundTilemapB.ClearAllTiles();
+        if (groundTilemap != null) groundTilemap.ClearAllTiles();
         if (decorTilemap != null) decorTilemap.ClearAllTiles();
+        ClearSpawnedProps();
+    }
+
+    private void SpawnTreePrefab(Vector3Int cell)
+    {
+        if (treePrefab == null) return;
+
+        Vector3 pos = groundTilemap.GetCellCenterWorld(cell) + treeSpawnOffset;
+        Transform parent = propsParent != null ? propsParent : transform;
+
+        GameObject go = Instantiate(treePrefab, pos, Quaternion.identity, parent);
+
+        // 1) scegli variante sprite (Option A)
+        SpriteRenderer sr = go.GetComponentInChildren<SpriteRenderer>();
+        if (sr != null && treeVariantSprites != null && treeVariantSprites.Length > 0)
+        {
+            int idx = Hash(cell.x, cell.y, 7777) % treeVariantSprites.Length;
+            sr.sprite = treeVariantSprites[idx];
+        }
+
+        // 2) flipX deterministico
+        if (sr != null && treeAllowFlipX)
+        {
+            bool flip = (Hash(cell.x, cell.y, 8888) & 1) == 1;
+            sr.flipX = flip;
+        }
+
+        // 3) scala deterministica (±5% o quello che imposti)
+        if (treeAllowScale)
+        {
+            float minS = Mathf.Min(treeScaleRange.x, treeScaleRange.y);
+            float maxS = Mathf.Max(treeScaleRange.x, treeScaleRange.y);
+            minS = Mathf.Max(0.01f, minS);
+            maxS = Mathf.Max(minS, maxS);
+
+            float t = White01(cell.x, cell.y, 9999); // 0..1
+            float s = Mathf.Lerp(minS, maxS, t);
+
+            go.transform.localScale = new Vector3(s, s, 1f);
+        }
+    }
+
+    private void SpawnRockPrefab(Vector3Int cell)
+    {
+        if (rockPrefab == null) return;
+
+        Vector3 pos = groundTilemap.GetCellCenterWorld(cell) + rockSpawnOffset;
+        Transform parent = propsParent != null ? propsParent : transform;
+
+        GameObject go = Instantiate(rockPrefab, pos, Quaternion.identity, parent);
+
+        // 1) scegli variante sprite (Option A)
+        SpriteRenderer sr = go.GetComponentInChildren<SpriteRenderer>();
+        if (sr != null && rockVariantSprites != null && rockVariantSprites.Length > 0)
+        {
+            int idx = Hash(cell.x, cell.y, 17777) % rockVariantSprites.Length;
+            sr.sprite = rockVariantSprites[idx];
+        }
+
+        // 2) flipX deterministico
+        if (sr != null && rockAllowFlipX)
+        {
+            bool flip = (Hash(cell.x, cell.y, 18888) & 1) == 1;
+            sr.flipX = flip;
+        }
+
+        // 3) scala deterministica
+        if (rockAllowScale)
+        {
+            float minS = Mathf.Min(rockScaleRange.x, rockScaleRange.y);
+            float maxS = Mathf.Max(rockScaleRange.x, rockScaleRange.y);
+            minS = Mathf.Max(0.01f, minS);
+            maxS = Mathf.Max(minS, maxS);
+
+            float t = White01(cell.x, cell.y, 19999);
+            float s = Mathf.Lerp(minS, maxS, t);
+
+            go.transform.localScale = new Vector3(s, s, 1f);
+        }
+    }
+
+    private void ClearSpawnedProps()
+    {
+        Transform parent = propsParent != null ? propsParent : null;
+        if (parent == null) return;
+
+        for (int i = parent.childCount - 1; i >= 0; i--)
+        {
+#if UNITY_EDITOR
+            DestroyImmediate(parent.GetChild(i).gameObject);
+#else
+            Destroy(parent.GetChild(i).gameObject);
+#endif
+        }
     }
 
     // -----------------------
@@ -297,7 +461,6 @@ public class WorldGenTilemap : MonoBehaviour
     // -----------------------
     private float ComputeOceanDepth01(float heightVal01, float[,] oceanNoiseMap, int x, int y)
     {
-        // Only meaningful in ocean cells (heightVal01 < seaLevel), but safe anyway.
         float fromHeight = 0f;
 
         if (oceanDepthFromHeight)
@@ -341,7 +504,7 @@ public class WorldGenTilemap : MonoBehaviour
     }
 
     // -----------------------
-    // Deterministic variants
+    // Deterministic helpers
     // -----------------------
     private int Hash(int x, int y, int salt)
     {
@@ -372,7 +535,7 @@ public class WorldGenTilemap : MonoBehaviour
         return variants[idx];
     }
 
-    // NEW: clustered variant selection (for ocean palettes)
+    // clustered variant selection (for ocean palettes)
     private TileBase PickClusteredVariant(TileBase[] variants, int x, int y, int salt, float clusterScale, float clusterStrength)
     {
         if (variants == null || variants.Length == 0) return null;
@@ -409,20 +572,31 @@ public class WorldGenTilemap : MonoBehaviour
         float[,] flowerPatchMap, float[,] flowerScatterMap,
         float[,] treePatchMap, float[,] treeScatterMap,
         float[,] cactusPatchMap, float[,] cactusScatterMap,
+        float[,] rockPatchMap, float[,] rockScatterMap,
         float[,] fallbackDecorMap
     )
     {
         // 1) PLAINS
         if (ground == GroundType.Plains)
         {
-            // TREES: patch mask + scatter
-            if (HasAny(treeTiles))
+            // TREES: patch mask + scatter (solo se hai assegnato il prefab)
+            if (treePrefab != null)
             {
                 float patch = treePatchMap[x, y];
                 float scatter = treeScatterMap[x, y];
 
                 if (patch > treePatchThreshold && scatter < treeInPatchChance)
                     return DecorType.Tree;
+            }
+
+            // BIG ROCKS: patch mask + scatter (prefab)
+            if (rockPrefab != null)
+            {
+                float patch = rockPatchMap[x, y];
+                float scatter = rockScatterMap[x, y];
+
+                if (patch > rockPrefabPatchThreshold && scatter < rockPrefabInPatchChance)
+                    return DecorType.BigRock;
             }
 
             // FLOWERS: soft density from patch (borders fade out)
@@ -462,7 +636,17 @@ public class WorldGenTilemap : MonoBehaviour
                     return DecorType.Cactus;
             }
 
-            // ROCK: fallback (simple)
+            // BIG ROCKS: patch mask + scatter (prefab)
+            if (rockPrefab != null)
+            {
+                float patch = rockPatchMap[x, y];
+                float scatter = rockScatterMap[x, y];
+
+                if (patch > rockPrefabPatchThreshold && scatter < rockPrefabInPatchChance)
+                    return DecorType.BigRock;
+            }
+
+            // ROCK: fallback (tile-based)
             if (HasAny(rockTiles))
             {
                 float v = fallbackDecorMap[x, y];
@@ -503,33 +687,13 @@ public class WorldGenTilemap : MonoBehaviour
     private bool HasNearbySameDecor(TileData[,] data, int x, int y, DecorType d, int radius)
     {
         for (int yy = y - radius; yy <= y + radius; yy++)
-            for (int xx = x - radius; xx <= x + radius; xx++)
-            {
-                if (xx == x && yy == y) continue;
-                if (xx < 0 || yy < 0 || xx >= width || yy >= height) continue;
-                if (data[xx, yy].decor == d) return true;
-            }
+        for (int xx = x - radius; xx <= x + radius; xx++)
+        {
+            if (xx == x && yy == y) continue;
+            if (xx < 0 || yy < 0 || xx >= width || yy >= height) continue;
+            if (data[xx, yy].decor == d) return true;
+        }
         return false;
-    }
-
-    // LEGACY (not used by patched approach, kept for reference)
-    private DecorType PickDecor(GroundType ground, float v01)
-    {
-        if (ground == GroundType.Plains)
-        {
-            if (HasAny(treeTiles) && v01 < treeChance) return DecorType.Tree;
-            if (HasAny(flowerTiles) && v01 < treeChance + flowerChance) return DecorType.Flower;
-            return DecorType.None;
-        }
-
-        if (ground == GroundType.Desert)
-        {
-            if (HasAny(cactusTiles) && v01 < cactusChance) return DecorType.Cactus;
-            if (HasAny(rockTiles) && v01 < cactusChance + rockChance) return DecorType.Rock;
-            return DecorType.None;
-        }
-
-        return DecorType.None;
     }
 
     // -----------------------
@@ -562,49 +726,46 @@ public class WorldGenTilemap : MonoBehaviour
         float maxVal = float.MinValue;
 
         for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
+        for (int x = 0; x < width; x++)
+        {
+            float amplitude = 1f;
+            float frequency = 1f;
+            float noiseValue = 0f;
+
+            for (int i = 0; i < octaves; i++)
             {
-                float amplitude = 1f;
-                float frequency = 1f;
-                float noiseValue = 0f;
+                float sampleX = (x / (float)width) * scale * frequency + octaveOffsets[i].x;
+                float sampleY = (y / (float)height) * scale * frequency + octaveOffsets[i].y;
 
-                for (int i = 0; i < octaves; i++)
-                {
-                    float sampleX = (x / (float)width) * scale * frequency + octaveOffsets[i].x;
-                    float sampleY = (y / (float)height) * scale * frequency + octaveOffsets[i].y;
+                float perlin = Mathf.PerlinNoise(sampleX, sampleY) * 2f - 1f; // [-1,1]
+                noiseValue += perlin * amplitude;
 
-                    float perlin = Mathf.PerlinNoise(sampleX, sampleY) * 2f - 1f; // [-1,1]
-                    noiseValue += perlin * amplitude;
-
-                    amplitude *= persistence;
-                    frequency *= lacunarity;
-                }
-
-                if (noiseValue < minVal) minVal = noiseValue;
-                if (noiseValue > maxVal) maxVal = noiseValue;
-
-                map[x, y] = noiseValue;
+                amplitude *= persistence;
+                frequency *= lacunarity;
             }
+
+            if (noiseValue < minVal) minVal = noiseValue;
+            if (noiseValue > maxVal) maxVal = noiseValue;
+
+            map[x, y] = noiseValue;
+        }
 
         // Normalize to [0,1]
         for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
-                map[x, y] = Mathf.InverseLerp(minVal, maxVal, map[x, y]);
+        for (int x = 0; x < width; x++)
+            map[x, y] = Mathf.InverseLerp(minVal, maxVal, map[x, y]);
 
         return map;
     }
 
     private void ValidateRefs()
     {
-        if (groundTilemapA == null) throw new Exception("Assign Ground Tilemap A in inspector.");
-        if (groundTilemapB == null) throw new Exception("Assign Ground Tilemap B in inspector.");
+        if (groundTilemap == null) throw new Exception("Assign Ground Tilemap in inspector.");
         if (decorTilemap == null) throw new Exception("Assign Decor Tilemap in inspector.");
 
-        // Plains/Desert still required
         if (!HasAny(plainsTiles) || !HasAny(desertTiles))
             throw new Exception("Assign ground tile arrays (at least 1 each): plainsTiles, desertTiles.");
 
-        // Ocean must exist either via bands or fallback array
         bool hasOceanBands = oceanBands != null && oceanBands.Length > 0;
         if (!hasOceanBands && !HasAny(oceanTiles))
             throw new Exception("Assign oceanTiles OR configure oceanBands (with tiles inside each band).");
