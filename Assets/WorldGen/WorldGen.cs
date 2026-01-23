@@ -9,7 +9,8 @@ using UnityEditor;
 public class WorldGenTilemap : MonoBehaviour
 {
     [Header("Tilemaps (same Grid)")]
-    [SerializeField] private Tilemap groundTilemap;
+    [SerializeField] private Tilemap groundTilemapA;
+    [SerializeField] private Tilemap groundTilemapB;
     [SerializeField] private Tilemap decorTilemap;
 
     [Header("World Size (prototype, no chunks yet)")]
@@ -114,13 +115,13 @@ public class WorldGenTilemap : MonoBehaviour
     [Header("Flower Patches (Plains)")]
     public float flowerPatchScale = 1.6f;                 // basso = macchie grandi
     [Range(0f, 1f)] public float flowerPatchMin = 0.65f;  // da qui in su inizia ad apparire
-    [Range(0f, 1f)] public float flowerBaseChance = 0.18f;// densit� massima al centro patch
+    [Range(0f, 1f)] public float flowerBaseChance = 0.18f;// densità massima al centro patch
     public float flowerScatterScale = 18f;                // alto = dettagli piccoli nello scatter
 
     [Header("Tree Patches (Plains)")]
     public float treePatchScale = 1.2f;
     [Range(0f, 1f)] public float treePatchThreshold = 0.72f; // alto = poche patch
-    [Range(0f, 1f)] public float treeInPatchChance = 0.10f;  // densit� dentro patch
+    [Range(0f, 1f)] public float treeInPatchChance = 0.10f;  // densità dentro patch
     public float treeScatterScale = 14f;
 
     [Header("Cactus Patches (Desert)")]
@@ -230,10 +231,12 @@ public class WorldGenTilemap : MonoBehaviour
             }
 
         // Render
-        groundTilemap.ClearAllTiles();
+        groundTilemapA.ClearAllTiles();
+        groundTilemapB.ClearAllTiles();
         decorTilemap.ClearAllTiles();
 
-        groundTilemap.CompressBounds();
+        groundTilemapA.CompressBounds();
+        groundTilemapB.CompressBounds();
         decorTilemap.CompressBounds();
 
         for (int y = 0; y < height; y++)
@@ -262,7 +265,9 @@ public class WorldGenTilemap : MonoBehaviour
                     };
                 }
 
-                groundTilemap.SetTile(cell, groundTile);
+                // NEW: checkerboard ground split (prevents chunk sorting overlap artifacts)
+                Tilemap targetGround = (((x + y) & 1) == 0) ? groundTilemapA : groundTilemapB;
+                targetGround.SetTile(cell, groundTile);
 
                 // decor (variant)
                 TileBase decorTile = data[x, y].decor switch
@@ -282,7 +287,8 @@ public class WorldGenTilemap : MonoBehaviour
 
     public void Clear()
     {
-        if (groundTilemap != null) groundTilemap.ClearAllTiles();
+        if (groundTilemapA != null) groundTilemapA.ClearAllTiles();
+        if (groundTilemapB != null) groundTilemapB.ClearAllTiles();
         if (decorTilemap != null) decorTilemap.ClearAllTiles();
     }
 
@@ -590,7 +596,8 @@ public class WorldGenTilemap : MonoBehaviour
 
     private void ValidateRefs()
     {
-        if (groundTilemap == null) throw new Exception("Assign Ground Tilemap in inspector.");
+        if (groundTilemapA == null) throw new Exception("Assign Ground Tilemap A in inspector.");
+        if (groundTilemapB == null) throw new Exception("Assign Ground Tilemap B in inspector.");
         if (decorTilemap == null) throw new Exception("Assign Decor Tilemap in inspector.");
 
         // Plains/Desert still required
