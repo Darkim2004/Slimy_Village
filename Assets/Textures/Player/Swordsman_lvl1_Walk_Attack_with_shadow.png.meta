@@ -1,0 +1,819 @@
+fileFormatVersion: 2
+guid: 1b9572cd13f250f4da2ab06a5c582452
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8377188919713305153
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_0
+  - first:
+      213: 4219625805557987346
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_1
+  - first:
+      213: 3382977650958832288
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_2
+  - first:
+      213: 3687433833340348787
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_3
+  - first:
+      213: 8379309331296749765
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_4
+  - first:
+      213: -6526711919833393170
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_5
+  - first:
+      213: 198805244914039984
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_6
+  - first:
+      213: -3517598511892459358
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_7
+  - first:
+      213: 917489251334888951
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_8
+  - first:
+      213: -7025978518417141696
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_9
+  - first:
+      213: -5364327296431308819
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_10
+  - first:
+      213: 3657779279774051462
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_11
+  - first:
+      213: -5526834872832570155
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_12
+  - first:
+      213: 5589886826633904998
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_13
+  - first:
+      213: -4034164880944738303
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_14
+  - first:
+      213: -1993877180669471752
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_15
+  - first:
+      213: -6960782893725596159
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_16
+  - first:
+      213: 6641376394155705881
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_17
+  - first:
+      213: 8224318183483830602
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_18
+  - first:
+      213: 2465150084174774867
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_19
+  - first:
+      213: 665913188465132421
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_20
+  - first:
+      213: -5363534650853960231
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_21
+  - first:
+      213: -3657514665097808736
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_22
+  - first:
+      213: 7998781213742845475
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_23
+  - first:
+      213: -7493156800492396596
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_24
+  - first:
+      213: 2815837387128293363
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_25
+  - first:
+      213: 87727468982466637
+    second: Swordsman_lvl1_Walk_Attack_with_shadow_26
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_0
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 208
+        width: 25
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbd6620df0f3ebb80800000000000000
+      internalID: -8377188919713305153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_1
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 203
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 218fa59405f1f8a30800000000000000
+      internalID: 4219625805557987346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_2
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 203
+        width: 36
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a29c70ff30c2fe20800000000000000
+      internalID: 3382977650958832288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_3
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 199
+        width: 34
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3792209d8856c2330800000000000000
+      internalID: 3687433833340348787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_4
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 208
+        width: 29
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c80f0bf079494470800000000000000
+      internalID: 8379309331296749765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_5
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 199
+        width: 32
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee7d503c6167c65a0800000000000000
+      internalID: -6526711919833393170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_6
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 208
+        width: 18
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bcf592215c42c200800000000000000
+      internalID: 198805244914039984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_7
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 144
+        width: 18
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a0153c5acafe2fc0800000000000000
+      internalID: -3517598511892459358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_8
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 144
+        width: 23
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fd1e0fec939bbc00800000000000000
+      internalID: 917489251334888951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_9
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 144
+        width: 32
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 040983243c5be7e90800000000000000
+      internalID: -7025978518417141696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_10
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 143
+        width: 32
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: defb74dceb41e85b0800000000000000
+      internalID: -5364327296431308819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_11
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 144
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68c67bd00ea03c230800000000000000
+      internalID: 3657779279774051462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_12
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 144
+        width: 22
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5dcc29037fcbc43b0800000000000000
+      internalID: -5526834872832570155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_13
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 80
+        width: 26
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 663462cc374439d40800000000000000
+      internalID: 5589886826633904998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_14
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 80
+        width: 30
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 100dee92a64c308c0800000000000000
+      internalID: -4034164880944738303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_15
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 80
+        width: 33
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f35078a4435454e0800000000000000
+      internalID: -1993877180669471752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_16
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 79
+        width: 33
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 106ced486d4566f90800000000000000
+      internalID: -6960782893725596159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_17
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 80
+        width: 33
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 916c05994a8ea2c50800000000000000
+      internalID: 6641376394155705881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_18
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 80
+        width: 28
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a41f65640d5a22270800000000000000
+      internalID: 8224318183483830602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_19
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 16
+        width: 25
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 352034dc0f8f53220800000000000000
+      internalID: 2465150084174774867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_20
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 16
+        width: 27
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58346b9448ccd3900800000000000000
+      internalID: 665913188465132421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_21
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 16
+        width: 28
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d5d95bf6a5e095b0800000000000000
+      internalID: -5363534650853960231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_22
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 37
+        width: 32
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a4301a5ac5ed3dc0800000000000000
+      internalID: -3657514665097808736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_23
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 16
+        width: 26
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32ec5317221610f60800000000000000
+      internalID: 7998781213742845475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_24
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 40
+        width: 34
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccf19542795f20890800000000000000
+      internalID: -7493156800492396596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_25
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 16
+        width: 32
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f7cb054f2dd31720800000000000000
+      internalID: 2815837387128293363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Swordsman_lvl1_Walk_Attack_with_shadow_26
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 16
+        width: 19
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d487eb11baba73100800000000000000
+      internalID: 87727468982466637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Swordsman_lvl1_Walk_Attack_with_shadow_0: -8377188919713305153
+      Swordsman_lvl1_Walk_Attack_with_shadow_1: 4219625805557987346
+      Swordsman_lvl1_Walk_Attack_with_shadow_10: -5364327296431308819
+      Swordsman_lvl1_Walk_Attack_with_shadow_11: 3657779279774051462
+      Swordsman_lvl1_Walk_Attack_with_shadow_12: -5526834872832570155
+      Swordsman_lvl1_Walk_Attack_with_shadow_13: 5589886826633904998
+      Swordsman_lvl1_Walk_Attack_with_shadow_14: -4034164880944738303
+      Swordsman_lvl1_Walk_Attack_with_shadow_15: -1993877180669471752
+      Swordsman_lvl1_Walk_Attack_with_shadow_16: -6960782893725596159
+      Swordsman_lvl1_Walk_Attack_with_shadow_17: 6641376394155705881
+      Swordsman_lvl1_Walk_Attack_with_shadow_18: 8224318183483830602
+      Swordsman_lvl1_Walk_Attack_with_shadow_19: 2465150084174774867
+      Swordsman_lvl1_Walk_Attack_with_shadow_2: 3382977650958832288
+      Swordsman_lvl1_Walk_Attack_with_shadow_20: 665913188465132421
+      Swordsman_lvl1_Walk_Attack_with_shadow_21: -5363534650853960231
+      Swordsman_lvl1_Walk_Attack_with_shadow_22: -3657514665097808736
+      Swordsman_lvl1_Walk_Attack_with_shadow_23: 7998781213742845475
+      Swordsman_lvl1_Walk_Attack_with_shadow_24: -7493156800492396596
+      Swordsman_lvl1_Walk_Attack_with_shadow_25: 2815837387128293363
+      Swordsman_lvl1_Walk_Attack_with_shadow_26: 87727468982466637
+      Swordsman_lvl1_Walk_Attack_with_shadow_3: 3687433833340348787
+      Swordsman_lvl1_Walk_Attack_with_shadow_4: 8379309331296749765
+      Swordsman_lvl1_Walk_Attack_with_shadow_5: -6526711919833393170
+      Swordsman_lvl1_Walk_Attack_with_shadow_6: 198805244914039984
+      Swordsman_lvl1_Walk_Attack_with_shadow_7: -3517598511892459358
+      Swordsman_lvl1_Walk_Attack_with_shadow_8: 917489251334888951
+      Swordsman_lvl1_Walk_Attack_with_shadow_9: -7025978518417141696
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

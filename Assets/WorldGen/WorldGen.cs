@@ -11,6 +11,7 @@ public class WorldGenTilemap : MonoBehaviour
     [Header("Tilemaps (same Grid)")]
     [SerializeField] private Tilemap groundTilemap;
     [SerializeField] private Tilemap decorTilemap;
+    [SerializeField] private Tilemap treeCollisionTilemap;
 
     [Header("World Size (prototype, no chunks yet)")]
     [Min(1)] public int width = 128;
@@ -79,6 +80,10 @@ public class WorldGenTilemap : MonoBehaviour
 
     [Header("Tiles - Minor Decor Variants (white noise)")]
     public TileBase[] grassTiles;   // Plains minor decor
+
+    [Header("Tiles - Collision (Trees)")]
+    public TileBase treeCollisionTile;
+    public TileBase snowTreeCollisionTile;
 
     // -----------------------
     // Prefabs - Props (y-sorted)
@@ -299,6 +304,8 @@ public class WorldGenTilemap : MonoBehaviour
         // Render
         groundTilemap.ClearAllTiles();
         decorTilemap.ClearAllTiles();
+        if (treeCollisionTilemap != null)
+            treeCollisionTilemap.ClearAllTiles();
 
         for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
@@ -332,12 +339,16 @@ public class WorldGenTilemap : MonoBehaviour
             if (data[x, y].decor == DecorType.Tree)
             {
                 SpawnTreePrefab(cell);
+                if (treeCollisionTilemap != null && treeCollisionTile != null)
+                    treeCollisionTilemap.SetTile(cell, treeCollisionTile);
                 continue; // non mettere tile albero
             }
 
             if (data[x, y].decor == DecorType.SnowTree)
             {
                 SpawnSnowTreePrefab(cell);
+                if (treeCollisionTilemap != null && snowTreeCollisionTile != null)
+                    treeCollisionTilemap.SetTile(cell, snowTreeCollisionTile);
                 continue; // non mettere tile albero
             }
 
@@ -361,12 +372,15 @@ public class WorldGenTilemap : MonoBehaviour
         // CompressBounds DOPO aver piazzato le tile
         groundTilemap.CompressBounds();
         decorTilemap.CompressBounds();
+        if (treeCollisionTilemap != null)
+            treeCollisionTilemap.CompressBounds();
     }
 
     public void Clear()
     {
         if (groundTilemap != null) groundTilemap.ClearAllTiles();
         if (decorTilemap != null) decorTilemap.ClearAllTiles();
+        if (treeCollisionTilemap != null) treeCollisionTilemap.ClearAllTiles();
         ClearSpawnedProps();
     }
 
