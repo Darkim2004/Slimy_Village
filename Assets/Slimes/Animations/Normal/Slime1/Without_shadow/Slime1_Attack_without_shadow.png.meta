@@ -1,0 +1,2977 @@
+fileFormatVersion: 2
+guid: cf0d41d559495b54abfd9ffff6039bfe
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2915183140811031606
+    second: Slime1_Attack_without_shadow_0
+  - first:
+      213: 1311127430629411145
+    second: Slime1_Attack_without_shadow_1
+  - first:
+      213: 1247642650476137223
+    second: Slime1_Attack_without_shadow_2
+  - first:
+      213: -7064522567798769508
+    second: Slime1_Attack_without_shadow_3
+  - first:
+      213: -8081849422081391442
+    second: Slime1_Attack_without_shadow_4
+  - first:
+      213: 1123932231437229871
+    second: Slime1_Attack_without_shadow_5
+  - first:
+      213: -6006089990204242505
+    second: Slime1_Attack_without_shadow_6
+  - first:
+      213: -408147056589554564
+    second: Slime1_Attack_without_shadow_7
+  - first:
+      213: -2942639294544996576
+    second: Slime1_Attack_without_shadow_8
+  - first:
+      213: 495415151234290126
+    second: Slime1_Attack_without_shadow_9
+  - first:
+      213: -1229702953188591159
+    second: Slime1_Attack_without_shadow_10
+  - first:
+      213: -7465014520715267762
+    second: Slime1_Attack_without_shadow_11
+  - first:
+      213: -6050946037228185328
+    second: Slime1_Attack_without_shadow_12
+  - first:
+      213: 7428543431180406126
+    second: Slime1_Attack_without_shadow_13
+  - first:
+      213: 6781533283516287364
+    second: Slime1_Attack_without_shadow_14
+  - first:
+      213: -5075605333349773819
+    second: Slime1_Attack_without_shadow_15
+  - first:
+      213: -6786635773175184312
+    second: Slime1_Attack_without_shadow_16
+  - first:
+      213: -5759583695569072131
+    second: Slime1_Attack_without_shadow_17
+  - first:
+      213: -2122384811397250577
+    second: Slime1_Attack_without_shadow_18
+  - first:
+      213: 756174150280323520
+    second: Slime1_Attack_without_shadow_19
+  - first:
+      213: -6598053732309701569
+    second: Slime1_Attack_without_shadow_20
+  - first:
+      213: 7360683008711117364
+    second: Slime1_Attack_without_shadow_21
+  - first:
+      213: 4227541729454845939
+    second: Slime1_Attack_without_shadow_22
+  - first:
+      213: 3407285399079415231
+    second: Slime1_Attack_without_shadow_23
+  - first:
+      213: 2554619832581024793
+    second: Slime1_Attack_without_shadow_24
+  - first:
+      213: -3136899724541717193
+    second: Slime1_Attack_without_shadow_25
+  - first:
+      213: -5589831531929527177
+    second: Slime1_Attack_without_shadow_26
+  - first:
+      213: 9106586126123952929
+    second: Slime1_Attack_without_shadow_27
+  - first:
+      213: 5254342634515328203
+    second: Slime1_Attack_without_shadow_28
+  - first:
+      213: 7452003163193833895
+    second: Slime1_Attack_without_shadow_29
+  - first:
+      213: -7093090353913208186
+    second: Slime1_Attack_without_shadow_30
+  - first:
+      213: 3198262151732415376
+    second: Slime1_Attack_without_shadow_31
+  - first:
+      213: 4953515766198024119
+    second: Slime1_Attack_without_shadow_32
+  - first:
+      213: 1647001721893869689
+    second: Slime1_Attack_without_shadow_33
+  - first:
+      213: 6358375047653301002
+    second: Slime1_Attack_without_shadow_34
+  - first:
+      213: 4867174325437139473
+    second: Slime1_Attack_without_shadow_35
+  - first:
+      213: -4919227306299641272
+    second: Slime1_Attack_without_shadow_36
+  - first:
+      213: 3748978612998452103
+    second: Slime1_Attack_without_shadow_37
+  - first:
+      213: -7150932730759490210
+    second: Slime1_Attack_without_shadow_38
+  - first:
+      213: -134754438032504051
+    second: Slime1_Attack_without_shadow_39
+  - first:
+      213: -2246408093313161678
+    second: Slime1_Attack_without_shadow_40
+  - first:
+      213: -301894105679993750
+    second: Slime1_Attack_without_shadow_41
+  - first:
+      213: -958694702269512037
+    second: Slime1_Attack_without_shadow_42
+  - first:
+      213: -6882200254279262712
+    second: Slime1_Attack_without_shadow_43
+  - first:
+      213: -4635832735414817903
+    second: Slime1_Attack_without_shadow_44
+  - first:
+      213: -3032810377900311396
+    second: Slime1_Attack_without_shadow_45
+  - first:
+      213: -4819191271436854910
+    second: Slime1_Attack_without_shadow_46
+  - first:
+      213: 8360487063253007124
+    second: Slime1_Attack_without_shadow_47
+  - first:
+      213: 2229925373113163742
+    second: Slime1_Attack_without_shadow_48
+  - first:
+      213: 3141896873221260849
+    second: Slime1_Attack_without_shadow_49
+  - first:
+      213: -4231036381397863389
+    second: Slime1_Attack_without_shadow_50
+  - first:
+      213: 394582344259726011
+    second: Slime1_Attack_without_shadow_51
+  - first:
+      213: 7943227164746956585
+    second: Slime1_Attack_without_shadow_52
+  - first:
+      213: -1041936694562298988
+    second: Slime1_Attack_without_shadow_53
+  - first:
+      213: -8209993185523510290
+    second: Slime1_Attack_without_shadow_54
+  - first:
+      213: -295358933655918312
+    second: Slime1_Attack_without_shadow_55
+  - first:
+      213: 7963140885527541301
+    second: Slime1_Attack_without_shadow_56
+  - first:
+      213: 8721650017443555008
+    second: Slime1_Attack_without_shadow_57
+  - first:
+      213: -7010160296127077879
+    second: Slime1_Attack_without_shadow_58
+  - first:
+      213: -5585013114957038724
+    second: Slime1_Attack_without_shadow_59
+  - first:
+      213: -5087729960647871956
+    second: Slime1_Attack_without_shadow_60
+  - first:
+      213: 7543868791296163803
+    second: Slime1_Attack_without_shadow_61
+  - first:
+      213: 1657844956960093348
+    second: Slime1_Attack_without_shadow_62
+  - first:
+      213: -8731090498393380010
+    second: Slime1_Attack_without_shadow_63
+  - first:
+      213: 113482602839065518
+    second: Slime1_Attack_without_shadow_64
+  - first:
+      213: 8171580240028603938
+    second: Slime1_Attack_without_shadow_65
+  - first:
+      213: -6573489992018970336
+    second: Slime1_Attack_without_shadow_66
+  - first:
+      213: -7515041131990574901
+    second: Slime1_Attack_without_shadow_67
+  - first:
+      213: -4564455260915595427
+    second: Slime1_Attack_without_shadow_68
+  - first:
+      213: 9189746156846781552
+    second: Slime1_Attack_without_shadow_69
+  - first:
+      213: -3406773259910374414
+    second: Slime1_Attack_without_shadow_70
+  - first:
+      213: -889173174609365686
+    second: Slime1_Attack_without_shadow_71
+  - first:
+      213: 7180991180302897232
+    second: Slime1_Attack_without_shadow_72
+  - first:
+      213: -2687810994846910704
+    second: Slime1_Attack_without_shadow_73
+  - first:
+      213: -7634318899624183250
+    second: Slime1_Attack_without_shadow_74
+  - first:
+      213: 1528234407096245572
+    second: Slime1_Attack_without_shadow_75
+  - first:
+      213: 735870348089384206
+    second: Slime1_Attack_without_shadow_76
+  - first:
+      213: -7097406333971022467
+    second: Slime1_Attack_without_shadow_77
+  - first:
+      213: -5448852270314801966
+    second: Slime1_Attack_without_shadow_78
+  - first:
+      213: 3276638075769683546
+    second: Slime1_Attack_without_shadow_79
+  - first:
+      213: 4793870495175162816
+    second: Slime1_Attack_without_shadow_80
+  - first:
+      213: 2881586296403163066
+    second: Slime1_Attack_without_shadow_81
+  - first:
+      213: -6478700795499282061
+    second: Slime1_Attack_without_shadow_82
+  - first:
+      213: -7207839669847666476
+    second: Slime1_Attack_without_shadow_83
+  - first:
+      213: 1572122367489148514
+    second: Slime1_Attack_without_shadow_84
+  - first:
+      213: 8540532370058713378
+    second: Slime1_Attack_without_shadow_85
+  - first:
+      213: 2198706270841219222
+    second: Slime1_Attack_without_shadow_86
+  - first:
+      213: 5974425422625840247
+    second: Slime1_Attack_without_shadow_87
+  - first:
+      213: 1173682951802984775
+    second: Slime1_Attack_without_shadow_88
+  - first:
+      213: -2452616730043114214
+    second: Slime1_Attack_without_shadow_89
+  - first:
+      213: 323510478392056424
+    second: Slime1_Attack_without_shadow_90
+  - first:
+      213: -4007277308466330011
+    second: Slime1_Attack_without_shadow_91
+  - first:
+      213: -6122034794093312651
+    second: Slime1_Attack_without_shadow_92
+  - first:
+      213: -1898029641599267125
+    second: Slime1_Attack_without_shadow_93
+  - first:
+      213: -8033203070569533380
+    second: Slime1_Attack_without_shadow_94
+  - first:
+      213: 8601821309690874370
+    second: Slime1_Attack_without_shadow_95
+  - first:
+      213: -8268950167976187576
+    second: Slime1_Attack_without_shadow_96
+  - first:
+      213: -5040931934702545363
+    second: Slime1_Attack_without_shadow_97
+  - first:
+      213: 8954311486527589351
+    second: Slime1_Attack_without_shadow_98
+  - first:
+      213: -6548270811747118710
+    second: Slime1_Attack_without_shadow_99
+  - first:
+      213: -4779127448138197209
+    second: Slime1_Attack_without_shadow_100
+  - first:
+      213: 6234959538703060409
+    second: Slime1_Attack_without_shadow_101
+  - first:
+      213: -1185149149561300623
+    second: Slime1_Attack_without_shadow_102
+  - first:
+      213: -5700718415441018056
+    second: Slime1_Attack_without_shadow_103
+  - first:
+      213: -1952949779988944522
+    second: Slime1_Attack_without_shadow_104
+  - first:
+      213: -9087267417127762066
+    second: Slime1_Attack_without_shadow_105
+  - first:
+      213: 6333014378992521839
+    second: Slime1_Attack_without_shadow_106
+  - first:
+      213: -2181566957525223051
+    second: Slime1_Attack_without_shadow_107
+  - first:
+      213: -2463417293289729191
+    second: Slime1_Attack_without_shadow_108
+  - first:
+      213: 2853121520208241027
+    second: Slime1_Attack_without_shadow_109
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_0
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 217
+        width: 15
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 634cf3b0f9fc47820800000000000000
+      internalID: 2915183140811031606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_1
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 219
+        width: 15
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 949cfe5937f023210800000000000000
+      internalID: 1311127430629411145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_2
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 222
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70bc14c5164805110800000000000000
+      internalID: 1247642650476137223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_3
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 224
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c98bf9e6726c5fd90800000000000000
+      internalID: -7064522567798769508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_4
+      rect:
+        serializedVersion: 2
+        x: 420
+        y: 223
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea484a425c087df80800000000000000
+      internalID: -8081849422081391442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_5
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 232
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2f9d6ed862099f00800000000000000
+      internalID: 1123932231437229871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_6
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 238
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b5c8dcb9f416aca0800000000000000
+      internalID: -6006089990204242505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_7
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 230
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7cbbdb1a68f55af0800000000000000
+      internalID: -408147056589554564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_8
+      rect:
+        serializedVersion: 2
+        x: 492
+        y: 233
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0271a820725a927d0800000000000000
+      internalID: -2942639294544996576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_9
+      rect:
+        serializedVersion: 2
+        x: 522
+        y: 215
+        width: 57
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec19aa9847110e600800000000000000
+      internalID: 495415151234290126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_10
+      rect:
+        serializedVersion: 2
+        x: 585
+        y: 215
+        width: 55
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c9f1f7eda73feee0800000000000000
+      internalID: -1229702953188591159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_11
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 215
+        width: 19
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4132a148d0f66890800000000000000
+      internalID: -7465014520715267762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_12
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 215
+        width: 23
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 019d4ff63a8b60ca0800000000000000
+      internalID: -6050946037228185328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_13
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 215
+        width: 24
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6dc11e74ec771760800000000000000
+      internalID: 7428543431180406126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_14
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 215
+        width: 23
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4890a7c5798dc1e50800000000000000
+      internalID: 6781533283516287364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_15
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 223
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50ecb9d47d3df89b0800000000000000
+      internalID: -5075605333349773819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_16
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 226
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8444fefa8b601d1a0800000000000000
+      internalID: -6786635773175184312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_17
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 215
+        width: 21
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dff497bf429d110b0800000000000000
+      internalID: -5759583695569072131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_18
+      rect:
+        serializedVersion: 2
+        x: 487
+        y: 226
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe18bf74246cb82e0800000000000000
+      internalID: -2122384811397250577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_19
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 217
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c1aacf12687e7a00800000000000000
+      internalID: 756174150280323520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_20
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 217
+        width: 11
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3c6db4a6110f64a0800000000000000
+      internalID: -6598053732309701569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_21
+      rect:
+        serializedVersion: 2
+        x: 388
+        y: 217
+        width: 19
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43aca76a236662660800000000000000
+      internalID: 7360683008711117364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_22
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 215
+        width: 19
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ffeb41fdce3baa30800000000000000
+      internalID: 4227541729454845939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_23
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 218
+        width: 19
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbde084940c194f20800000000000000
+      internalID: 3407285399079415231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_24
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 217
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91ce829e335d37320800000000000000
+      internalID: 2554619832581024793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_25
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 217
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7359bae025e7774d0800000000000000
+      internalID: -3136899724541717193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_26
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 218
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77c101186ddec62b0800000000000000
+      internalID: -5589831531929527177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_27
+      rect:
+        serializedVersion: 2
+        x: 502
+        y: 218
+        width: 16
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12b6e1c35d7116e70800000000000000
+      internalID: 9106586126123952929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_28
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 153
+        width: 15
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcce97299cc2be840800000000000000
+      internalID: 5254342634515328203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_29
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 155
+        width: 15
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a9714ff465da6760800000000000000
+      internalID: 7452003163193833895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_30
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 159
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 682e04767e7409d90800000000000000
+      internalID: -7093090353913208186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_31
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 160
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09b469c5b72826c20800000000000000
+      internalID: 3198262151732415376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_32
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 158
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b7b781385c6eb440800000000000000
+      internalID: 4953515766198024119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_33
+      rect:
+        serializedVersion: 2
+        x: 461
+        y: 169
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 978d0f107535bd610800000000000000
+      internalID: 1647001721893869689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_34
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 174
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0b1510fa6c7d3850800000000000000
+      internalID: 6358375047653301002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_35
+      rect:
+        serializedVersion: 2
+        x: 478
+        y: 166
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11a0597f24dab8340800000000000000
+      internalID: 4867174325437139473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_36
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 168
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 842bb9ef3d46bbbb0800000000000000
+      internalID: -4919227306299641272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_37
+      rect:
+        serializedVersion: 2
+        x: 521
+        y: 151
+        width: 58
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7833f428f2c070430800000000000000
+      internalID: 3748978612998452103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_38
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 151
+        width: 56
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e55dd529198c2cc90800000000000000
+      internalID: -7150932730759490210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_39
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 151
+        width: 19
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0b4a257d81412ef0800000000000000
+      internalID: -134754438032504051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_40
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 151
+        width: 23
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 236a189bdb723d0e0800000000000000
+      internalID: -2246408093313161678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_41
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 151
+        width: 24
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a64e82f09e47fcbf0800000000000000
+      internalID: -301894105679993750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_42
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 151
+        width: 23
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b964d276f3802b2f0800000000000000
+      internalID: -958694702269512037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_43
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 159
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80ed49a05538d70a0800000000000000
+      internalID: -6882200254279262712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_44
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 162
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19be87750b63aafb0800000000000000
+      internalID: -4635832735414817903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_45
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 151
+        width: 21
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9c3222a70b49e5d0800000000000000
+      internalID: -3032810377900311396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_46
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 162
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 289d751621bce1db0800000000000000
+      internalID: -4819191271436854910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_47
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 153
+        width: 11
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41bb17230ba660470800000000000000
+      internalID: 8360487063253007124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_48
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 153
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edf5a0cef4942fe10800000000000000
+      internalID: 2229925373113163742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_49
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 154
+        width: 19
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13683494f824a9b20800000000000000
+      internalID: 3141896873221260849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_50
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 151
+        width: 19
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 324b60ff3d65845c0800000000000000
+      internalID: -4231036381397863389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_51
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 153
+        width: 19
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbaed303d86d97500800000000000000
+      internalID: 394582344259726011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_52
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 155
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92fb9f475030c3e60800000000000000
+      internalID: 7943227164746956585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_53
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 154
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4936b22c81c4a81f0800000000000000
+      internalID: -1041936694562298988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_54
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 153
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee35e7832be301e80800000000000000
+      internalID: -8209993185523510290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_55
+      rect:
+        serializedVersion: 2
+        x: 500
+        y: 153
+        width: 18
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 819633e5d9ca6ebf0800000000000000
+      internalID: -295358933655918312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_56
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 89
+        width: 15
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5363242e172c28e60800000000000000
+      internalID: 7963140885527541301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_57
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 91
+        width: 15
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c6a0094b76890970800000000000000
+      internalID: 8721650017443555008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_58
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 94
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9026cc22a58e6be90800000000000000
+      internalID: -7010160296127077879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_59
+      rect:
+        serializedVersion: 2
+        x: 411
+        y: 96
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7b7611a92c0e72b0800000000000000
+      internalID: -5585013114957038724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_60
+      rect:
+        serializedVersion: 2
+        x: 420
+        y: 94
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c22b8768e80c469b0800000000000000
+      internalID: -5087729960647871956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_61
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 104
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdffc5152b431b860800000000000000
+      internalID: 7543868791296163803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_62
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 110
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a477486439d10710800000000000000
+      internalID: 1657844956960093348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_63
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 102
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65b6975737fe4d680800000000000000
+      internalID: -8731090498393380010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_64
+      rect:
+        serializedVersion: 2
+        x: 493
+        y: 104
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea3c86673db239100800000000000000
+      internalID: 113482602839065518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_65
+      rect:
+        serializedVersion: 2
+        x: 513
+        y: 87
+        width: 53
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2269184fee8476170800000000000000
+      internalID: 8171580240028603938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_66
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 87
+        width: 70
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 029bf1b1ea546c4a0800000000000000
+      internalID: -6573489992018970336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_67
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 87
+        width: 19
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc8904728e535b790800000000000000
+      internalID: -7515041131990574901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_68
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 87
+        width: 23
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5786fbaf1cc7a0c0800000000000000
+      internalID: -4564455260915595427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_69
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 87
+        width: 25
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0741dd6b079888f70800000000000000
+      internalID: 9189746156846781552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_70
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 89
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fb1ebc15c5b8b0d0800000000000000
+      internalID: -3406773259910374414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_71
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 87
+        width: 26
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a453a9f65b509a3f0800000000000000
+      internalID: -889173174609365686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_72
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 95
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 050da259e6108a360800000000000000
+      internalID: 7180991180302897232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_73
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 98
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 017b2cc042af2bad0800000000000000
+      internalID: -2687810994846910704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_74
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 87
+        width: 19
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2a79ddb8637d0690800000000000000
+      internalID: -7634318899624183250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_75
+      rect:
+        serializedVersion: 2
+        x: 487
+        y: 98
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44d5088a811653510800000000000000
+      internalID: 1528234407096245572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_76
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 89
+        width: 19
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0d5c9ace26563a00800000000000000
+      internalID: 735870348089384206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_77
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 87
+        width: 19
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7dbc0dfa82f08d90800000000000000
+      internalID: -7097406333971022467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_78
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 89
+        width: 19
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d43e4abab9c164b0800000000000000
+      internalID: -5448852270314801966
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_79
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 89
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5e75c338f4f87d20800000000000000
+      internalID: 3276638075769683546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_80
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 89
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cb342cf0df378240800000000000000
+      internalID: 4793870495175162816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_81
+      rect:
+        serializedVersion: 2
+        x: 493
+        y: 89
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab77eb228737df720800000000000000
+      internalID: 2881586296403163066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_82
+      rect:
+        serializedVersion: 2
+        x: 499
+        y: 89
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 371893eb3f70716a0800000000000000
+      internalID: -6478700795499282061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_83
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 25
+        width: 15
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d0d2c0520c98fb90800000000000000
+      internalID: -7207839669847666476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_84
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 27
+        width: 15
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26603a9b6fc41d510800000000000000
+      internalID: 1572122367489148514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_85
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 30
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 229131ed0f0168670800000000000000
+      internalID: 8540532370058713378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_86
+      rect:
+        serializedVersion: 2
+        x: 414
+        y: 32
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6982aee34bf538e10800000000000000
+      internalID: 2198706270841219222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_87
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 30
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77c1dac944c69e250800000000000000
+      internalID: 5974425422625840247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_88
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 40
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 749162d1d62c94010800000000000000
+      internalID: 1173682951802984775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_89
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 46
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1d999b141e86fdd0800000000000000
+      internalID: -2452616730043114214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_90
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 38
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86adca9e0175d7400800000000000000
+      internalID: 323510478392056424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_91
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 40
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5668168f48a4368c0800000000000000
+      internalID: -4007277308466330011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_92
+      rect:
+        serializedVersion: 2
+        x: 514
+        y: 23
+        width: 54
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5758c7b6ac92a0ba0800000000000000
+      internalID: -6122034794093312651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_93
+      rect:
+        serializedVersion: 2
+        x: 571
+        y: 23
+        width: 69
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bce405fd818d8a5e0800000000000000
+      internalID: -1898029641599267125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_94
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 23
+        width: 19
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c30302a7e54548090800000000000000
+      internalID: -8033203070569533380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_95
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 23
+        width: 23
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20a828128eecf5770800000000000000
+      internalID: 8601821309690874370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_96
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 23
+        width: 25
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8496f5c02a9ce3d80800000000000000
+      internalID: -8268950167976187576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_97
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 23
+        width: 26
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d26d1270d130b0ab0800000000000000
+      internalID: -5040931934702545363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_98
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 31
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7eb4da2eada144c70800000000000000
+      internalID: 8954311486527589351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_99
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 25
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8111c4146edf15a0800000000000000
+      internalID: -6548270811747118710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_100
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 34
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 727576528e02dadb0800000000000000
+      internalID: -4779127448138197209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_101
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 23
+        width: 19
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bd445d8aa6078650800000000000000
+      internalID: 6234959538703060409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_102
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 34
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 179da8ea0218d8fe0800000000000000
+      internalID: -1185149149561300623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_103
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 25
+        width: 19
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8334c1b0ecaf2e0b0800000000000000
+      internalID: -5700718415441018056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_104
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 23
+        width: 19
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 679e493b58ab5e4e0800000000000000
+      internalID: -1952949779988944522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_105
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 25
+        width: 19
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e674e173e6a83e180800000000000000
+      internalID: -9087267417127762066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_106
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 25
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f625a41260363e750800000000000000
+      internalID: 6333014378992521839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_107
+      rect:
+        serializedVersion: 2
+        x: 461
+        y: 25
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 579bafa196489b1e0800000000000000
+      internalID: -2181566957525223051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_108
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 25
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95359e3060f20ddd0800000000000000
+      internalID: -2463417293289729191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slime1_Attack_without_shadow_109
+      rect:
+        serializedVersion: 2
+        x: 500
+        y: 25
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 381e809f7e2589720800000000000000
+      internalID: 2853121520208241027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Slime1_Attack_without_shadow_0: 2915183140811031606
+      Slime1_Attack_without_shadow_1: 1311127430629411145
+      Slime1_Attack_without_shadow_10: -1229702953188591159
+      Slime1_Attack_without_shadow_100: -4779127448138197209
+      Slime1_Attack_without_shadow_101: 6234959538703060409
+      Slime1_Attack_without_shadow_102: -1185149149561300623
+      Slime1_Attack_without_shadow_103: -5700718415441018056
+      Slime1_Attack_without_shadow_104: -1952949779988944522
+      Slime1_Attack_without_shadow_105: -9087267417127762066
+      Slime1_Attack_without_shadow_106: 6333014378992521839
+      Slime1_Attack_without_shadow_107: -2181566957525223051
+      Slime1_Attack_without_shadow_108: -2463417293289729191
+      Slime1_Attack_without_shadow_109: 2853121520208241027
+      Slime1_Attack_without_shadow_11: -7465014520715267762
+      Slime1_Attack_without_shadow_12: -6050946037228185328
+      Slime1_Attack_without_shadow_13: 7428543431180406126
+      Slime1_Attack_without_shadow_14: 6781533283516287364
+      Slime1_Attack_without_shadow_15: -5075605333349773819
+      Slime1_Attack_without_shadow_16: -6786635773175184312
+      Slime1_Attack_without_shadow_17: -5759583695569072131
+      Slime1_Attack_without_shadow_18: -2122384811397250577
+      Slime1_Attack_without_shadow_19: 756174150280323520
+      Slime1_Attack_without_shadow_2: 1247642650476137223
+      Slime1_Attack_without_shadow_20: -6598053732309701569
+      Slime1_Attack_without_shadow_21: 7360683008711117364
+      Slime1_Attack_without_shadow_22: 4227541729454845939
+      Slime1_Attack_without_shadow_23: 3407285399079415231
+      Slime1_Attack_without_shadow_24: 2554619832581024793
+      Slime1_Attack_without_shadow_25: -3136899724541717193
+      Slime1_Attack_without_shadow_26: -5589831531929527177
+      Slime1_Attack_without_shadow_27: 9106586126123952929
+      Slime1_Attack_without_shadow_28: 5254342634515328203
+      Slime1_Attack_without_shadow_29: 7452003163193833895
+      Slime1_Attack_without_shadow_3: -7064522567798769508
+      Slime1_Attack_without_shadow_30: -7093090353913208186
+      Slime1_Attack_without_shadow_31: 3198262151732415376
+      Slime1_Attack_without_shadow_32: 4953515766198024119
+      Slime1_Attack_without_shadow_33: 1647001721893869689
+      Slime1_Attack_without_shadow_34: 6358375047653301002
+      Slime1_Attack_without_shadow_35: 4867174325437139473
+      Slime1_Attack_without_shadow_36: -4919227306299641272
+      Slime1_Attack_without_shadow_37: 3748978612998452103
+      Slime1_Attack_without_shadow_38: -7150932730759490210
+      Slime1_Attack_without_shadow_39: -134754438032504051
+      Slime1_Attack_without_shadow_4: -8081849422081391442
+      Slime1_Attack_without_shadow_40: -2246408093313161678
+      Slime1_Attack_without_shadow_41: -301894105679993750
+      Slime1_Attack_without_shadow_42: -958694702269512037
+      Slime1_Attack_without_shadow_43: -6882200254279262712
+      Slime1_Attack_without_shadow_44: -4635832735414817903
+      Slime1_Attack_without_shadow_45: -3032810377900311396
+      Slime1_Attack_without_shadow_46: -4819191271436854910
+      Slime1_Attack_without_shadow_47: 8360487063253007124
+      Slime1_Attack_without_shadow_48: 2229925373113163742
+      Slime1_Attack_without_shadow_49: 3141896873221260849
+      Slime1_Attack_without_shadow_5: 1123932231437229871
+      Slime1_Attack_without_shadow_50: -4231036381397863389
+      Slime1_Attack_without_shadow_51: 394582344259726011
+      Slime1_Attack_without_shadow_52: 7943227164746956585
+      Slime1_Attack_without_shadow_53: -1041936694562298988
+      Slime1_Attack_without_shadow_54: -8209993185523510290
+      Slime1_Attack_without_shadow_55: -295358933655918312
+      Slime1_Attack_without_shadow_56: 7963140885527541301
+      Slime1_Attack_without_shadow_57: 8721650017443555008
+      Slime1_Attack_without_shadow_58: -7010160296127077879
+      Slime1_Attack_without_shadow_59: -5585013114957038724
+      Slime1_Attack_without_shadow_6: -6006089990204242505
+      Slime1_Attack_without_shadow_60: -5087729960647871956
+      Slime1_Attack_without_shadow_61: 7543868791296163803
+      Slime1_Attack_without_shadow_62: 1657844956960093348
+      Slime1_Attack_without_shadow_63: -8731090498393380010
+      Slime1_Attack_without_shadow_64: 113482602839065518
+      Slime1_Attack_without_shadow_65: 8171580240028603938
+      Slime1_Attack_without_shadow_66: -6573489992018970336
+      Slime1_Attack_without_shadow_67: -7515041131990574901
+      Slime1_Attack_without_shadow_68: -4564455260915595427
+      Slime1_Attack_without_shadow_69: 9189746156846781552
+      Slime1_Attack_without_shadow_7: -408147056589554564
+      Slime1_Attack_without_shadow_70: -3406773259910374414
+      Slime1_Attack_without_shadow_71: -889173174609365686
+      Slime1_Attack_without_shadow_72: 7180991180302897232
+      Slime1_Attack_without_shadow_73: -2687810994846910704
+      Slime1_Attack_without_shadow_74: -7634318899624183250
+      Slime1_Attack_without_shadow_75: 1528234407096245572
+      Slime1_Attack_without_shadow_76: 735870348089384206
+      Slime1_Attack_without_shadow_77: -7097406333971022467
+      Slime1_Attack_without_shadow_78: -5448852270314801966
+      Slime1_Attack_without_shadow_79: 3276638075769683546
+      Slime1_Attack_without_shadow_8: -2942639294544996576
+      Slime1_Attack_without_shadow_80: 4793870495175162816
+      Slime1_Attack_without_shadow_81: 2881586296403163066
+      Slime1_Attack_without_shadow_82: -6478700795499282061
+      Slime1_Attack_without_shadow_83: -7207839669847666476
+      Slime1_Attack_without_shadow_84: 1572122367489148514
+      Slime1_Attack_without_shadow_85: 8540532370058713378
+      Slime1_Attack_without_shadow_86: 2198706270841219222
+      Slime1_Attack_without_shadow_87: 5974425422625840247
+      Slime1_Attack_without_shadow_88: 1173682951802984775
+      Slime1_Attack_without_shadow_89: -2452616730043114214
+      Slime1_Attack_without_shadow_9: 495415151234290126
+      Slime1_Attack_without_shadow_90: 323510478392056424
+      Slime1_Attack_without_shadow_91: -4007277308466330011
+      Slime1_Attack_without_shadow_92: -6122034794093312651
+      Slime1_Attack_without_shadow_93: -1898029641599267125
+      Slime1_Attack_without_shadow_94: -8033203070569533380
+      Slime1_Attack_without_shadow_95: 8601821309690874370
+      Slime1_Attack_without_shadow_96: -8268950167976187576
+      Slime1_Attack_without_shadow_97: -5040931934702545363
+      Slime1_Attack_without_shadow_98: 8954311486527589351
+      Slime1_Attack_without_shadow_99: -6548270811747118710
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -13,6 +13,17 @@ public class WorldGenTilemap : MonoBehaviour
     [SerializeField] private Tilemap decorTilemap;
     [SerializeField] private Tilemap treeCollisionTilemap;
 
+    // --- Cached generated data (for spawners/queries) ---
+    private TileData[,] _generated;
+    private bool _hasGenerated;
+
+    public bool HasGenerated => _hasGenerated;
+    public int Width => width;
+    public int Height => height;
+    public Tilemap GroundTilemap => groundTilemap;
+
+    public enum Biome { Ocean, Plains, Snomy }
+
     [Header("World Size (prototype, no chunks yet)")]
     [Min(1)] public int width = 128;
     [Min(1)] public int height = 128;
@@ -217,6 +228,15 @@ public class WorldGenTilemap : MonoBehaviour
         public DecorType decor;
     }
 
+    [Header("Auto Generate")]
+    public bool generateOnStart = true;
+    private void Start()
+    {
+        if (generateOnStart)
+            Generate();
+    }
+
+
     public void Generate()
     {
         ValidateRefs();
@@ -255,7 +275,8 @@ public class WorldGenTilemap : MonoBehaviour
         float[,] rockScatterMap = GenerateNoiseMap(width, height, rockPrefabScatterScale, 2, 0.5f, 2f, worldOffset + new Vector2(2032, 3032), seed + 41);
 
         // Build tile data first (so rules can look around)
-        TileData[,] data = new TileData[width, height];
+        _generated = new TileData[width, height];
+        TileData[,] data = _generated;
 
         for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
@@ -374,6 +395,8 @@ public class WorldGenTilemap : MonoBehaviour
         decorTilemap.CompressBounds();
         if (treeCollisionTilemap != null)
             treeCollisionTilemap.CompressBounds();
+
+        _hasGenerated = true;
     }
 
     public void Clear()
@@ -787,6 +810,45 @@ public class WorldGenTilemap : MonoBehaviour
             map[x, y] = Mathf.InverseLerp(minVal, maxVal, map[x, y]);
 
         return map;
+    }
+
+    public bool IsInside(int x, int y) => x >= 0 && y >= 0 && x < width && y < height;
+
+    public bool IsOceanCell(int x, int y)
+    {
+        if (!_hasGenerated || !IsInside(x, y)) return false;
+        return _generated[x, y].ground == GroundType.Ocean;
+    }
+
+    public bool IsLandCell(int x, int y)
+    {
+        if (!_hasGenerated || !IsInside(x, y)) return false;
+        return _generated[x, y].ground != GroundType.Ocean;
+    }
+
+    public Biome GetBiome(int x, int y)
+    {
+        if (!_hasGenerated || !IsInside(x, y)) return Biome.Ocean;
+
+        return _generated[x, y].ground switch
+        {
+            GroundType.Ocean => Biome.Ocean,
+            GroundType.Plains => Biome.Plains,
+            GroundType.Snomy => Biome.Snomy,
+            _ => Biome.Ocean
+        };
+    }
+
+    public bool IsBlockedCell(int x, int y)
+    {
+        if (treeCollisionTilemap == null) return false;
+        var cell = new Vector3Int(x, y, 0);
+        return treeCollisionTilemap.GetTile(cell) != null;
+    }
+
+    public Vector3 CellCenterWorld(int x, int y)
+    {
+        return groundTilemap.GetCellCenterWorld(new Vector3Int(x, y, 0));
     }
 
     private void ValidateRefs()

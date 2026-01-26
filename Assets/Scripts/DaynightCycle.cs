@@ -18,7 +18,7 @@ public class DayNightScript : MonoBehaviour
     public Volume ppv; // post processing volume (assegnalo da Inspector o con GetComponent)
 
     [Header("Tempo di gioco")]
-    public float tick = 1f;   // 1 = 1 secondo di gioco al secondo reale (con FixedUpdate a 0.02)
+    public float tick = 72f;   // 1 = 1 secondo di gioco al secondo reale (con FixedUpdate a 0.02)
     public bool useDebugSpeed = false;
     public float debugMultiplier = 300f;  // quanto più veloce in modalità debug
 
@@ -40,6 +40,11 @@ public class DayNightScript : MonoBehaviour
         {
             ppv = GetComponent<Volume>(); // se il Volume è sullo stesso GO
         }
+
+        // Inizializza sempre l'orario alle 09:00
+        hours = 9;
+        mins = 0;
+        seconds = 0f;
     }
 
     void FixedUpdate() // usiamo FixedUpdate per avere passo costante

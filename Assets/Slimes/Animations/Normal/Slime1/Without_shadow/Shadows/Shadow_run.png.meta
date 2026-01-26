@@ -1,0 +1,949 @@
+fileFormatVersion: 2
+guid: 6f90e71d87702c54c8e7f29933a94c8b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2137096955065819392
+    second: Shadow_run_0
+  - first:
+      213: 6201126057682791378
+    second: Shadow_run_1
+  - first:
+      213: 2376426206641509408
+    second: Shadow_run_2
+  - first:
+      213: -7011762328735313089
+    second: Shadow_run_3
+  - first:
+      213: 7684362556097988905
+    second: Shadow_run_4
+  - first:
+      213: 358533756116594741
+    second: Shadow_run_5
+  - first:
+      213: 1575043568324402289
+    second: Shadow_run_6
+  - first:
+      213: 2781568439751669359
+    second: Shadow_run_7
+  - first:
+      213: 99259066765874418
+    second: Shadow_run_8
+  - first:
+      213: -5743797155404180289
+    second: Shadow_run_9
+  - first:
+      213: 7969219492707094054
+    second: Shadow_run_10
+  - first:
+      213: -3511042148420962984
+    second: Shadow_run_11
+  - first:
+      213: 2594935756426263132
+    second: Shadow_run_12
+  - first:
+      213: 8516377545543501563
+    second: Shadow_run_13
+  - first:
+      213: 7719339490568261735
+    second: Shadow_run_14
+  - first:
+      213: 2192751476300562320
+    second: Shadow_run_15
+  - first:
+      213: 1646341340715625100
+    second: Shadow_run_16
+  - first:
+      213: -8391844533176766149
+    second: Shadow_run_17
+  - first:
+      213: -452523524752185165
+    second: Shadow_run_18
+  - first:
+      213: 3229813400705185078
+    second: Shadow_run_19
+  - first:
+      213: 7367441250586588459
+    second: Shadow_run_20
+  - first:
+      213: 504315526778046054
+    second: Shadow_run_21
+  - first:
+      213: -8480581094301670871
+    second: Shadow_run_22
+  - first:
+      213: 4427345774880969860
+    second: Shadow_run_23
+  - first:
+      213: 7215168172368636078
+    second: Shadow_run_24
+  - first:
+      213: 209860970926057472
+    second: Shadow_run_25
+  - first:
+      213: 4855848038418343800
+    second: Shadow_run_26
+  - first:
+      213: 3844816587924252450
+    second: Shadow_run_27
+  - first:
+      213: -166511104535734458
+    second: Shadow_run_28
+  - first:
+      213: 9087647095481077984
+    second: Shadow_run_29
+  - first:
+      213: -5929845667164821991
+    second: Shadow_run_30
+  - first:
+      213: 2200379269541327967
+    second: Shadow_run_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Shadow_run_0
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 53
+        width: 19
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00164499b5e78ad10800000000000000
+      internalID: 2137096955065819392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_1
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 53
+        width: 19
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2dbe9936b43de0650800000000000000
+      internalID: 6201126057682791378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_2
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 53
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 024dbc94b03caf020800000000000000
+      internalID: 2376426206641509408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_3
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 53
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f33144adf4731be90800000000000000
+      internalID: -7011762328735313089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_4
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 53
+        width: 21
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9298881080754aa60800000000000000
+      internalID: 7684362556097988905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_5
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 53
+        width: 27
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 530f0553d84c9f400800000000000000
+      internalID: 358533756116594741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_6
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 53
+        width: 27
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17c5dbbc7cdabd510800000000000000
+      internalID: 1575043568324402289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_7
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 53
+        width: 24
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f66f5d132cd1a9620800000000000000
+      internalID: 2781568439751669359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_8
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 37
+        width: 19
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f411576893a06100800000000000000
+      internalID: 99259066765874418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_9
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 37
+        width: 19
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb41c3a4beee940b0800000000000000
+      internalID: -5743797155404180289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_10
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 37
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62ecce7e7ea589e60800000000000000
+      internalID: 7969219492707094054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_11
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 37
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 855b1ffa4c5464fc0800000000000000
+      internalID: -3511042148420962984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_12
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 37
+        width: 21
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5a3fb86250130420800000000000000
+      internalID: 2594935756426263132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_13
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 37
+        width: 27
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf6cb378140403670800000000000000
+      internalID: 8516377545543501563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_14
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 37
+        width: 27
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76057fb2e5a902b60800000000000000
+      internalID: 7719339490568261735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_15
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 37
+        width: 24
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09fbb9999d73e6e10800000000000000
+      internalID: 2192751476300562320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_16
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 21
+        width: 19
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8a25680abaf8d610800000000000000
+      internalID: 1646341340715625100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_17
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 21
+        width: 20
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b31f1b5ebdd2a8b80800000000000000
+      internalID: -8391844533176766149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_18
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 21
+        width: 21
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b863a6704058b9f0800000000000000
+      internalID: -452523524752185165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_19
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 21
+        width: 22
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63534d7fc2a92dc20800000000000000
+      internalID: 3229813400705185078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_20
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 21
+        width: 21
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b25f5c478c86e3660800000000000000
+      internalID: 7367441250586588459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_21
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 21
+        width: 27
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 666c154bc40bff600800000000000000
+      internalID: 504315526778046054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_22
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 21
+        width: 25
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92261414d6cee4a80800000000000000
+      internalID: -8480581094301670871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_23
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 21
+        width: 21
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4845b917687117d30800000000000000
+      internalID: 4427345774880969860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_24
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 5
+        width: 19
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea8acb4a93d612460800000000000000
+      internalID: 7215168172368636078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_25
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 5
+        width: 20
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0082440f07399e200800000000000000
+      internalID: 209860970926057472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_26
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 5
+        width: 21
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 877e3354010736340800000000000000
+      internalID: 4855848038418343800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_27
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 5
+        width: 22
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22721c5e0588b5530800000000000000
+      internalID: 3844816587924252450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_28
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 5
+        width: 21
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6475dfa580f60bdf0800000000000000
+      internalID: -166511104535734458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_29
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 5
+        width: 27
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e0924a82eecd1e70800000000000000
+      internalID: 9087647095481077984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_30
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 5
+        width: 25
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91660cb88c4f4bda0800000000000000
+      internalID: -5929845667164821991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shadow_run_31
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 5
+        width: 21
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f54f42c9941598e10800000000000000
+      internalID: 2200379269541327967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Shadow_run_0: 2137096955065819392
+      Shadow_run_1: 6201126057682791378
+      Shadow_run_10: 7969219492707094054
+      Shadow_run_11: -3511042148420962984
+      Shadow_run_12: 2594935756426263132
+      Shadow_run_13: 8516377545543501563
+      Shadow_run_14: 7719339490568261735
+      Shadow_run_15: 2192751476300562320
+      Shadow_run_16: 1646341340715625100
+      Shadow_run_17: -8391844533176766149
+      Shadow_run_18: -452523524752185165
+      Shadow_run_19: 3229813400705185078
+      Shadow_run_2: 2376426206641509408
+      Shadow_run_20: 7367441250586588459
+      Shadow_run_21: 504315526778046054
+      Shadow_run_22: -8480581094301670871
+      Shadow_run_23: 4427345774880969860
+      Shadow_run_24: 7215168172368636078
+      Shadow_run_25: 209860970926057472
+      Shadow_run_26: 4855848038418343800
+      Shadow_run_27: 3844816587924252450
+      Shadow_run_28: -166511104535734458
+      Shadow_run_29: 9087647095481077984
+      Shadow_run_3: -7011762328735313089
+      Shadow_run_30: -5929845667164821991
+      Shadow_run_31: 2200379269541327967
+      Shadow_run_4: 7684362556097988905
+      Shadow_run_5: 358533756116594741
+      Shadow_run_6: 1575043568324402289
+      Shadow_run_7: 2781568439751669359
+      Shadow_run_8: 99259066765874418
+      Shadow_run_9: -5743797155404180289
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

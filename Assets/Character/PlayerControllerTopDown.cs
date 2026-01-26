@@ -8,7 +8,7 @@ public class PlayerControllerTopDown : MonoBehaviour
     public enum PlayerState
     {
         Idle, Walk, Run,
-        Attack, WalkAttack, RunAttack,
+        Attack,
         Hurt, Death
     }
 
@@ -175,13 +175,10 @@ public class PlayerControllerTopDown : MonoBehaviour
 
         lockedDir = facing;
 
-        bool moving = moveInput.sqrMagnitude > 0.001f;
-        if (!moving)
-            SetTimedState(PlayerState.Attack, GetClipOrFallback("attack", lockedDir, 0.35f));
-        else if (runHeld)
-            SetTimedState(PlayerState.RunAttack, GetClipOrFallback("run_attack", lockedDir, 0.35f));
-        else
-            SetTimedState(PlayerState.WalkAttack, GetClipOrFallback("walk_attack", lockedDir, 0.35f));
+        // Ferma subito il movimento quando si attacca
+        moveInput = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
+        SetTimedState(PlayerState.Attack, GetClipOrFallback("attack", lockedDir, 0.35f));
     }
 
     private void EnterHurt()
@@ -212,11 +209,11 @@ public class PlayerControllerTopDown : MonoBehaviour
     }
 
     private bool IsTimedState(PlayerState s) =>
-        s == PlayerState.Attack || s == PlayerState.WalkAttack || s == PlayerState.RunAttack ||
+        s == PlayerState.Attack ||
         s == PlayerState.Hurt || s == PlayerState.Death;
 
     private bool LocksFacing(PlayerState s) =>
-        s == PlayerState.Attack || s == PlayerState.WalkAttack || s == PlayerState.RunAttack ||
+        s == PlayerState.Attack ||
         s == PlayerState.Hurt || s == PlayerState.Death;
 
     private void PlayAnimationForCurrentState()
@@ -229,8 +226,6 @@ public class PlayerControllerTopDown : MonoBehaviour
             PlayerState.Walk => "walk",
             PlayerState.Run => "run",
             PlayerState.Attack => "attack",
-            PlayerState.WalkAttack => "walk_attack",
-            PlayerState.RunAttack => "run_attack",
             PlayerState.Hurt => "hurt",
             PlayerState.Death => "death",
             _ => "idle"
