@@ -32,6 +32,9 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
     protected Animator animator;
     protected Health health;
 
+    protected MeleeAttack2D melee;
+
+
     protected State state = State.Idle;
     protected Dir facing = Dir.Down;
     protected Dir lockedDir = Dir.Down;
@@ -49,6 +52,7 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         health = GetComponent<Health>();
+        melee = GetComponent<MeleeAttack2D>();
 
         rb.gravityScale = 0f;
         rb.freezeRotation = true;
@@ -103,6 +107,20 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
 
         // Lascia alla derivata decidere desiredVelocity e/o cambiare stato
         TickAI();
+
+        if (state == State.Attack && melee != null)
+        {
+            Vector2 dir = lockedDir switch
+            {
+                Dir.Up => Vector2.up,
+                Dir.Down => Vector2.down,
+                Dir.Left => Vector2.left,
+                Dir.Right => Vector2.right,
+                _ => Vector2.down
+            };
+
+            melee.TickAttack(dir);
+        }
 
         // timer stati “bloccanti”
         if (IsTimedState(state))
@@ -180,15 +198,30 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
 
     protected virtual void StartAttack()
     {
-        // per dopo: blocca movimento, lock dir, timer = durata clip attack
         lockedDir = facing;
         state = State.Attack;
         stateTimer = GetClipOrFallback(attackName, lockedDir, 0.35f);
         desiredVelocity = Vector2.zero;
+
+        if (melee != null)
+        {
+            Vector2 dir = lockedDir switch
+            {
+                Dir.Up => Vector2.up,
+                Dir.Down => Vector2.down,
+                Dir.Left => Vector2.left,
+                Dir.Right => Vector2.right,
+                _ => Vector2.down
+            };
+
+            int dmg = melee.baseDamage; // per ora base
+            melee.StartAttack(stateTimer, dir, dmg);
+        }
     }
 
     protected virtual void OnAttackFinished()
     {
+        if (melee != null) melee.EndAttack();
         EnterIdle();
     }
 

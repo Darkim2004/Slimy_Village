@@ -33,61 +33,12 @@ public class WorldGenTilemap : MonoBehaviour
     public Vector2 offset; // useful to "move" the world without changing seed
 
     // -----------------------
-    // Ocean palette bands (shallow/deep palettes)
-    // -----------------------
-    [Serializable]
-    public class PaletteBand
-    {
-        public string name;
-        [Range(0f, 1f)] public float minInclusive = 0f;
-        [Range(0f, 1f)] public float maxExclusive = 1f;
-
-        [Header("Tiles for this band (variants)")]
-        public TileBase[] tiles;
-
-        [Header("Clustering inside this band")]
-        [Tooltip("Lower = bigger patches. Higher = smaller patches.")]
-        public float clusterScale = 1.2f;
-
-        [Range(0f, 1f)]
-        [Tooltip("0 = no clustering (pure hashed pick). 1 = strong clustering.")]
-        public float clusterStrength = 0.85f;
-
-        [Tooltip("Salt to avoid repeating patterns between bands")]
-        public int salt = 1000;
-    }
-
-    [Header("Ocean Palettes (bands by depth)")]
-    [Tooltip("Depth 0 = near shore / shallow, Depth 1 = deep. Bands choose which tile palette to use.")]
-    public PaletteBand[] oceanBands;
-
-    [Header("Ocean Depth Source")]
-    [Tooltip("Use heightMap to derive depth: shallow near seaLevel, deep where height is very low.")]
-    public bool oceanDepthFromHeight = true;
-
-    [Tooltip("Optional extra noise to vary depth patterns in the ocean (adds variety).")]
-    public bool oceanDepthAddNoise = false;
-
-    [Range(0f, 1f)]
-    [Tooltip("If oceanDepthAddNoise is true, this is how much noise blends in (0 = only height, 1 = only noise).")]
-    public float oceanDepthNoiseBlend = 0.35f;
-
-    [Tooltip("Lower = bigger deep/shallow regions if using noise depth.")]
-    public float oceanDepthNoiseScale = 1.2f;
-
-    // -----------------------
     // Tiles - Ground
     // -----------------------
     [Header("Tiles - Ground Variants (at least 1 each)")]
     public TileBase[] oceanTiles;   // fallback if oceanBands not set
     public TileBase[] plainsTiles;
     public TileBase[] snomyTiles;
-
-    // -----------------------
-    // Tiles - Decor (tile-based)
-    // -----------------------
-    [Header("Tiles - Decor Variants (tile-based)")]
-    public TileBase[] flowerTiles;
 
     [Header("Tiles - Minor Decor Variants (white noise)")]
     public TileBase[] grassTiles;   // Plains minor decor
@@ -184,12 +135,6 @@ public class WorldGenTilemap : MonoBehaviour
     [Tooltip("Chance per erba tile nelle plains (fallback semplice).")]
     public float grassChance = 0.18f;
 
-    [Header("Flower Patches (Plains)")]
-    public float flowerPatchScale = 1.6f;                 // basso = macchie grandi
-    [Range(0f, 1f)] public float flowerPatchMin = 0.65f;  // da qui in su inizia ad apparire
-    [Range(0f, 1f)] public float flowerBaseChance = 0.18f;// densità massima al centro patch
-    public float flowerScatterScale = 18f;                // alto = dettagli piccoli nello scatter
-
     [Header("Tree Patches (Plains)")]
     public float treePatchScale = 1.2f;
     [Range(0f, 1f)] public float treePatchThreshold = 0.72f; // alto = poche patch
@@ -220,7 +165,7 @@ public class WorldGenTilemap : MonoBehaviour
     public int clumpRadius = 1;
 
     private enum GroundType { Ocean, Plains, Snomy }
-    private enum DecorType { None, Tree, SnowTree, BigRock, Flower, Grass }
+    private enum DecorType { None, Tree, SnowTree, BigRock, Grass }
 
     private struct TileData
     {
@@ -246,21 +191,6 @@ public class WorldGenTilemap : MonoBehaviour
 
         float[,] heightMap = GenerateNoiseMap(width, height, heightScale, heightOctaves, heightPersistence, heightLacunarity, worldOffset, seed);
         float[,] biomeMap = GenerateNoiseMap(width, height, biomeScale, biomeOctaves, biomePersistence, biomeLacunarity, worldOffset + new Vector2(777, 333), seed + 1);
-        // Optional extra ocean depth noise (only used if oceanDepthAddNoise)
-        float[,] oceanDepthNoiseMap = null;
-        if (oceanDepthAddNoise)
-        {
-            oceanDepthNoiseMap = GenerateNoiseMap(
-                width, height,
-                oceanDepthNoiseScale,
-                2, 0.5f, 2f,
-                worldOffset + new Vector2(5000, 6000), seed + 99
-            );
-        }
-
-        // --- FLOWERS: patch + scatter (soft density) ---
-        float[,] flowerPatchMap = GenerateNoiseMap(width, height, flowerPatchScale, 2, 0.5f, 2f, worldOffset + new Vector2(2001, 3001), seed + 10);
-        float[,] flowerScatterMap = GenerateNoiseMap(width, height, flowerScatterScale, 2, 0.5f, 2f, worldOffset + new Vector2(2002, 3002), seed + 11);
 
         // --- TREES: patch mask + scatter ---
         float[,] treePatchMap = GenerateNoiseMap(width, height, treePatchScale, 2, 0.5f, 2f, worldOffset + new Vector2(2011, 3011), seed + 20);
@@ -307,7 +237,6 @@ public class WorldGenTilemap : MonoBehaviour
             DecorType d = PickDecorPatched(
                 data[x, y].ground,
                 x, y,
-                flowerPatchMap, flowerScatterMap,
                 treePatchMap, treeScatterMap,
                 snowTreePatchMap, snowTreeScatterMap,
                 rockPatchMap, rockScatterMap
@@ -337,12 +266,7 @@ public class WorldGenTilemap : MonoBehaviour
             TileBase groundTile;
             if (data[x, y].ground == GroundType.Ocean)
             {
-                float depth01 = ComputeOceanDepth01(heightMap[x, y], oceanDepthNoiseMap, x, y);
-                groundTile = PickOceanTile(depth01, x, y);
-
-                // Fallback if bands not configured
-                if (groundTile == null)
-                    groundTile = PickVariant(oceanTiles, x, y, 101);
+                groundTile = PickVariant(oceanTiles, x, y, 101);
             }
             else
             {
@@ -381,7 +305,6 @@ public class WorldGenTilemap : MonoBehaviour
 
             TileBase decorTile = data[x, y].decor switch
             {
-                DecorType.Flower => PickVariant(flowerTiles, x, y, 202),
                 DecorType.Grass => PickVariant(grassTiles, x, y, 205),
                 _ => null
             };
@@ -537,53 +460,6 @@ public class WorldGenTilemap : MonoBehaviour
     }
 
     // -----------------------
-    // Ocean depth + palette picking
-    // -----------------------
-    private float ComputeOceanDepth01(float heightVal01, float[,] oceanNoiseMap, int x, int y)
-    {
-        float fromHeight = 0f;
-
-        if (oceanDepthFromHeight)
-        {
-            // height near seaLevel => shallow(0), height very low => deep(1)
-            fromHeight = Mathf.InverseLerp(seaLevel, 0f, heightVal01);
-        }
-
-        if (oceanDepthAddNoise && oceanNoiseMap != null)
-        {
-            float n = oceanNoiseMap[x, y]; // 0..1
-            float t = Mathf.Clamp01(oceanDepthNoiseBlend);
-            return oceanDepthFromHeight ? Mathf.Lerp(fromHeight, n, t) : n;
-        }
-
-        return oceanDepthFromHeight ? fromHeight : 0f;
-    }
-
-    private TileBase PickOceanTile(float depth01, int x, int y)
-    {
-        if (oceanBands == null || oceanBands.Length == 0) return null;
-
-        PaletteBand band = null;
-        for (int i = 0; i < oceanBands.Length; i++)
-        {
-            var b = oceanBands[i];
-            if (b == null) continue;
-
-            if (depth01 >= b.minInclusive && depth01 < b.maxExclusive)
-            {
-                band = b;
-                break;
-            }
-        }
-
-        // fallback: last band
-        if (band == null) band = oceanBands[oceanBands.Length - 1];
-        if (band == null) return null;
-
-        return PickClusteredVariant(band.tiles, x, y, band.salt, band.clusterScale, band.clusterStrength);
-    }
-
-    // -----------------------
     // Deterministic helpers
     // -----------------------
     private int Hash(int x, int y, int salt)
@@ -615,32 +491,6 @@ public class WorldGenTilemap : MonoBehaviour
         return variants[idx];
     }
 
-    // clustered variant selection (for ocean palettes)
-    private TileBase PickClusteredVariant(TileBase[] variants, int x, int y, int salt, float clusterScale, float clusterStrength)
-    {
-        if (variants == null || variants.Length == 0) return null;
-        if (variants.Length == 1) return variants[0];
-
-        float r = (Hash(x, y, salt) % 100000) / 100000f; // 0..1 (deterministic)
-        float c = ClusterValue(x, y, clusterScale, salt); // 0..1
-        float mixed = Mathf.Lerp(r, c, Mathf.Clamp01(clusterStrength));
-
-        int idx = Mathf.FloorToInt(mixed * variants.Length);
-        if (idx >= variants.Length) idx = variants.Length - 1;
-        return variants[idx];
-    }
-
-    private float ClusterValue(int x, int y, float scale, int salt)
-    {
-        if (scale <= 0f) scale = 0.0001f;
-
-        // Use offset so moving the world also moves clusters
-        float sx = (x + offset.x + salt * 0.001f) / 100f * scale;
-        float sy = (y + offset.y + salt * 0.001f) / 100f * scale;
-
-        return Mathf.PerlinNoise(sx, sy);
-    }
-
     private bool HasAny(TileBase[] variants) => variants != null && variants.Length > 0;
 
     // -----------------------
@@ -649,7 +499,6 @@ public class WorldGenTilemap : MonoBehaviour
     private DecorType PickDecorPatched(
         GroundType ground,
         int x, int y,
-        float[,] flowerPatchMap, float[,] flowerScatterMap,
         float[,] treePatchMap, float[,] treeScatterMap,
         float[,] snowTreePatchMap, float[,] snowTreeScatterMap,
         float[,] rockPatchMap, float[,] rockScatterMap
@@ -676,19 +525,6 @@ public class WorldGenTilemap : MonoBehaviour
 
                 if (patch > rockPrefabPatchThreshold && scatter < rockPrefabInPatchChance)
                     return DecorType.BigRock;
-            }
-
-            // FLOWERS: soft density from patch (borders fade out)
-            if (HasAny(flowerTiles))
-            {
-                float patch = flowerPatchMap[x, y];
-                float scatter = flowerScatterMap[x, y];
-
-                float intensity = Mathf.InverseLerp(flowerPatchMin, 1f, patch); // 0..1
-                float finalChance = flowerBaseChance * intensity;
-
-                if (scatter < finalChance)
-                    return DecorType.Flower;
             }
 
             // MINOR: GRASS (white noise)
@@ -859,9 +695,8 @@ public class WorldGenTilemap : MonoBehaviour
         if (!HasAny(plainsTiles) || !HasAny(snomyTiles))
             throw new Exception("Assign ground tile arrays (at least 1 each): plainsTiles, snomyTiles.");
 
-        bool hasOceanBands = oceanBands != null && oceanBands.Length > 0;
-        if (!hasOceanBands && !HasAny(oceanTiles))
-            throw new Exception("Assign oceanTiles OR configure oceanBands (with tiles inside each band).");
+        if (!HasAny(oceanTiles))
+            throw new Exception("Assign oceanTiles (at least 1).");
     }
 }
 

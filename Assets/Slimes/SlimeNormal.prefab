@@ -99,8 +99,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Offset: {x: 0.0177145, y: -0.004428625}
+  m_Radius: 0.21804357
 --- !u!212 &4217704237579498679
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -148,15 +148,15 @@ SpriteRenderer:
   m_SortingLayerID: 978398353
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 3719010626058602801, guid: e8f88e3507601e84fa77e195a2b4312f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2, y: 2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &8642761490611947822
@@ -169,7 +169,7 @@ Animator:
   m_GameObject: {fileID: 9049272925549827451}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a18ca191729612749862692b990d04bf, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -206,7 +206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0310933b03909454db1e6d975dc9a44c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlimeNormalAI
-  definition: {fileID: 0}
+  definition: {fileID: 11400000, guid: 66be58097f1a43b459a85832273d2291, type: 2}
   walkSpeed: 1.6
   runSpeed: 2.8
   hurtDurationFallback: 0.25
