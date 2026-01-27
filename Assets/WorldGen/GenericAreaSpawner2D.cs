@@ -18,9 +18,6 @@ public class GenericAreaSpawner2D : MonoBehaviour
     public float spawnInterval = 2.0f;
     public int triesPerTick = 30;
 
-    public bool debugSpawn = true;
-    public bool debugEveryTick = false;
-
     private float timer;
 
     private void Awake()
@@ -37,20 +34,14 @@ public class GenericAreaSpawner2D : MonoBehaviour
         if (transform.childCount >= maxAlive) { Debug.Log("Spawner: maxAlive reached"); return; }
 
         timer -= Time.deltaTime;
-        if (timer > 0f) { Debug.Log($"Spawner: waiting timer {timer:F2}"); return; }
+        if (timer > 0f) { return; }
         timer = spawnInterval;
-        Debug.Log("Spawner: TICK (trying spawn)");
 
         Vector3Int playerCell = world.GroundTilemap.WorldToCell(player.position);
         int half = Mathf.Max(1, rules.windowSize / 2);
         int minD2 = rules.minDistanceFromPlayerCells * rules.minDistanceFromPlayerCells;
 
         Camera cam = camOverride != null ? camOverride : Camera.main;
-
-        if (debugSpawn && debugEveryTick)
-            Debug.Log("Spawner tick: trying to spawn...");
-
-        int rejectedInside = 0, rejectedLand = 0, rejectedBlocked = 0, rejectedOffscreen = 0, rejectedAvoid = 0, rejectedNoEntry = 0, rejectedMinDist = 0;
 
         for (int i = 0; i < triesPerTick; i++)
         {
@@ -59,23 +50,23 @@ public class GenericAreaSpawner2D : MonoBehaviour
 
             int dx = x - playerCell.x;
             int dy = y - playerCell.y;
-            if (dx * dx + dy * dy < minD2) { rejectedMinDist++; continue; }
+            if (dx * dx + dy * dy < minD2) { continue; }
 
-            if (!world.IsInside(x, y)) { rejectedInside++; continue; }
-            if (!world.IsLandCell(x, y)) { rejectedLand++; continue; }
-            if (world.IsBlockedCell(x, y)) { rejectedBlocked++; continue; }
+            if (!world.IsInside(x, y)) { continue; }
+            if (!world.IsLandCell(x, y)) { continue; }
+            if (world.IsBlockedCell(x, y)) { continue; }
 
             var biome = world.GetBiome(x, y);
             var entry = PickEntryFor(biome);
-            if (entry == null) { rejectedNoEntry++; continue; }
+            if (entry == null) { continue; }
 
             Vector3 pos = world.CellCenterWorld(x, y);
 
-            if (!rules.IsOffscreen(pos, cam)) { rejectedOffscreen++; continue; }
+            if (!rules.IsOffscreen(pos, cam)) { continue; }
 
             if (rules.avoidRadius > 0f &&
                 Physics2D.OverlapCircle(pos, rules.avoidRadius, rules.avoidMask) != null)
-            { rejectedAvoid++; continue; }
+            { continue; }
 
             var go = Instantiate(entry.prefab, pos, Quaternion.identity, transform);
 
@@ -83,16 +74,8 @@ public class GenericAreaSpawner2D : MonoBehaviour
             var init = go.GetComponent<ISpawnInitializable>();
             if (init != null) init.Initialize(entry.definition);
 
-            if (debugSpawn) Debug.Log($"Spawn OK at cell ({x},{y}) biome={biome}");
             return;
         }
-
-        if (debugSpawn)
-        {
-            Debug.Log($"Spawn FAIL. inside:{rejectedInside} land:{rejectedLand} blocked:{rejectedBlocked} minDist:{rejectedMinDist} noEntry:{rejectedNoEntry} offscreen:{rejectedOffscreen} avoid:{rejectedAvoid}");
-        }
-
-        Debug.Log("Spawner: loop finished, no valid spot found");
     }
 
     private SpawnEntry PickEntryFor(WorldGenTilemap.Biome biome)
