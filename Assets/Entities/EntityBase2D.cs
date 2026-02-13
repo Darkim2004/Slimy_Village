@@ -41,6 +41,7 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
 
     protected float stateTimer;
     protected string currentAnim = "";
+    protected bool deathAnimFrozen;
 
     protected readonly Dictionary<string, float> clipLength = new();
 
@@ -101,7 +102,14 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
     {
         if (state == State.Death)
         {
-            PlayAnim();
+            if (!deathAnimFrozen)
+            {
+                PlayAnim();
+
+                stateTimer -= Time.deltaTime;
+                if (stateTimer <= 0f)
+                    FreezeDeathAnimation();
+            }
             return;
         }
 
@@ -187,6 +195,7 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
         lockedDir = facing;
         state = State.Death;
         stateTimer = GetClipOrFallback(deathName, lockedDir, deathDurationFallback);
+        deathAnimFrozen = false;
         desiredVelocity = Vector2.zero;
 
         rb.linearVelocity = Vector2.zero;
@@ -194,6 +203,17 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
 
         var col = GetComponent<Collider2D>();
         if (col) col.enabled = false;
+    }
+
+    protected virtual void FreezeDeathAnimation()
+    {
+        if (animator == null) return;
+
+        string clip = $"{deathName}_{lockedDir.ToString().ToLower()}";
+        animator.Play(clip, 0, 0.999f);
+        animator.Update(0f);
+        animator.enabled = false;
+        deathAnimFrozen = true;
     }
 
     protected virtual void StartAttack()

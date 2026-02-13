@@ -40,9 +40,20 @@ public class DamageHitbox2D : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        TryDamage(other);
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        TryDamage(other);
+    }
+
+    private void TryDamage(Collider2D other)
+    {
         if (ignoreTriggers && other.isTrigger) return;
 
-        if (((1 << other.gameObject.layer) & targetLayers) == 0) return;
+        bool hasLayerFilter = targetLayers.value != 0;
+        if (hasLayerFilter && ((1 << other.gameObject.layer) & targetLayers) == 0) return;
 
         // evita autocolpi
         if (_ownerRoot != null && other.transform.root == _ownerRoot) return;
