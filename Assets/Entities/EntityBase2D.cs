@@ -205,15 +205,21 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
         if (col) col.enabled = false;
     }
 
+    [Header("Death cleanup")]
+    [Tooltip("Tempo extra dopo la fine dell'anim di morte prima di distruggere il GO.")]
+    public float destroyDelayAfterDeath = 0.15f;
+
     protected virtual void FreezeDeathAnimation()
     {
-        if (animator == null) return;
-
-        string clip = $"{deathName}_{lockedDir.ToString().ToLower()}";
-        animator.Play(clip, 0, 0.999f);
-        animator.Update(0f);
-        animator.enabled = false;
         deathAnimFrozen = true;
+
+        // Disattiva l'animator e lo sprite per evitare residui visivi
+        if (animator != null) animator.enabled = false;
+
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr != null) sr.enabled = false;
+
+        Destroy(gameObject, destroyDelayAfterDeath);
     }
 
     protected virtual void StartAttack()
