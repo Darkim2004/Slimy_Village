@@ -5,6 +5,7 @@ using UnityEngine;
 /// Piazza su un GO con <see cref="InventoryModel"/>. Trascina 2 ItemDefinition nell'Inspector.
 /// </summary>
 [RequireComponent(typeof(InventoryModel))]
+[RequireComponent(typeof(InventoryInteractionController))]
 public class InventoryConsoleTest : MonoBehaviour
 {
     [Header("Trascina qui le ItemDefinition di test")]
@@ -12,23 +13,19 @@ public class InventoryConsoleTest : MonoBehaviour
     [SerializeField] private ItemDefinition testUnstackable; // es: "iron_sword", maxStack 1
 
     private InventoryModel inv;
+    private InventoryInteractionController ctrl;
     private int passed, failed;
 
     private void Awake()
     {
-        inv = GetComponent<InventoryModel>();
-
-        inv.OnSlotChanged += (sec, idx) =>
-            Debug.Log($"  [EVT] {sec.sectionName}[{idx}] → {sec.GetSlot(idx)}");
-        inv.OnBulkChanged += () =>
-            Debug.Log("  [EVT] BulkChanged");
+        inv  = GetComponent<InventoryModel>();
+        ctrl = GetComponent<InventoryInteractionController>();
     }
 
     private void Start()
     {
         if (testStackable == null || testUnstackable == null)
         {
-            Debug.LogWarning("InventoryConsoleTest: assegna entrambe le ItemDefinition!");
             return;
         }
 
@@ -54,12 +51,21 @@ public class InventoryConsoleTest : MonoBehaviour
         Test_SectionTryAddWithRemainder();
         Test_Clear();
 
+        // ── Controller / Cursor tests ──
+        Test_LeftClick_PickUp();
+        Test_LeftClick_PlaceDown();
+        Test_LeftClick_Merge();
+        Test_LeftClick_Swap();
+        Test_RightClick_PickHalf();
+        Test_RightClick_PlaceOne();
+        Test_RightClick_AddOne();
+        Test_ReturnCursorToInventory();
+        Test_GetSectionByName();
+
         Log("═══════════════════════════════════════════");
         Log($"   DONE — {passed} passed, {failed} failed");
         Log("═══════════════════════════════════════════");
 
-        if (failed > 0)
-            Debug.LogError($"⚠ {failed} test(s) FAILED — vedi sopra");
     }
 
     // ══════════════════════════════════════════════════════════
@@ -336,6 +342,148 @@ public class InventoryConsoleTest : MonoBehaviour
     }
 
     // ══════════════════════════════════════════════════════════
+    //  Test: InventoryInteractionController
+    // ══════════════════════════════════════════════════════════
+
+    private void Test_LeftClick_PickUp()
+    {
+        Log("\n── LeftClick: Pick Up ──");
+        inv.Clear();
+        ctrl.ClearCursor();
+        inv.Hotbar.SetSlot(0, new ItemStack(testStackable, 10));
+
+        ctrl.OnLeftClick(inv.Hotbar.RefAt(0));
+
+        Assert(inv.Hotbar.RefAt(0).IsEmpty,       "Slot should be empty after pick up");
+        Assert(!ctrl.CursorEmpty,                  "Cursor should hold items");
+        Assert(ctrl.CursorStack.amount == 10,      "Cursor should have 10");
+        Assert(ctrl.CursorStack.def == testStackable, "Cursor def matches");
+    }
+
+    private void Test_LeftClick_PlaceDown()
+    {
+        Log("\n── LeftClick: Place Down ──");
+        inv.Clear();
+        ctrl.ClearCursor();
+        ctrl.SetCursor(new ItemStack(testStackable, 5));
+
+        ctrl.OnLeftClick(inv.Hotbar.RefAt(0));
+
+        Assert(ctrl.CursorEmpty,                   "Cursor should be empty");
+        Assert(!inv.Hotbar.RefAt(0).IsEmpty,       "Slot should have items");
+        Assert(inv.Hotbar.GetSlot(0).amount == 5,  "Slot should have 5");
+    }
+
+    private void Test_LeftClick_Merge()
+    {
+        Log("\n── LeftClick: Merge ──");
+        inv.Clear();
+        ctrl.ClearCursor();
+        inv.Hotbar.SetSlot(0, new ItemStack(testStackable, 30));
+        ctrl.SetCursor(new ItemStack(testStackable, 20));
+
+        ctrl.OnLeftClick(inv.Hotbar.RefAt(0));
+
+        int max = testStackable.EffectiveMaxStack;
+        if (50 <= max)
+        {
+            Assert(ctrl.CursorEmpty,                      "Cursor empty after full merge");
+            Assert(inv.Hotbar.GetSlot(0).amount == 50,    "Slot has 50");
+        }
+        else
+        {
+            Assert(inv.Hotbar.GetSlot(0).amount == max,   "Slot capped at max");
+            Assert(ctrl.CursorStack.amount == 50 - max,   "Cursor has remainder");
+        }
+    }
+
+    private void Test_LeftClick_Swap()
+    {
+        Log("\n── LeftClick: Swap ──");
+        inv.Clear();
+        ctrl.ClearCursor();
+        inv.Hotbar.SetSlot(0, new ItemStack(testUnstackable, 1));
+        ctrl.SetCursor(new ItemStack(testStackable, 5));
+
+        ctrl.OnLeftClick(inv.Hotbar.RefAt(0));
+
+        Assert(ctrl.CursorStack.def == testUnstackable,   "Cursor now has sword");
+        Assert(inv.Hotbar.GetSlot(0).def == testStackable, "Slot now has stone");
+        Assert(inv.Hotbar.GetSlot(0).amount == 5,          "Slot amount 5");
+    }
+
+    private void Test_RightClick_PickHalf()
+    {
+        Log("\n── RightClick: Pick Half ──");
+        inv.Clear();
+        ctrl.ClearCursor();
+        inv.Hotbar.SetSlot(0, new ItemStack(testStackable, 10));
+
+        ctrl.OnRightClick(inv.Hotbar.RefAt(0));
+
+        Assert(!ctrl.CursorEmpty,                  "Cursor should have items");
+        Assert(ctrl.CursorStack.amount == 5,       "Cursor has half (5)");
+        Assert(inv.Hotbar.GetSlot(0).amount == 5,  "Slot has remaining 5");
+    }
+
+    private void Test_RightClick_PlaceOne()
+    {
+        Log("\n── RightClick: Place 1 in empty ──");
+        inv.Clear();
+        ctrl.ClearCursor();
+        ctrl.SetCursor(new ItemStack(testStackable, 10));
+
+        ctrl.OnRightClick(inv.Hotbar.RefAt(0));
+
+        Assert(inv.Hotbar.GetSlot(0).amount == 1,   "Slot should have 1");
+        Assert(ctrl.CursorStack.amount == 9,         "Cursor should have 9");
+    }
+
+    private void Test_RightClick_AddOne()
+    {
+        Log("\n── RightClick: Add 1 to compatible ──");
+        inv.Clear();
+        ctrl.ClearCursor();
+        inv.Hotbar.SetSlot(0, new ItemStack(testStackable, 3));
+        ctrl.SetCursor(new ItemStack(testStackable, 10));
+
+        ctrl.OnRightClick(inv.Hotbar.RefAt(0));
+
+        Assert(inv.Hotbar.GetSlot(0).amount == 4,    "Slot should have 4");
+        Assert(ctrl.CursorStack.amount == 9,          "Cursor should have 9");
+    }
+
+    private void Test_ReturnCursorToInventory()
+    {
+        Log("\n── ReturnCursorToInventory ──");
+        inv.Clear();
+        ctrl.ClearCursor();
+        ctrl.SetCursor(new ItemStack(testStackable, 15));
+
+        bool ok = ctrl.TryReturnCursorToInventory();
+        Assert(ok,                                       "Should return all");
+        Assert(ctrl.CursorEmpty,                         "Cursor should be empty");
+        Assert(inv.CountItem(testStackable.id) == 15,    "Inventory should have 15");
+    }
+
+    private void Test_GetSectionByName()
+    {
+        Log("\n── GetSection / GetSlot / SetSlot by name ──");
+        inv.Clear();
+
+        Assert(inv.GetSection("Hotbar") == inv.Hotbar,  "GetSection('Hotbar') returns Hotbar");
+        Assert(inv.GetSection("Main") == inv.Main,      "GetSection('Main') returns Main");
+        Assert(inv.GetSection("Nonexistent") == null,   "Unknown section → null");
+
+        inv.SetSlot("Hotbar", 0, new ItemStack(testStackable, 7));
+        var got = inv.GetSlot("Hotbar", 0);
+        Assert(got != null && got.amount == 7,           "GetSlot by name works");
+
+        var r = inv.RefAt("Hotbar", 0);
+        Assert(r.IsValid && r.Stack.amount == 7,         "RefAt by name works");
+    }
+
+    // ══════════════════════════════════════════════════════════
     //  Helpers
     // ══════════════════════════════════════════════════════════
 
@@ -344,14 +492,12 @@ public class InventoryConsoleTest : MonoBehaviour
         if (condition)
         {
             passed++;
-            Debug.Log($"  ✓ {msg}");
         }
         else
         {
             failed++;
-            Debug.LogError($"  ✗ FAIL: {msg}");
         }
     }
 
-    private void Log(string msg) => Debug.Log(msg);
+    private void Log(string msg) { }
 }

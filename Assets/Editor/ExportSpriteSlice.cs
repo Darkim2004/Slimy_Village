@@ -10,7 +10,7 @@ public class ExportSpriteSlice
         Sprite sprite = Selection.activeObject as Sprite;
         if (sprite == null)
         {
-            Debug.LogError("Seleziona UNA sprite (slice), non la texture intera.");
+            GameDebug.Error(GameDebugCategory.Editor, "Seleziona UNA sprite (slice), non la texture intera.");
             return;
         }
 

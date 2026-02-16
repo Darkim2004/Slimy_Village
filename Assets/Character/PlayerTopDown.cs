@@ -8,8 +8,26 @@ public class PlayerTopDown : EntityBase2D
     public KeyCode runKey = KeyCode.LeftShift;
     public KeyCode attackKey = KeyCode.J;
 
+    private bool inputLocked;
+
+    public void SetInputLocked(bool locked)
+    {
+        inputLocked = locked;
+        if (!locked) return;
+
+        EnterIdle();
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
+    }
+
     protected override void TickAI()
     {
+        if (inputLocked)
+        {
+            EnterIdle();
+            return;
+        }
+
         // Se sei in stati bloccanti, non leggere input
         if (state == State.Hurt || state == State.Death || state == State.Attack)
             return;

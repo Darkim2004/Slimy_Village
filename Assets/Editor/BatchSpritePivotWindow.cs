@@ -122,7 +122,7 @@ public class BatchSpritePivotWindow : EditorWindow
             AssetDatabase.Refresh();
         }
 
-        Debug.Log($"Batch Sprite Pivot: processed={processed}, skipped={skipped}, pivot={pivot}");
+        GameDebug.Log(GameDebugCategory.Editor, $"Batch Sprite Pivot: processed={processed}, skipped={skipped}, pivot={pivot}");
     }
 
     private static Vector2 GetPivotFromPreset(PivotPreset p, Vector2 custom)

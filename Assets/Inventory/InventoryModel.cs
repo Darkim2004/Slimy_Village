@@ -43,6 +43,8 @@ public class InventoryModel : MonoBehaviour
 
         RegisterSection(Hotbar);
         RegisterSection(Main);
+
+        GameDebug.Log(GameDebugCategory.Inventory, $"[InventoryModel] Awake on {name} → sections={sections.Count} (Hotbar='{Hotbar.sectionName}', Main='{Main.sectionName}')", this);
     }
 
     // ══════════════════════════════════════════════════════════
@@ -246,6 +248,39 @@ public class InventoryModel : MonoBehaviour
     }
 
     // ══════════════════════════════════════════════════════════
+    //  API: Slot Access by section name
+    // ══════════════════════════════════════════════════════════
+
+    /// <summary>Restituisce la sezione con il nome indicato, o null.</summary>
+    public InventorySection GetSection(string sectionName)
+    {
+        foreach (var sec in sections)
+            if (sec.sectionName == sectionName) return sec;
+        return null;
+    }
+
+    /// <summary>Accesso rapido a uno slot tramite nome sezione + indice.</summary>
+    public ItemStack GetSlot(string sectionName, int index)
+    {
+        var sec = GetSection(sectionName);
+        return sec?.GetSlot(index);
+    }
+
+    /// <summary>Imposta direttamente uno slot tramite nome sezione + indice.</summary>
+    public void SetSlot(string sectionName, int index, ItemStack stack)
+    {
+        var sec = GetSection(sectionName);
+        sec?.SetSlot(index, stack);
+    }
+
+    /// <summary>Crea un SlotRef tramite nome sezione + indice.</summary>
+    public SlotRef RefAt(string sectionName, int index)
+    {
+        var sec = GetSection(sectionName);
+        return sec != null ? sec.RefAt(index) : default;
+    }
+
+    // ══════════════════════════════════════════════════════════
     //  Helpers: ricerca globale
     // ══════════════════════════════════════════════════════════
 
@@ -306,15 +341,6 @@ public class InventoryModel : MonoBehaviour
     /// <summary>Stampa in console il contenuto completo (per debug).</summary>
     public void DebugDump()
     {
-        foreach (var sec in sections)
-        {
-            Debug.Log($"── {sec.sectionName} ({sec.Size} slots) ──");
-            for (int i = 0; i < sec.Size; i++)
-            {
-                var s = sec.GetSlot(i);
-                if (s != null && !s.IsEmpty)
-                    Debug.Log($"  [{i}] {s}");
-            }
-        }
+        // Intenzionalmente vuoto: logging disabilitato.
     }
 }

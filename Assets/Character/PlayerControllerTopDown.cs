@@ -41,6 +41,7 @@ public class PlayerControllerTopDown : MonoBehaviour
     private Vector2 moveInput;
     private bool runHeld;
     private bool attackPressedThisFrame;
+    private bool inputLocked;
 
     private int hp;
 
@@ -135,6 +136,14 @@ public class PlayerControllerTopDown : MonoBehaviour
 
     private void ReadInput()
     {
+        if (inputLocked)
+        {
+            moveInput = Vector2.zero;
+            runHeld = false;
+            attackPressedThisFrame = false;
+            return;
+        }
+
         float x = Input.GetAxisRaw(horizontalAxis);
         float y = Input.GetAxisRaw(verticalAxis);
         moveInput = new Vector2(x, y);
@@ -263,6 +272,22 @@ public class PlayerControllerTopDown : MonoBehaviour
         {
             EnterHurt();
         }
+    }
+
+    // === API PUBBLICA per lock input (inventario/UI) ===
+    public void SetInputLocked(bool locked)
+    {
+        inputLocked = locked;
+
+        if (!locked) return;
+
+        moveInput = Vector2.zero;
+        runHeld = false;
+        attackPressedThisFrame = false;
+        rb.linearVelocity = Vector2.zero;
+
+        if (state == PlayerState.Walk || state == PlayerState.Run)
+            SetState(PlayerState.Idle);
     }
 
     public int CurrentHp => hp;

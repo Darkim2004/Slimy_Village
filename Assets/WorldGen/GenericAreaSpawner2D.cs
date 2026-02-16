@@ -27,11 +27,11 @@ public class GenericAreaSpawner2D : MonoBehaviour
 
     private void Update()
     {
-        if (world == null || player == null) { Debug.Log("Spawner: missing world/player"); return; }
-        if (!world.HasGenerated) { Debug.Log("Spawner: world not generated"); return; }
-        if (entries == null || entries.Length == 0) { Debug.Log("Spawner: no entries"); return; }
+        if (world == null || player == null) { GameDebug.Log(GameDebugCategory.Spawner, "Spawner: missing world/player"); return; }
+        if (!world.HasGenerated) { GameDebug.Log(GameDebugCategory.Spawner, "Spawner: world not generated"); return; }
+        if (entries == null || entries.Length == 0) { GameDebug.Log(GameDebugCategory.Spawner, "Spawner: no entries"); return; }
 
-        if (transform.childCount >= maxAlive) { Debug.Log("Spawner: maxAlive reached"); return; }
+        if (transform.childCount >= maxAlive) { GameDebug.Log(GameDebugCategory.Spawner, "Spawner: maxAlive reached"); return; }
 
         timer -= Time.deltaTime;
         if (timer > 0f) { return; }
