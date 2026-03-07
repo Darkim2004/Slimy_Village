@@ -7,6 +7,12 @@ public class Health : MonoBehaviour
     public System.Action onHurt;
     public System.Action onDeath;
 
+    /// <summary>
+    /// Se assegnato, la difesa dell'armatura viene sottratta al danno ricevuto (minimo 1).
+    /// </summary>
+    [Tooltip("Riferimento opzionale all'inventario per leggere la difesa armatura.")]
+    public InventoryModel inventory;
+
     private int hp;
     private bool dead;
 
@@ -20,7 +26,10 @@ public class Health : MonoBehaviour
     {
         if (dead) return;
 
-        hp -= Mathf.Abs(amount);
+        int defense = inventory != null ? inventory.ArmorDefense : 0;
+        int effective = Mathf.Max(1, Mathf.Abs(amount) - defense);
+
+        hp -= effective;
         if (hp <= 0)
         {
             hp = 0;

@@ -14,11 +14,13 @@ public class InventoryModel : MonoBehaviour
     [Header("Section sizes")]
     [SerializeField] private int hotbarSize = 9;
     [SerializeField] private int mainSize   = 27;
+    [SerializeField] private int armorSize  = 1;
 
     // ── Sezioni ─────────────────────────────────────────────
 
     public InventorySection Hotbar { get; private set; }
     public InventorySection Main   { get; private set; }
+    public InventorySection Armor  { get; private set; }
 
     /// <summary>Accesso ordinato a tutte le sezioni (hotbar prima, poi main).</summary>
     public IReadOnlyList<InventorySection> Sections => sections;
@@ -40,11 +42,13 @@ public class InventoryModel : MonoBehaviour
     {
         Hotbar = new InventorySection("Hotbar", InventorySection.SectionType.Hotbar, hotbarSize);
         Main   = new InventorySection("Main",   InventorySection.SectionType.Main,   mainSize);
+        Armor  = new InventorySection("Armor",  InventorySection.SectionType.Equipment, armorSize);
 
         RegisterSection(Hotbar);
         RegisterSection(Main);
+        RegisterSection(Armor);
 
-        GameDebug.Log(GameDebugCategory.Inventory, $"[InventoryModel] Awake on {name} → sections={sections.Count} (Hotbar='{Hotbar.sectionName}', Main='{Main.sectionName}')", this);
+        GameDebug.Log(GameDebugCategory.Inventory, $"[InventoryModel] Awake on {name} → sections={sections.Count} (Hotbar='{Hotbar.sectionName}', Main='{Main.sectionName}', Armor='{Armor.sectionName}')", this);
     }
 
     // ══════════════════════════════════════════════════════════
@@ -328,6 +332,23 @@ public class InventoryModel : MonoBehaviour
     {
         if (section == null) return;
         sections.Remove(section);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    //  API: Armor
+    // ══════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Difesa totale fornita dall'armatura equipaggiata (0 se nessuna armatura).
+    /// </summary>
+    public int ArmorDefense
+    {
+        get
+        {
+            var stack = Armor?.GetSlot(0);
+            if (stack == null || stack.IsEmpty) return 0;
+            return stack.def != null && stack.def.isArmor ? stack.def.armorDefense : 0;
+        }
     }
 
     // ── Internal ────────────────────────────────────────────

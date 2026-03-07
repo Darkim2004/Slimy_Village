@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Costruisce e aggiorna la UI di una sezione inventario (Hotbar/Main/Chest).
@@ -16,10 +17,17 @@ public class InventorySectionUI : MonoBehaviour
     [SerializeField] private Transform slotsRoot;
     [SerializeField] private InventorySlotUI slotPrefab;
 
+    [Header("Section Label (optional)")]
+    [Tooltip("Sprite mostrato sotto gli slot per identificare la sezione (es. icona armatura).")]
+    [SerializeField] private Sprite sectionIcon;
+    [SerializeField] private Vector2 iconSize = new Vector2(32, 32);
+    [SerializeField] private float iconOffsetY = -8f;
+
     private readonly List<InventorySlotUI> slotViews = new();
     private InventorySection section;
     private Coroutine delayedBuildRoutine;
     private bool warningLogged;
+    private GameObject labelInstance;
 
     private void OnEnable()
     {
@@ -85,7 +93,12 @@ public class InventorySectionUI : MonoBehaviour
                 delayedBuildRoutine = StartCoroutine(DelayedBuildRetry());
 
             if (!warningLogged)
+            {
+                GameDebug.Warning(GameDebugCategory.Inventory,
+                    $"[InventorySectionUI] Section '{sectionName}' not found on '{name}'. " +
+                    $"Available sections: [{GetAvailableSections()}]. Retrying...", this);
                 warningLogged = true;
+            }
             return;
         }
 
@@ -98,6 +111,8 @@ public class InventorySectionUI : MonoBehaviour
             slotView.Bind(inventory, controller, section, i);
             slotViews.Add(slotView);
         }
+
+        CreateSectionLabel();
     }
 
     private System.Collections.IEnumerator DelayedBuildRetry()
@@ -147,8 +162,45 @@ public class InventorySectionUI : MonoBehaviour
         slotViews[changedIndex].Refresh();
     }
 
+    private void CreateSectionLabel()
+    {
+        if (sectionIcon == null || slotViews.Count == 0) return;
+        if (labelInstance != null) return;
+
+        // Crea il label come figlio del primo slot, così il GridLayoutGroup non lo gestisce
+        var slotTransform = slotViews[0].transform;
+
+        labelInstance = new GameObject($"Label_{sectionName}");
+        labelInstance.transform.SetParent(slotTransform, false);
+        // Primo figlio → renderizzato dietro gli altri elementi dello slot
+        labelInstance.transform.SetAsFirstSibling();
+
+        var rt = labelInstance.AddComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot     = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = new Vector2(0f, iconOffsetY);
+        rt.sizeDelta = iconSize;
+
+        // Ignora qualsiasi layout group sul parent
+        var le = labelInstance.AddComponent<LayoutElement>();
+        le.ignoreLayout = true;
+
+        var img = labelInstance.AddComponent<Image>();
+        img.sprite = sectionIcon;
+        img.raycastTarget = false;
+        img.preserveAspect = true;
+    }
+
     private void ClearInstantiated()
     {
+        if (labelInstance != null)
+        {
+            if (Application.isPlaying) Destroy(labelInstance);
+            else DestroyImmediate(labelInstance);
+            labelInstance = null;
+        }
+
         for (int i = slotViews.Count - 1; i >= 0; i--)
         {
             var slotView = slotViews[i];

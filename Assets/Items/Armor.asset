@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 360cc822f75e8ea47a02e4491f3151f7, type: 3}
+  m_Name: Armor
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
+  id: armor
+  displayName: Armor
+  description: 
+  icon: {fileID: -8848596863996917792, guid: 59b5b0ede2d8dcb49bff2f2167061a2e, type: 3}
+  isArmor: 1
+  armorDefense: 2
+  isStackable: 0
+  maxStack: 1

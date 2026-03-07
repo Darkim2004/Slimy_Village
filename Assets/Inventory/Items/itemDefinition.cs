@@ -20,6 +20,14 @@ public class ItemDefinition : ScriptableObject
     [Header("Visuals")]
     public Sprite icon;
 
+    [Header("Armor")]
+    [Tooltip("True se questo item è un'armatura equipaggiabile nello slot armatura.")]
+    public bool isArmor;
+
+    [Min(0)]
+    [Tooltip("Riduzione danno quando equipaggiata (punti di danno assorbiti).")]
+    public int armorDefense;
+
     [Header("Stacking")]
     [Tooltip("Se false → maxStack viene forzato a 1 e NBT è permesso.")]
     public bool isStackable = true;
