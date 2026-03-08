@@ -56,6 +56,26 @@ public class InventorySectionUI : MonoBehaviour
         TryBuild();
     }
 
+    /// <summary>
+    /// Configura questa view da codice (utile per setup HUD automatici).
+    /// </summary>
+    public void Configure(InventoryModel inv, InventoryInteractionController ctrl, string secName, Transform root, InventorySlotUI prefab)
+    {
+        inventory = inv;
+        controller = ctrl;
+        sectionName = secName;
+        slotsRoot = root;
+        slotPrefab = prefab;
+
+        if (isActiveAndEnabled)
+            RebuildSlots();
+    }
+
+    public InventorySlotUI[] GetSlotViews()
+    {
+        return slotViews.ToArray();
+    }
+
     public void RefreshAll()
     {
         for (int i = 0; i < slotViews.Count; i++)
@@ -108,6 +128,26 @@ public class InventorySectionUI : MonoBehaviour
         {
             var slotView = Instantiate(slotPrefab, slotsRoot);
             slotView.name = $"Slot_{sectionName}_{i}";
+
+            var slotRect = slotView.transform as RectTransform;
+            if (slotRect != null && slotRect.sizeDelta.sqrMagnitude < 0.001f)
+            {
+                // Fallback utile quando il prefab è pensato per GridLayoutGroup e ha size a zero.
+                var fallbackSize = new Vector2(48f, 48f);
+                slotRect.sizeDelta = fallbackSize;
+
+                var layout = slotView.GetComponent<LayoutElement>();
+                if (layout == null)
+                    layout = slotView.gameObject.AddComponent<LayoutElement>();
+
+                layout.minWidth = fallbackSize.x;
+                layout.minHeight = fallbackSize.y;
+                layout.preferredWidth = fallbackSize.x;
+                layout.preferredHeight = fallbackSize.y;
+                layout.flexibleWidth = 0f;
+                layout.flexibleHeight = 0f;
+            }
+
             slotView.Bind(inventory, controller, section, i);
             slotViews.Add(slotView);
         }

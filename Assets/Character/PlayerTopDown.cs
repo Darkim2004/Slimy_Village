@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class PlayerTopDown : EntityBase2D
 {
+    [Header("Player Stats")]
+    [SerializeField] private int playerMaxHp = 20;
+
     [Header("Input")]
     public string horizontalAxis = "Horizontal";
     public string verticalAxis = "Vertical";
@@ -9,6 +12,12 @@ public class PlayerTopDown : EntityBase2D
     public KeyCode attackKey = KeyCode.J;
 
     private bool inputLocked;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        health.SetMaxHp(playerMaxHp, refillCurrentHp: true);
+    }
 
     public void SetInputLocked(bool locked)
     {

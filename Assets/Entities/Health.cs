@@ -6,6 +6,7 @@ public class Health : MonoBehaviour
 
     public System.Action onHurt;
     public System.Action onDeath;
+    public System.Action<int, int> onHpChanged;
 
     /// <summary>
     /// Se assegnato, la difesa dell'armatura viene sottratta al danno ricevuto (minimo 1).
@@ -22,6 +23,11 @@ public class Health : MonoBehaviour
         dead = false;
     }
 
+    private void Start()
+    {
+        onHpChanged?.Invoke(hp, maxHp);
+    }
+
     public void TakeDamage(int amount)
     {
         if (dead) return;
@@ -34,14 +40,37 @@ public class Health : MonoBehaviour
         {
             hp = 0;
             dead = true;
+            onHpChanged?.Invoke(hp, maxHp);
             onDeath?.Invoke();
         }
         else
         {
+            onHpChanged?.Invoke(hp, maxHp);
             onHurt?.Invoke();
         }
     }
 
+    public void Heal(int amount)
+    {
+        if (dead) return;
+
+        hp = Mathf.Min(hp + Mathf.Abs(amount), maxHp);
+        onHpChanged?.Invoke(hp, maxHp);
+    }
+
+    public void SetMaxHp(int value, bool refillCurrentHp)
+    {
+        maxHp = Mathf.Max(1, value);
+
+        if (refillCurrentHp)
+            hp = maxHp;
+        else
+            hp = Mathf.Clamp(hp, 0, maxHp);
+
+        onHpChanged?.Invoke(hp, maxHp);
+    }
+
     public bool IsDead => dead;
     public int CurrentHp => hp;
+    public int MaxHp => maxHp;
 }
