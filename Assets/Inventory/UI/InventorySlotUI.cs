@@ -27,6 +27,8 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnte
         this.controller = controller;
         this.section = section;
         this.index = index;
+
+        NormalizeHighlightToSlot();
         Refresh();
     }
 
@@ -59,8 +61,27 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnte
 
     public void SetHighlight(bool enabled)
     {
+        NormalizeHighlightToSlot();
+
         if (highlightObject != null)
             highlightObject.SetActive(enabled);
+    }
+
+    private void NormalizeHighlightToSlot()
+    {
+        if (highlightObject == null) return;
+
+        var highlightRect = highlightObject.transform as RectTransform;
+        if (highlightRect == null) return;
+
+        // Mantiene sempre l'overlay highlight aderente allo slot,
+        // evitando differenze di size tra stato attivo/non attivo.
+        highlightRect.anchorMin = Vector2.zero;
+        highlightRect.anchorMax = Vector2.one;
+        highlightRect.pivot = new Vector2(0.5f, 0.5f);
+        highlightRect.anchoredPosition = Vector2.zero;
+        highlightRect.sizeDelta = Vector2.zero;
+        highlightRect.localScale = Vector3.one;
     }
 
     public void OnPointerClick(PointerEventData eventData)
