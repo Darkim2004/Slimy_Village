@@ -7,8 +7,10 @@ using UnityEngine.UI;
 /// delega la visualizzazione degli slot a <see cref="InventorySectionUI"/>.
 /// </summary>
 [RequireComponent(typeof(InventorySectionUI))]
+[RequireComponent(typeof(CanvasGroup))]
 public class HotbarHUD : MonoBehaviour
 {
+    private CanvasGroup canvasGroup;
     [Header("References")]
     [Tooltip("InventorySectionUI sullo stesso GO (auto-rilevato).")]
     [SerializeField] private InventorySectionUI hotbarSectionUI;
@@ -45,6 +47,8 @@ public class HotbarHUD : MonoBehaviour
         }
     }
 
+    private InventoryToggleController toggleController;
+
     private void Start()
     {
         if (inventory == null)
@@ -56,18 +60,34 @@ public class HotbarHUD : MonoBehaviour
         if (hotbarSectionUI == null)
             hotbarSectionUI = GetComponent<InventorySectionUI>();
 
+        toggleController = FindFirstObjectByType<InventoryToggleController>();
+
+        canvasGroup = GetComponent<CanvasGroup>();
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+
         EnsureLayoutComponent();
         ConfigureSectionUI();
 
-        CacheSlotViews();
         hotbarSize = inventory != null && inventory.Hotbar != null ? inventory.Hotbar.Size : 9;
-
-        selectedIndex = Mathf.Clamp(selectedIndex, 0, hotbarSize - 1);
-        UpdateSelection();
+        selectedIndex = Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, hotbarSize - 1));
     }
 
-    private void Update()
+    private void LateUpdate()
     {
+        // Aggiorna la cache slot se non ancora pronta
+        if (slotViews == null || slotViews.Length == 0)
+        {
+            CacheSlotViews();
+            if (slotViews != null && slotViews.Length > 0)
+                ApplySelection();
+        }
+
+        // Blocca interazione mouse quando l'inventario è chiuso
+        bool inventoryOpen = toggleController != null && toggleController.IsOpen;
+        canvasGroup.interactable = inventoryOpen;
+        canvasGroup.blocksRaycasts = inventoryOpen;
+
         HandleNumberKeys();
         HandleScrollWheel();
     }
@@ -97,29 +117,23 @@ public class HotbarHUD : MonoBehaviour
     public void SetSelected(int index)
     {
         if (index < 0 || index >= hotbarSize) return;
-        if (index == selectedIndex) return;
 
         selectedIndex = index;
-        UpdateSelection();
+        ApplySelection();
     }
 
-    private void UpdateSelection()
+    private void ApplySelection()
     {
-        if (slotViews == null || slotViews.Length == 0)
-            CacheSlotViews();
+        if (slotViews == null) return;
 
-        // Evidenzia solo lo slot selezionato
-        if (slotViews != null)
+        for (int i = 0; i < slotViews.Length; i++)
         {
-            for (int i = 0; i < slotViews.Length; i++)
-            {
-                if (slotViews[i] != null)
-                    slotViews[i].SetHighlight(i == selectedIndex);
-            }
+            if (slotViews[i] != null)
+                slotViews[i].SetHighlight(i == selectedIndex);
         }
 
         // Sposta la cornice di selezione
-        if (selectionFrame != null && slotViews != null &&
+        if (selectionFrame != null &&
             selectedIndex < slotViews.Length && slotViews[selectedIndex] != null)
         {
             selectionFrame.SetParent(slotViews[selectedIndex].transform, false);

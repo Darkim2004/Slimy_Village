@@ -15,11 +15,18 @@ public class InventoryCursorUI : MonoBehaviour
     [SerializeField] private Text amountText;
     [SerializeField] private Vector2 screenOffset = new Vector2(18f, -18f);
 
+    [Header("Draw Order")]
+    [Tooltip("Se true, aggiunge/usa un Canvas dedicato sul cursorRoot con sorting alto.")]
+    [SerializeField] private bool useDedicatedCursorCanvas = true;
+    [Tooltip("Ordine di sorting del canvas del cursore (più alto = più sopra).")]
+    [SerializeField] private int cursorSortingOrder = 500;
+
     private Canvas parentCanvas;
 
     private void Awake()
     {
         parentCanvas = GetComponentInParent<Canvas>();
+        EnsureCursorOnTopSetup();
     }
 
     private void OnEnable()
@@ -40,6 +47,9 @@ public class InventoryCursorUI : MonoBehaviour
     {
         if (cursorRoot == null) return;
 
+        // Mantiene il cursore in cima tra i fratelli della UI.
+        cursorRoot.SetAsLastSibling();
+
         Vector2 screenPos = (Vector2)Input.mousePosition + screenOffset;
 
         if (parentCanvas != null && parentCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
@@ -55,6 +65,32 @@ public class InventoryCursorUI : MonoBehaviour
         }
 
         cursorRoot.position = screenPos;
+    }
+
+    private void EnsureCursorOnTopSetup()
+    {
+        if (cursorRoot == null) return;
+
+        if (iconImage != null)
+            iconImage.raycastTarget = false;
+        if (amountText != null)
+            amountText.raycastTarget = false;
+
+        var canvasGroup = cursorRoot.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+            canvasGroup = cursorRoot.gameObject.AddComponent<CanvasGroup>();
+
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+
+        if (!useDedicatedCursorCanvas) return;
+
+        var cursorCanvas = cursorRoot.GetComponent<Canvas>();
+        if (cursorCanvas == null)
+            cursorCanvas = cursorRoot.gameObject.AddComponent<Canvas>();
+
+        cursorCanvas.overrideSorting = true;
+        cursorCanvas.sortingOrder = cursorSortingOrder;
     }
 
     private void HandleCursorChanged(ItemStack cursor)
