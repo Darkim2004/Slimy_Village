@@ -15,6 +15,10 @@ MonoBehaviour:
   id: sword
   displayName: Sword
   description: 
+  category: 1
   icon: {fileID: 7541167501828912623, guid: 546ecd36c72f0f648bd17a16c2dfa3be, type: 3}
+  attackDamage: 3
+  isArmor: 0
+  armorDefense: 0
   isStackable: 0
   maxStack: 1

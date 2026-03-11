@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,7 +48,18 @@ public class HotbarHUD : MonoBehaviour
         }
     }
 
+    // ── Eventi ──────────────────────────────────────────────
+
+    /// <summary>
+    /// Fired quando cambia l'item attivo della hotbar (cambio slot o contenuto dello slot).
+    /// Il parametro è lo stack attivo corrente (può essere null se vuoto).
+    /// </summary>
+    public event Action<ItemStack> OnActiveItemChanged;
+
     private InventoryToggleController toggleController;
+
+    /// <summary>Cache dell'ultimo stack notificato, per evitare notifiche duplicate.</summary>
+    private ItemStack lastNotifiedStack;
 
     private void Start()
     {
@@ -71,6 +83,22 @@ public class HotbarHUD : MonoBehaviour
 
         hotbarSize = inventory != null && inventory.Hotbar != null ? inventory.Hotbar.Size : 9;
         selectedIndex = Mathf.Clamp(selectedIndex, 0, Mathf.Max(0, hotbarSize - 1));
+
+        // Iscriviti ai cambiamenti dello slot della hotbar
+        if (inventory != null && inventory.Hotbar != null)
+            inventory.Hotbar.OnSlotChanged += OnHotbarSlotChanged;
+    }
+
+    private void OnDestroy()
+    {
+        if (inventory != null && inventory.Hotbar != null)
+            inventory.Hotbar.OnSlotChanged -= OnHotbarSlotChanged;
+    }
+
+    private void OnHotbarSlotChanged(int slotIndex)
+    {
+        if (slotIndex == selectedIndex)
+            NotifyActiveItemChanged();
     }
 
     private void LateUpdate()
@@ -120,6 +148,19 @@ public class HotbarHUD : MonoBehaviour
 
         selectedIndex = index;
         ApplySelection();
+        NotifyActiveItemChanged();
+    }
+
+    /// <summary>Notifica i listener solo se l'item attivo è effettivamente cambiato.</summary>
+    private void NotifyActiveItemChanged()
+    {
+        var current = SelectedStack;
+
+        // Evita notifiche duplicate se lo stack non è cambiato
+        if (ReferenceEquals(current, lastNotifiedStack)) return;
+
+        lastNotifiedStack = current;
+        OnActiveItemChanged?.Invoke(current);
     }
 
     private void ApplySelection()

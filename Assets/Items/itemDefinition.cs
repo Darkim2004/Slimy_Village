@@ -1,6 +1,19 @@
 using UnityEngine;
 
 /// <summary>
+/// Categoria funzionale di un item. Determina il comportamento quando
+/// l'item è nello slot attivo della hotbar.
+/// </summary>
+public enum ItemCategory
+{
+    None,
+    Weapon,
+    Building,
+    Consumable,
+    Resource
+}
+
+/// <summary>
 /// Definizione immutabile di un tipo di oggetto.
 /// Ogni item nel gioco punta a uno di questi asset.
 /// </summary>
@@ -17,8 +30,17 @@ public class ItemDefinition : ScriptableObject
     [TextArea(2, 4)]
     public string description;
 
+    [Header("Category")]
+    [Tooltip("Categoria funzionale dell'item. Influenza il comportamento dello slot attivo della hotbar.")]
+    public ItemCategory category = ItemCategory.None;
+
     [Header("Visuals")]
     public Sprite icon;
+
+    [Header("Weapon")]
+    [Tooltip("Danno bonus quando l'item è nello slot attivo della hotbar (solo Weapon).")]
+    [Min(0)]
+    public int attackDamage;
 
     [Header("Armor")]
     [Tooltip("True se questo item è un'armatura equipaggiabile nello slot armatura.")]
@@ -38,6 +60,12 @@ public class ItemDefinition : ScriptableObject
 
     /// <summary>Stack effettivo: 1 se non stackabile, altrimenti maxStack.</summary>
     public int EffectiveMaxStack => isStackable ? Mathf.Max(1, maxStack) : 1;
+
+    /// <summary>True se l'item è un'arma con danno bonus.</summary>
+    public bool IsWeapon => category == ItemCategory.Weapon && attackDamage > 0;
+
+    /// <summary>True se l'item è un elemento costruibile.</summary>
+    public bool IsBuilding => category == ItemCategory.Building;
 
     private void OnValidate()
     {

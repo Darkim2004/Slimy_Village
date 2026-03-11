@@ -240,10 +240,16 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
                 _ => Vector2.down
             };
 
-            int dmg = melee.baseDamage; // per ora base
+            int dmg = melee.baseDamage + GetBonusDamage();
             melee.StartAttack(stateTimer, dir, dmg);
         }
     }
+
+    /// <summary>
+    /// Danno bonus da aggiungere al baseDamage durante l'attacco.
+    /// Le derivate possono sovrascrivere per integrare armi della hotbar, buff, ecc.
+    /// </summary>
+    protected virtual int GetBonusDamage() => 0;
 
     protected virtual void OnAttackFinished()
     {

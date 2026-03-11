@@ -12,11 +12,17 @@ public class PlayerTopDown : EntityBase2D
     public KeyCode attackKey = KeyCode.J;
 
     private bool inputLocked;
+    private HotbarEffectManager hotbarEffects;
 
     protected override void Awake()
     {
         base.Awake();
         health.SetMaxHp(playerMaxHp, refillCurrentHp: true);
+    }
+
+    private void Start()
+    {
+        hotbarEffects = FindFirstObjectByType<HotbarEffectManager>();
     }
 
     public void SetInputLocked(bool locked)
@@ -27,6 +33,11 @@ public class PlayerTopDown : EntityBase2D
         EnterIdle();
         if (rb != null)
             rb.linearVelocity = Vector2.zero;
+    }
+
+    protected override int GetBonusDamage()
+    {
+        return hotbarEffects != null ? hotbarEffects.WeaponBonusDamage : 0;
     }
 
     protected override void TickAI()
