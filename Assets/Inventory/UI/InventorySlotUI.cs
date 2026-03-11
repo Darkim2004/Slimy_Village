@@ -139,6 +139,8 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnte
     {
         if (controller == null || section == null) return;
 
+        HideTooltip();
+
         var slot = section.RefAt(index);
         if (eventData.button == PointerEventData.InputButton.Left)
         {
@@ -155,6 +157,8 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnte
         SetHighlight(true);
         if (controller != null && section != null)
             controller.NotifyPointerEnter(section.RefAt(index));
+
+        ShowTooltipForCurrentSlot();
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -162,6 +166,25 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnte
         SetHighlight(false);
         if (controller != null && section != null)
             controller.NotifyPointerExit(section.RefAt(index));
+
+        HideTooltip();
+    }
+
+    private void ShowTooltipForCurrentSlot()
+    {
+        if (InventoryTooltipUI.Instance == null || section == null) return;
+
+        var stack = section.GetSlot(index);
+        if (stack != null && !stack.IsEmpty && stack.def != null)
+            InventoryTooltipUI.Instance.RequestShow(stack.def.displayName);
+        else
+            InventoryTooltipUI.Instance.Hide();
+    }
+
+    private void HideTooltip()
+    {
+        if (InventoryTooltipUI.Instance != null)
+            InventoryTooltipUI.Instance.Hide();
     }
 
     private void SetEmptyVisual()
