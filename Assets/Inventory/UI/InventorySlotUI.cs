@@ -29,6 +29,7 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnte
         this.index = index;
 
         NormalizeHighlightToSlot();
+        NormalizeAmountToSlot();
         Refresh();
     }
 
@@ -74,6 +75,9 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnte
         var highlightRect = highlightObject.transform as RectTransform;
         if (highlightRect == null) return;
 
+        // Garantisce il render dietro icona/quantita, indipendentemente dall'ordine nel prefab.
+        highlightRect.SetAsFirstSibling();
+
         // Mantiene sempre l'overlay highlight aderente allo slot,
         // evitando differenze di size tra stato attivo/non attivo.
         highlightRect.anchorMin = Vector2.zero;
@@ -82,6 +86,53 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnte
         highlightRect.anchoredPosition = Vector2.zero;
         highlightRect.sizeDelta = Vector2.zero;
         highlightRect.localScale = Vector3.one;
+    }
+
+    /// <summary>
+    /// Forza il RectTransform dell'amountText a coprire lo slot con allineamento bottom-right,
+    /// così il numero è sempre visibile indipendentemente dalla dimensione dello slot.
+    /// </summary>
+    private void NormalizeAmountToSlot()
+    {
+        if (amountText == null) return;
+
+        var amountRect = amountText.rectTransform;
+        if (amountRect == null) return;
+
+        // Stretch su tutto lo slot con un piccolo margine interno
+        amountRect.anchorMin = Vector2.zero;
+        amountRect.anchorMax = Vector2.one;
+        amountRect.pivot = new Vector2(1f, 0f);
+        amountRect.anchoredPosition = Vector2.zero;
+        amountRect.sizeDelta = new Vector2(-4f, -4f);
+        amountRect.localScale = Vector3.one;
+
+        // Testo in basso a destra
+        amountText.alignment = TextAnchor.LowerRight;
+
+        AdaptFontSizeToSlot();
+    }
+
+    /// <summary>
+    /// Ricalcola il fontSize dell'amountText in proporzione all'altezza dello slot.
+    /// Chiamato sia al Bind sia quando il layout ridimensiona lo slot (GridLayoutGroup).
+    /// </summary>
+    private void AdaptFontSizeToSlot()
+    {
+        if (amountText == null) return;
+
+        var slotRect = transform as RectTransform;
+        if (slotRect == null || slotRect.rect.height < 1f) return;
+
+        // Rapporto di riferimento: 20px in un slot da 48px (~0.42)
+        const float ratio = 0.42f;
+        int fontSize = Mathf.Clamp(Mathf.RoundToInt(slotRect.rect.height * ratio), 10, 60);
+        amountText.fontSize = fontSize;
+    }
+
+    private void OnRectTransformDimensionsChange()
+    {
+        AdaptFontSizeToSlot();
     }
 
     public void OnPointerClick(PointerEventData eventData)

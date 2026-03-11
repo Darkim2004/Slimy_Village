@@ -14,6 +14,8 @@ public class InventoryCursorUI : MonoBehaviour
     [SerializeField] private Image iconImage;
     [SerializeField] private Text amountText;
     [SerializeField] private Vector2 screenOffset = new Vector2(18f, -18f);
+    [Tooltip("Nasconde l'Image eventualmente presente su CursorRoot per evitare lo sfondo bianco.")]
+    [SerializeField] private bool hideCursorRootBackground = true;
 
     [Header("Draw Order")]
     [Tooltip("Se true, aggiunge/usa un Canvas dedicato sul cursorRoot con sorting alto.")]
@@ -71,8 +73,18 @@ public class InventoryCursorUI : MonoBehaviour
     {
         if (cursorRoot == null) return;
 
+        if (hideCursorRootBackground)
+        {
+            var rootImage = cursorRoot.GetComponent<Image>();
+            if (rootImage != null)
+                rootImage.enabled = false;
+        }
+
         if (iconImage != null)
+        {
             iconImage.raycastTarget = false;
+            iconImage.preserveAspect = true;
+        }
         if (amountText != null)
             amountText.raycastTarget = false;
 
@@ -92,6 +104,8 @@ public class InventoryCursorUI : MonoBehaviour
         cursorCanvas.overrideSorting = true;
         cursorCanvas.sortingOrder = cursorSortingOrder;
     }
+
+    private bool amountNormalized;
 
     private void HandleCursorChanged(ItemStack cursor)
     {
@@ -114,6 +128,9 @@ public class InventoryCursorUI : MonoBehaviour
             return;
         }
 
+        if (!amountNormalized)
+            NormalizeAmountToCursor();
+
         if (iconImage != null)
         {
             iconImage.enabled = cursor.def != null && cursor.def.icon != null;
@@ -122,5 +139,30 @@ public class InventoryCursorUI : MonoBehaviour
 
         if (amountText != null)
             amountText.text = cursor.amount > 1 ? cursor.amount.ToString() : string.Empty;
+    }
+
+    private void NormalizeAmountToCursor()
+    {
+        if (amountText == null || cursorRoot == null) return;
+
+        var amountRect = amountText.rectTransform;
+
+        // Stretch su tutto il cursorRoot con piccolo margine
+        amountRect.anchorMin = Vector2.zero;
+        amountRect.anchorMax = Vector2.one;
+        amountRect.pivot = new Vector2(1f, 0f);
+        amountRect.anchoredPosition = Vector2.zero;
+        amountRect.sizeDelta = new Vector2(-4f, -4f);
+        amountRect.localScale = Vector3.one;
+
+        amountText.alignment = TextAnchor.LowerRight;
+
+        // Font proporzionale all'altezza del cursore (stessa logica degli slot: 42%)
+        const float ratio = 0.42f;
+        float height = cursorRoot.rect.height;
+        if (height >= 1f)
+            amountText.fontSize = Mathf.Clamp(Mathf.RoundToInt(height * ratio), 10, 60);
+
+        amountNormalized = true;
     }
 }
