@@ -64,6 +64,6 @@ public class DamageHitbox2D : MonoBehaviour
         if (_alreadyHit.Contains(health)) return;
         _alreadyHit.Add(health);
 
-        health.TakeDamage(_damage);
+        health.TakeDamage(_damage, _ownerRoot != null ? _ownerRoot.gameObject : null);
     }
 }

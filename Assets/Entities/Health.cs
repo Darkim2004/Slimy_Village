@@ -9,6 +9,12 @@ public class Health : MonoBehaviour
     public System.Action<int, int> onHpChanged;
 
     /// <summary>
+    /// Invocato quando l'entità subisce danno da un attaccante noto.
+    /// Il parametro è il GameObject root dell'attaccante (può essere null).
+    /// </summary>
+    public System.Action<GameObject> onHurtBy;
+
+    /// <summary>
     /// Se assegnato, la difesa dell'armatura viene sottratta al danno ricevuto (minimo 1).
     /// </summary>
     [Tooltip("Riferimento opzionale all'inventario per leggere la difesa armatura.")]
@@ -28,7 +34,9 @@ public class Health : MonoBehaviour
         onHpChanged?.Invoke(hp, maxHp);
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(int amount) => TakeDamage(amount, null);
+
+    public void TakeDamage(int amount, GameObject attacker)
     {
         if (dead) return;
 
@@ -47,6 +55,7 @@ public class Health : MonoBehaviour
         {
             onHpChanged?.Invoke(hp, maxHp);
             onHurt?.Invoke();
+            onHurtBy?.Invoke(attacker);
         }
     }
 

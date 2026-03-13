@@ -17,4 +17,9 @@ MonoBehaviour:
   weight: 1
   lootTable: {fileID: 11400000, guid: 1b5e5ae69e1c7fa40b41dd954d220ea8, type: 2}
   animatorController: {fileID: 0}
-  attackId: none
+  attackDamage: 1
+  attackRadius: 0.6
+  attackHitboxDelay: 0.6
+  aggroRange: 5
+  attackCooldown: 1.5
+  chaseSpeed: 2

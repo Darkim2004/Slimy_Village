@@ -194,6 +194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHp: 3
+  inventory: {fileID: 0}
 --- !u!114 &290928077391342749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,8 +208,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlimeNormalAI
   definition: {fileID: 11400000, guid: 66be58097f1a43b459a85832273d2291, type: 2}
-  walkSpeed: 1.6
-  runSpeed: 2.8
+  walkSpeed: 1
+  runSpeed: 2
   hurtDurationFallback: 0.25
   deathDurationFallback: 0.8
   idleName: idle
@@ -217,10 +218,14 @@ MonoBehaviour:
   hurtName: hurt
   deathName: death
   attackName: attack
+  destroyDelayAfterDeath: 0.15
   wanderRadius: 3.5
   idleTimeRange: {x: 0.6, y: 1.8}
   moveTimeRange: {x: 0.8, y: 2}
   runChance: 0.15
+  aoeDamageTargets:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &1335603603578274472
 MonoBehaviour:
   m_ObjectHideFlags: 0
