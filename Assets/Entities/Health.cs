@@ -79,6 +79,38 @@ public class Health : MonoBehaviour
         onHpChanged?.Invoke(hp, maxHp);
     }
 
+    public void Revive()
+    {
+        hp = maxHp;
+        dead = false;
+        onHpChanged?.Invoke(hp, maxHp);
+    }
+
+    /// <summary>
+    /// Imposta direttamente gli HP a un valore specifico (per debug/cheat).
+    /// Se il valore è <= 0, scatena la morte. Se è inferiore al corrente, scatena hurt.
+    /// </summary>
+    public void SetHp(int value)
+    {
+        if (dead && value > 0) { Revive(); return; }
+        if (dead) return;
+
+        int previous = hp;
+        hp = Mathf.Clamp(value, 0, maxHp);
+        onHpChanged?.Invoke(hp, maxHp);
+
+        if (hp <= 0)
+        {
+            hp = 0;
+            dead = true;
+            onDeath?.Invoke();
+        }
+        else if (hp < previous)
+        {
+            onHurt?.Invoke();
+        }
+    }
+
     public bool IsDead => dead;
     public int CurrentHp => hp;
     public int MaxHp => maxHp;

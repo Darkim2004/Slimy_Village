@@ -12,6 +12,9 @@ public class WorldDrop : MonoBehaviour
     [SerializeField] private ItemDefinition itemDef;
     [SerializeField] private int amount = 1;
 
+    [Tooltip("Scala visiva dell'oggetto a terra (es. 0.6 per renderlo più piccolo).")]
+    [SerializeField] private float itemScale = 0.6f;
+
     [Header("Pickup")]
     [Tooltip("Raggio in unità mondo entro cui il player raccoglie il drop (0.5 = mezza casella).")]
     [SerializeField] private float pickupRadius = 0.5f;
@@ -26,6 +29,7 @@ public class WorldDrop : MonoBehaviour
     private SpriteRenderer sr;
     private Transform playerTransform;
     private InventoryModel playerInventory;
+    private Health playerHealth;
     private float spawnTime;
     private Vector3 basePosition;
 
@@ -61,6 +65,9 @@ public class WorldDrop : MonoBehaviour
         spawnTime = Time.time;
         basePosition = transform.position;
 
+        // Imposta la dimensione
+        transform.localScale = new Vector3(itemScale, itemScale, 1f);
+
         // Sprite dall'ItemDefinition
         if (itemDef != null && itemDef.icon != null)
         {
@@ -73,6 +80,7 @@ public class WorldDrop : MonoBehaviour
         if (player != null)
         {
             playerTransform = player.transform;
+            playerHealth = player.GetComponent<Health>();
             playerInventory = player.GetComponentInParent<InventoryModel>();
             if (playerInventory == null)
                 playerInventory = FindFirstObjectByType<InventoryModel>();
@@ -88,6 +96,7 @@ public class WorldDrop : MonoBehaviour
         // Pickup check
         if (playerTransform == null || playerInventory == null) return;
         if (Time.time - spawnTime < pickupDelay) return;
+        if (playerHealth != null && playerHealth.IsDead) return;
 
         float dist = Vector2.Distance(transform.position, playerTransform.position);
         if (dist <= pickupRadius)

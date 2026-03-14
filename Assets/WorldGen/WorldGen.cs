@@ -22,6 +22,12 @@ public class WorldGenTilemap : MonoBehaviour
     public int Height => height;
     public Tilemap GroundTilemap => groundTilemap;
 
+    /// <summary>
+    /// Punto di spawn iniziale del player, calcolato durante Generate().
+    /// Si trova sempre su una cella di terra (Plains o Snowy), mai Ocean.
+    /// </summary>
+    public Vector3 WorldSpawnPoint { get; private set; }
+
     public enum Biome { Ocean, Plains, Snomy }
 
     [Header("World Size (prototype, no chunks yet)")]
@@ -320,6 +326,66 @@ public class WorldGenTilemap : MonoBehaviour
             treeCollisionTilemap.CompressBounds();
 
         _hasGenerated = true;
+
+        // Calcola il punto di spawn del player
+        WorldSpawnPoint = FindWorldSpawnPoint();
+    }
+
+    /// <summary>
+    /// Cerca una cella valida per lo spawn del player partendo dal centro della mappa
+    /// e muovendosi a spirale verso l'esterno. La cella deve essere terra (non Ocean),
+    /// non bloccata (alberi/rocce) e non adiacente all'oceano.
+    /// </summary>
+    private Vector3 FindWorldSpawnPoint()
+    {
+        int cx = width / 2;
+        int cy = height / 2;
+
+        // Prova il centro prima
+        if (IsValidSpawnCell(cx, cy))
+            return CellCenterWorld(cx, cy);
+
+        // Spirale dal centro verso l'esterno
+        int maxRadius = Mathf.Max(width, height);
+        for (int r = 1; r < maxRadius; r++)
+        {
+            for (int dx = -r; dx <= r; dx++)
+            {
+                int[] dyValues = (Mathf.Abs(dx) == r)
+                    ? GetRange(-r, r)
+                    : new int[] { -r, r };
+
+                foreach (int dy in dyValues)
+                {
+                    int x = cx + dx;
+                    int y = cy + dy;
+                    if (IsValidSpawnCell(x, y))
+                        return CellCenterWorld(x, y);
+                }
+            }
+        }
+
+        // Fallback: centro mappa
+        Debug.LogWarning("[WorldGen] Nessuna cella valida per spawn! Usando il centro della mappa.");
+        return CellCenterWorld(cx, cy);
+    }
+
+    private bool IsValidSpawnCell(int x, int y)
+    {
+        if (!IsInside(x, y)) return false;
+        if (!IsLandCell(x, y)) return false;
+        if (IsBlockedCell(x, y)) return false;
+        if (_generated != null && IsAdjacentToOcean(_generated, x, y)) return false;
+        return true;
+    }
+
+    private static int[] GetRange(int from, int to)
+    {
+        int count = to - from + 1;
+        int[] result = new int[count];
+        for (int i = 0; i < count; i++)
+            result[i] = from + i;
+        return result;
     }
 
     public void Clear()

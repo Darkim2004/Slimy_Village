@@ -260,6 +260,29 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
     protected bool IsTimedState(State s) =>
         s == State.Hurt || s == State.Death || s == State.Attack;
 
+    /// <summary>
+    /// Resetta l'entità allo stato iniziale (Idle). Riabilita tutti i componenti
+    /// disattivati durante la morte (animator, collider, rigidbody, sprite).
+    /// Da chiamare dopo aver revivificato la Health.
+    /// </summary>
+    protected virtual void ResetEntity()
+    {
+        state = State.Idle;
+        deathAnimFrozen = false;
+        currentAnim = "";
+        desiredVelocity = Vector2.zero;
+
+        if (animator != null) animator.enabled = true;
+
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr != null) sr.enabled = true;
+
+        var col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = true;
+
+        if (rb != null) rb.simulated = true;
+    }
+
     protected Dir ResolveFacing(Vector2 v)
     {
         if (Mathf.Abs(v.x) > Mathf.Abs(v.y))
