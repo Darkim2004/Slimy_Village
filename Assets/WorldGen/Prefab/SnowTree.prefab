@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2381410134778226251}
   - component: {fileID: 5365521847945203705}
   - component: {fileID: -3453257733239237340}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SnowTree
   m_TagString: Untagged
   m_Icon: {fileID: 0}

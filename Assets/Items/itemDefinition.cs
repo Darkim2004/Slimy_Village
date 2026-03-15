@@ -50,6 +50,10 @@ public class ItemDefinition : ScriptableObject
     [Tooltip("Riduzione danno quando equipaggiata (punti di danno assorbiti).")]
     public int armorDefense;
 
+    [Header("Building")]
+    [Tooltip("Dati di piazzamento (solo per Building). Se null, l'item non è piazzabile.")]
+    public PlaceableDefinition placeableData;
+
     [Header("Stacking")]
     [Tooltip("Se false → maxStack viene forzato a 1 e NBT è permesso.")]
     public bool isStackable = true;

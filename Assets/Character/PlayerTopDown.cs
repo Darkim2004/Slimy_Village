@@ -155,6 +155,10 @@ public class PlayerTopDown : EntityBase2D
 
         if (attackPressed)
         {
+            // Non attaccare se si è in build mode
+            if (hotbarEffects != null && hotbarEffects.IsBuildModeRequested)
+                return;
+
             StartAttack();
             return;
         }
