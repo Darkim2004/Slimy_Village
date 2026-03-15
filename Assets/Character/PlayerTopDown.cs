@@ -11,6 +11,12 @@ public class PlayerTopDown : EntityBase2D
     public string verticalAxis = "Vertical";
     public KeyCode runKey = KeyCode.LeftShift;
     public KeyCode attackKey = KeyCode.J;
+    public KeyCode interactKey = KeyCode.E;
+
+    [Header("Interaction")]
+    [Tooltip("Raggio di rilevamento per gli oggetti interattivi.")]
+    [SerializeField] private float interactRadius = 1.0f;
+    private PlacedObject currentInteractable;
 
     [Header("Respawn")]
     [Tooltip("Secondi di attesa dopo la morte prima del respawn.")]
@@ -136,6 +142,8 @@ public class PlayerTopDown : EntityBase2D
 
     protected override void TickAI()
     {
+        UpdateInteraction();
+
         if (inputLocked)
         {
             EnterIdle();
@@ -203,6 +211,58 @@ public class PlayerTopDown : EntityBase2D
 #endif
 
     // ══════════════════════════════════════════════════════════
+    //  Interactions
+    // ══════════════════════════════════════════════════════════
+    private void UpdateInteraction()
+    {
+        if (inputLocked || state == State.Death || state == State.Hurt)
+        {
+            if (WorldInteractionTooltipUI.Instance != null) WorldInteractionTooltipUI.Instance.Hide();
+            return;
+        }
+
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, interactRadius);
+        PlacedObject closestInteractable = null;
+        float minDst = float.MaxValue;
+
+        foreach (var col in colliders)
+        {
+            var placedObj = col.GetComponentInParent<PlacedObject>();
+            if (placedObj != null && placedObj.definition != null && placedObj.definition.canInteract)
+            {
+                float dst = Vector2.Distance(transform.position, placedObj.transform.position);
+                if (dst < minDst)
+                {
+                    minDst = dst;
+                    closestInteractable = placedObj;
+                }
+            }
+        }
+
+        currentInteractable = closestInteractable;
+
+        if (currentInteractable != null)
+        {
+            if (WorldInteractionTooltipUI.Instance != null)
+            {
+                WorldInteractionTooltipUI.Instance.Show(currentInteractable.definition.interactionText, currentInteractable.transform);
+            }
+
+            if (Input.GetKeyDown(interactKey))
+            {
+                Debug.Log($"Menu placeholder for {currentInteractable.definition.name}");
+            }
+        }
+        else
+        {
+            if (WorldInteractionTooltipUI.Instance != null)
+            {
+                WorldInteractionTooltipUI.Instance.Hide();
+            }
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
     //  Gizmo: mostra il respawn point nella Scene view
     // ══════════════════════════════════════════════════════════
 
@@ -212,5 +272,8 @@ public class PlayerTopDown : EntityBase2D
         Gizmos.DrawWireSphere(respawnPoint, 0.35f);
         Gizmos.DrawLine(respawnPoint + Vector3.down * 0.5f, respawnPoint + Vector3.up * 0.5f);
         Gizmos.DrawLine(respawnPoint + Vector3.left * 0.5f, respawnPoint + Vector3.right * 0.5f);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, interactRadius);
     }
 }

@@ -7,6 +7,14 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Game/Building/Placeable Definition")]
 public class PlaceableDefinition : ScriptableObject
 {
+    [Header("Interaction")]
+    [Tooltip("Se vero, il giocatore può interagire con questo oggetto (E).")]
+    public bool canInteract = false;
+    
+    [Tooltip("Testo mostrato nel popup di interazione (es. 'Cassa', 'Letto').")]
+    public string interactionText = "";
+
+    [Space(10)]
     [Header("Grid Size")]
     [Tooltip("Dimensioni in celle della griglia (es. 1x1, 2x1, 2x2).")]
     public Vector2Int size = Vector2Int.one;

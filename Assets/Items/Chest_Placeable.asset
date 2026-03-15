@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edd75b322ebaba24296059dfe0af51e0, type: 3}
   m_Name: Chest_Placeable
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableDefinition
+  canInteract: 1
+  interactionText: 'Open [ E ]'
   size: {x: 1, y: 1}
   pivotOffset: {x: 0, y: 0}
   placedPrefab: {fileID: 8769627727532613429, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
