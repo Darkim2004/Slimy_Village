@@ -23,7 +23,15 @@ public class WorldInteractionTooltipUI : MonoBehaviour
 
     // ── Singleton ──────────────────────────────────────────
     private static WorldInteractionTooltipUI instance;
-    public  static WorldInteractionTooltipUI Instance => instance;
+    public static WorldInteractionTooltipUI Instance
+    {
+        get
+        {
+            if (instance == null)
+                EnsureInstance();
+            return instance;
+        }
+    }
 
     // ── Componenti runtime ─────────────────────────────────
     private GameObject tooltipGO;
@@ -37,20 +45,36 @@ public class WorldInteractionTooltipUI : MonoBehaviour
     private Transform targetTransform;
     private Camera mainCamera;
 
+    private static void EnsureInstance()
+    {
+        if (instance != null) return;
+
+        instance = FindFirstObjectByType<WorldInteractionTooltipUI>();
+        if (instance != null) return;
+
+        var parentCanvas = FindFirstObjectByType<Canvas>();
+        var go = new GameObject("WorldInteractionTooltipUI_Auto");
+        if (parentCanvas != null)
+            go.transform.SetParent(parentCanvas.transform, false);
+
+        instance = go.AddComponent<WorldInteractionTooltipUI>();
+        Debug.LogWarning("[WorldInteractionTooltipUI] Nessuna istanza trovata in scena: creata automaticamente a runtime.");
+    }
+
     private void Awake()
     {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         instance = this;
-        mainCamera = Camera.main;
+        if (mainCamera == null)
+            mainCamera = Camera.main;
 
         parentCanvas = GetComponentInParent<Canvas>();
-        if (parentCanvas == null)
-        {
-            // Cerca un canvas generico se non ne abbiamo uno nel parent
-            parentCanvas = FindFirstObjectByType<Canvas>();
-        }
-        
-        if (parentCanvas != null)
-            canvasRect = parentCanvas.transform as RectTransform;
+        EnsureCanvas();
 
         BuildTooltip();
         Hide();
@@ -105,13 +129,32 @@ public class WorldInteractionTooltipUI : MonoBehaviour
 
     private void UpdatePosition()
     {
-        if (tooltipRect == null || canvasRect == null || mainCamera == null) return;
+        if (tooltipRect == null) return;
+        if (mainCamera == null)
+            mainCamera = Camera.main;
+        if (mainCamera == null)
+            return;
+
+        EnsureCanvas();
+        if (canvasRect == null || parentCanvas == null)
+            return;
 
         // Trova la posizione sopra il target nel mondo
         Vector3 worldPos = targetTransform.position + new Vector3(0f, worldOffsetY, 0f);
-        
+
         // Converti su schermo
-        Vector2 screenPos = mainCamera.WorldToScreenPoint(worldPos);
+        Vector3 screenPoint = mainCamera.WorldToScreenPoint(worldPos);
+        if (screenPoint.z < 0f)
+        {
+            if (tooltipGO != null)
+                tooltipGO.SetActive(false);
+            return;
+        }
+
+        if (tooltipGO != null && isShowing)
+            tooltipGO.SetActive(true);
+
+        Vector2 screenPos = screenPoint;
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             canvasRect,
@@ -120,6 +163,18 @@ public class WorldInteractionTooltipUI : MonoBehaviour
             out var localPoint);
 
         tooltipRect.localPosition = localPoint;
+    }
+
+    private void EnsureCanvas()
+    {
+        if (parentCanvas == null)
+        {
+            // Cerca un canvas generico se non ne abbiamo uno nel parent
+            parentCanvas = FindFirstObjectByType<Canvas>();
+        }
+
+        if (parentCanvas != null)
+            canvasRect = parentCanvas.transform as RectTransform;
     }
 
     private void BuildTooltip()

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerTopDown : EntityBase2D
@@ -16,7 +17,14 @@ public class PlayerTopDown : EntityBase2D
     [Header("Interaction")]
     [Tooltip("Raggio di rilevamento per gli oggetti interattivi.")]
     [SerializeField] private float interactRadius = 1.0f;
+    [Tooltip("UI fallback se il PlaceableDefinition non ha un menu specifico.")]
+    [SerializeField] private WorldInteractionMenuPlaceholderUI interactionMenu;
+    [Tooltip("Parent runtime per i menu specifici instanziati da prefab. Se null usa il primo Canvas trovato.")]
+    [SerializeField] private Transform interactionMenusRoot;
     private PlacedObject currentInteractable;
+    private PlaceableInteractionMenuBase activeInteractionMenu;
+    private readonly Dictionary<PlaceableInteractionMenuBase, PlaceableInteractionMenuBase> menuInstances =
+        new Dictionary<PlaceableInteractionMenuBase, PlaceableInteractionMenuBase>();
 
     [Header("Respawn")]
     [Tooltip("Secondi di attesa dopo la morte prima del respawn.")]
@@ -39,6 +47,9 @@ public class PlayerTopDown : EntityBase2D
     {
         hotbarEffects = FindFirstObjectByType<HotbarEffectManager>();
 
+        if (interactionMenu == null)
+            interactionMenu = FindFirstObjectByType<WorldInteractionMenuPlaceholderUI>();
+
         // Inizializza respawnPoint dal WorldGen
         var world = FindFirstObjectByType<WorldGenTilemap>();
         if (world != null && world.HasGenerated)
@@ -51,6 +62,17 @@ public class PlayerTopDown : EntityBase2D
         {
             respawnPoint = transform.position;
         }
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var menu in menuInstances.Values)
+        {
+            if (menu != null)
+                Destroy(menu.gameObject);
+        }
+
+        menuInstances.Clear();
     }
 
     /// <summary>
@@ -217,26 +239,36 @@ public class PlayerTopDown : EntityBase2D
     {
         if (inputLocked || state == State.Death || state == State.Hurt)
         {
+            CloseActiveInteractionMenu();
             if (WorldInteractionTooltipUI.Instance != null) WorldInteractionTooltipUI.Instance.Hide();
             return;
         }
 
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, interactRadius);
-        PlacedObject closestInteractable = null;
-        float minDst = float.MaxValue;
-
-        foreach (var col in colliders)
+        // Toggle robusto: se qualunque menu di interazione è aperto,
+        // premere E lo richiude anche se il riferimento attivo non è più valido.
+        if (Input.GetKeyDown(interactKey) && IsAnyInteractionMenuOpen())
         {
-            var placedObj = col.GetComponentInParent<PlacedObject>();
-            if (placedObj != null && placedObj.definition != null && placedObj.definition.canInteract)
-            {
-                float dst = Vector2.Distance(transform.position, placedObj.transform.position);
-                if (dst < minDst)
-                {
-                    minDst = dst;
-                    closestInteractable = placedObj;
-                }
-            }
+            CloseAllInteractionMenus();
+            if (WorldInteractionTooltipUI.Instance != null)
+                WorldInteractionTooltipUI.Instance.Hide();
+            return;
+        }
+
+        PlacedObject closestInteractable = FindClosestInteractable();
+
+        if (activeInteractionMenu != null && !activeInteractionMenu.gameObject.activeInHierarchy)
+        {
+            activeInteractionMenu = null;
+        }
+
+        if (activeInteractionMenu != null && activeInteractionMenu.IsOpen)
+        {
+            if (Input.GetKeyDown(interactKey))
+                CloseActiveInteractionMenu();
+
+            if (WorldInteractionTooltipUI.Instance != null)
+                WorldInteractionTooltipUI.Instance.Hide();
+            return;
         }
 
         currentInteractable = closestInteractable;
@@ -245,12 +277,22 @@ public class PlayerTopDown : EntityBase2D
         {
             if (WorldInteractionTooltipUI.Instance != null)
             {
-                WorldInteractionTooltipUI.Instance.Show(currentInteractable.definition.interactionText, currentInteractable.transform);
+                string text = currentInteractable.definition.interactionText;
+                if (string.IsNullOrWhiteSpace(text))
+                    text = currentInteractable.definition.name;
+
+                WorldInteractionTooltipUI.Instance.Show(text, currentInteractable.transform);
             }
 
             if (Input.GetKeyDown(interactKey))
             {
-                Debug.Log($"Menu placeholder for {currentInteractable.definition.name}");
+                var menuToOpen = ResolveMenuFor(currentInteractable);
+
+                if (menuToOpen != null)
+                {
+                    activeInteractionMenu = menuToOpen;
+                    activeInteractionMenu.Show(currentInteractable);
+                }
             }
         }
         else
@@ -260,6 +302,139 @@ public class PlayerTopDown : EntityBase2D
                 WorldInteractionTooltipUI.Instance.Hide();
             }
         }
+    }
+
+    private PlaceableInteractionMenuBase ResolveMenuFor(PlacedObject interactable)
+    {
+        if (interactable == null || interactable.definition == null)
+            return null;
+
+        var menuPrefab = interactable.definition.interactionMenuPrefab;
+        if (menuPrefab != null)
+            return GetOrCreateMenuInstance(menuPrefab);
+
+        if (interactionMenu == null)
+            interactionMenu = WorldInteractionMenuPlaceholderUI.Instance;
+
+        return interactionMenu;
+    }
+
+    private PlaceableInteractionMenuBase GetOrCreateMenuInstance(PlaceableInteractionMenuBase menuPrefab)
+    {
+        if (menuPrefab == null)
+            return null;
+
+        if (menuInstances.TryGetValue(menuPrefab, out var instance) && instance != null)
+            return instance;
+
+        Transform parent = interactionMenusRoot;
+        if (parent == null)
+        {
+            var canvas = FindFirstObjectByType<Canvas>();
+            if (canvas != null)
+                parent = canvas.transform;
+        }
+
+        instance = Instantiate(menuPrefab, parent);
+        instance.gameObject.name = menuPrefab.gameObject.name + "_Runtime";
+        instance.Hide();
+
+        menuInstances[menuPrefab] = instance;
+        return instance;
+    }
+
+    private void CloseActiveInteractionMenu()
+    {
+        if (activeInteractionMenu == null)
+            return;
+
+        activeInteractionMenu.Hide();
+        activeInteractionMenu = null;
+    }
+
+    private bool IsAnyInteractionMenuOpen()
+    {
+        if (activeInteractionMenu != null && activeInteractionMenu.IsOpen)
+            return true;
+
+        if (interactionMenu != null && interactionMenu.IsOpen)
+            return true;
+
+        foreach (var menu in menuInstances.Values)
+        {
+            if (menu != null && menu.IsOpen)
+                return true;
+        }
+
+        return false;
+    }
+
+    private void CloseAllInteractionMenus()
+    {
+        CloseActiveInteractionMenu();
+
+        if (interactionMenu != null && interactionMenu.IsOpen)
+            interactionMenu.Hide();
+
+        foreach (var menu in menuInstances.Values)
+        {
+            if (menu != null && menu.IsOpen)
+                menu.Hide();
+        }
+
+        activeInteractionMenu = null;
+    }
+
+    private PlacedObject FindClosestInteractable()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, interactRadius);
+        PlacedObject closestInteractable = null;
+        float minDst = float.MaxValue;
+
+        foreach (var col in colliders)
+        {
+            var placedObj = col.GetComponentInParent<PlacedObject>();
+            if (!IsInteractable(placedObj))
+                continue;
+
+            float dst = Vector2.Distance(transform.position, placedObj.transform.position);
+            if (dst < minDst)
+            {
+                minDst = dst;
+                closestInteractable = placedObj;
+            }
+        }
+
+        // Fallback: oggetti senza collider non entrano in OverlapCircleAll,
+        // quindi facciamo un controllo per distanza sui PlacedObject in scena.
+        if (closestInteractable == null)
+        {
+            var allPlacedObjects = FindObjectsByType<PlacedObject>(FindObjectsSortMode.None);
+            foreach (var placedObj in allPlacedObjects)
+            {
+                if (!IsInteractable(placedObj))
+                    continue;
+
+                float dst = Vector2.Distance(transform.position, placedObj.transform.position);
+                if (dst > interactRadius)
+                    continue;
+
+                if (dst < minDst)
+                {
+                    minDst = dst;
+                    closestInteractable = placedObj;
+                }
+            }
+        }
+
+        return closestInteractable;
+    }
+
+    private static bool IsInteractable(PlacedObject placedObj)
+    {
+        return placedObj != null &&
+               placedObj.definition != null &&
+               placedObj.definition.canInteract;
     }
 
     // ══════════════════════════════════════════════════════════

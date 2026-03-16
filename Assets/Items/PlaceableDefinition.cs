@@ -10,9 +10,12 @@ public class PlaceableDefinition : ScriptableObject
     [Header("Interaction")]
     [Tooltip("Se vero, il giocatore può interagire con questo oggetto (E).")]
     public bool canInteract = false;
-    
+
     [Tooltip("Testo mostrato nel popup di interazione (es. 'Cassa', 'Letto').")]
     public string interactionText = "";
+
+    [Tooltip("Prefab UI da aprire quando il player preme E su questo oggetto. Se null, usa il menu placeholder di default.")]
+    public PlaceableInteractionMenuBase interactionMenuPrefab;
 
     [Space(10)]
     [Header("Grid Size")]
