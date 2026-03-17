@@ -31,6 +31,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8178830837738733026}
   - {fileID: 2675280424756257022}
   - {fileID: 7124205372807399219}
   m_Father: {fileID: 5586795907943151960}
@@ -101,11 +102,99 @@ MonoBehaviour:
   columns: 6
   cellSize: {x: 56, y: 56}
   spacing: {x: 6, y: 6}
+  useHorizontalLayout: 1
+  containerChildAlignment: 4
+  containerSpacing: 24
+  containerPaddingLeft: 0
+  containerPaddingRight: 0
+  containerPaddingTop: 0
+  containerPaddingBottom: 0
+  playerMenuPosition: {x: -200, y: 0}
+  chestMenuPosition: {x: 200, y: 0}
   closeWithInteractKey: 1
   interactKey: 101
-  forceScreenSpace: 1
-  screenSpaceRootCanvas: {fileID: 0}
-  anchoredScreenPosition: {x: 0, y: 0}
+  attachToSceneCanvasOnShow: 1
+  configureRootStretchOnAwake: 1
+  rootMargins: {x: 24, y: 24, z: 24, w: 24}
+--- !u!1 &3305167540961297994
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8178830837738733026}
+  - component: {fileID: 1616387829938163899}
+  - component: {fileID: 3393702801115193563}
+  m_Layer: 5
+  m_Name: ChestText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &8178830837738733026
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3305167540961297994}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5503715216234445471}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -20}
+  m_SizeDelta: {x: 0, y: 100}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!222 &1616387829938163899
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3305167540961297994}
+  m_CullTransparentMesh: 1
+--- !u!114 &3393702801115193563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3305167540961297994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 836cf469cd749e54e9fe3f8f61fc3aa8, type: 3}
+    m_FontSize: 70
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 70
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Chest
 --- !u!1 &3716203127814339046
 GameObject:
   m_ObjectHideFlags: 0
@@ -139,7 +228,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 120, y: 0}
   m_SizeDelta: {x: 1332, y: 748}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &6805196279217468756
@@ -183,7 +272,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -120, y: 0}
   m_SizeDelta: {x: 1332, y: 748}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &3852157852890093421
@@ -252,10 +341,19 @@ MonoBehaviour:
   chestSlotsRoot: {fileID: 2675280424756257022}
   rows: 5
   columns: 6
-  cellSize: {x: 56, y: 56}
+  cellSize: {x: 102, y: 102}
   spacing: {x: 6, y: 6}
+  useHorizontalLayout: 1
+  containerChildAlignment: 4
+  containerSpacing: 24
+  containerPaddingLeft: 200
+  containerPaddingRight: 0
+  containerPaddingTop: 0
+  containerPaddingBottom: 0
+  playerMenuPosition: {x: 120, y: 0}
+  chestMenuPosition: {x: -120, y: 0}
   closeWithInteractKey: 1
   interactKey: 101
-  forceScreenSpace: 1
-  screenSpaceRootCanvas: {fileID: 0}
-  anchoredScreenPosition: {x: 0, y: 0}
+  attachToSceneCanvasOnShow: 1
+  configureRootStretchOnAwake: 1
+  rootMargins: {x: 24, y: 24, z: 24, w: 24}
