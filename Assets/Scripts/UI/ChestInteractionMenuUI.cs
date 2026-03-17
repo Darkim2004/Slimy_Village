@@ -32,6 +32,8 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
     [SerializeField] private KeyCode interactKey = KeyCode.E;
     [Tooltip("Se true, il menu viene sempre agganciato a un Canvas UI e mostrato in posizione fissa sullo schermo.")]
     [SerializeField] private bool forceScreenSpace = true;
+    [Tooltip("Canvas UI principale da usare come parent del menu (consigliato: HUD root canvas).")]
+    [SerializeField] private Canvas screenSpaceRootCanvas;
     [SerializeField] private Vector2 anchoredScreenPosition = Vector2.zero;
 
     private readonly List<InventorySlotUI> playerSlotViews = new List<InventorySlotUI>();
@@ -39,15 +41,16 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
     private InventorySection activePlayerSection;
     private InventorySection activeChestSection;
     private RectTransform selfRect;
+    private int openedFrame = -1;
 
     private void Awake()
     {
         selfRect = transform as RectTransform;
         ResolveReferences();
+        EnsureMatricesRoots();
         ValidateMatricesRoots();
         SetupSlotsRootGrid(playerSlotsRoot);
         SetupSlotsRootGrid(chestSlotsRoot);
-        EnsureScreenSpacePresentation();
     }
 
     private void OnDestroy()
@@ -62,7 +65,7 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
         if (Input.GetKeyDown(KeyCode.Escape))
             Hide();
 
-        if (closeWithInteractKey && Input.GetKeyDown(interactKey))
+        if (closeWithInteractKey && Input.GetKeyDown(interactKey) && Time.frameCount > openedFrame)
             Hide();
     }
 
@@ -83,16 +86,20 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
         var chestSection = storage.Section;
         var playerSection = ResolvePlayerSection();
 
+        EnsureMatricesRoots();
+
         BindChestSection(chestSection);
         BindPlayerSection(playerSection);
 
         EnsureScreenSpacePresentation();
 
         base.Show(placedObject);
+        openedFrame = Time.frameCount;
     }
 
     public override void Hide()
     {
+        interactionController?.TryReturnCursorToInventory();
         base.Hide();
     }
 
@@ -109,8 +116,67 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
     {
         if (playerSlotsRoot == null || chestSlotsRoot == null)
         {
-            Debug.LogError("[ChestInteractionMenuUI] Assegna sia Player Slots Root che Chest Slots Root nel prefab/UI di scena.", this);
+            Debug.LogError("[ChestInteractionMenuUI] Roots mancanti anche dopo il setup runtime.", this);
         }
+    }
+
+    private void EnsureMatricesRoots()
+    {
+        if (playerSlotsRoot != null && chestSlotsRoot != null)
+            return;
+
+        if (selfRect == null)
+            selfRect = transform as RectTransform;
+
+        if (selfRect == null)
+            return;
+
+        selfRect.sizeDelta = new Vector2(820f, 520f);
+
+        RectTransform container = transform.Find("SlotsContainer") as RectTransform;
+        if (container == null)
+        {
+            var containerGO = new GameObject("SlotsContainer", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            containerGO.transform.SetParent(transform, false);
+            container = containerGO.GetComponent<RectTransform>();
+            container.anchorMin = new Vector2(0.5f, 0.5f);
+            container.anchorMax = new Vector2(0.5f, 0.5f);
+            container.pivot = new Vector2(0.5f, 0.5f);
+            container.anchoredPosition = Vector2.zero;
+            container.sizeDelta = new Vector2(760f, 420f);
+
+            var layout = containerGO.GetComponent<HorizontalLayoutGroup>();
+            layout.spacing = 24f;
+            layout.childAlignment = TextAnchor.MiddleCenter;
+            layout.childControlWidth = false;
+            layout.childControlHeight = false;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
+        }
+
+        if (playerSlotsRoot == null)
+            playerSlotsRoot = CreateMatrixRoot("PlayerSlotsRoot", container);
+
+        if (chestSlotsRoot == null)
+            chestSlotsRoot = CreateMatrixRoot("ChestSlotsRoot", container);
+    }
+
+    private RectTransform CreateMatrixRoot(string name, RectTransform parent)
+    {
+        var go = new GameObject(name, typeof(RectTransform), typeof(LayoutElement));
+        go.transform.SetParent(parent, false);
+
+        var rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.sizeDelta = new Vector2(360f, 360f);
+
+        var le = go.GetComponent<LayoutElement>();
+        le.preferredWidth = 360f;
+        le.preferredHeight = 360f;
+
+        return rt;
     }
 
     private InventorySection ResolvePlayerSection()
@@ -172,19 +238,13 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
             return;
         }
 
-        if (activePlayerSection == section && playerSlotViews.Count == rows * columns)
-        {
-            RefreshSlotList(playerSlotViews);
-            return;
-        }
-
         if (activePlayerSection != null)
             activePlayerSection.OnSlotChanged -= HandlePlayerSlotChanged;
 
         activePlayerSection = section;
         activePlayerSection.OnSlotChanged += HandlePlayerSlotChanged;
 
-        RebuildSlotViews(activePlayerSection, playerSlotsRoot, playerSlotViews, "PlayerSlot");
+        RebuildSlotViews(playerInventory, activePlayerSection, playerSlotsRoot, playerSlotViews, "PlayerSlot");
     }
 
     private void BindChestSection(InventorySection section)
@@ -209,22 +269,16 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
             return;
         }
 
-        if (activeChestSection == section && chestSlotViews.Count == rows * columns)
-        {
-            RefreshSlotList(chestSlotViews);
-            return;
-        }
-
         if (activeChestSection != null)
             activeChestSection.OnSlotChanged -= HandleChestSlotChanged;
 
         activeChestSection = section;
         activeChestSection.OnSlotChanged += HandleChestSlotChanged;
 
-        RebuildSlotViews(activeChestSection, chestSlotsRoot, chestSlotViews, "ChestSlot");
+        RebuildSlotViews(null, activeChestSection, chestSlotsRoot, chestSlotViews, "ChestSlot");
     }
 
-    private void RebuildSlotViews(InventorySection section, RectTransform root, List<InventorySlotUI> targetList, string namePrefix)
+    private void RebuildSlotViews(InventoryModel sourceModel, InventorySection section, RectTransform root, List<InventorySlotUI> targetList, string namePrefix)
     {
         if (root == null) return;
 
@@ -238,7 +292,7 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
 
             if (i < section.Size)
             {
-                slot.Bind(playerInventory, interactionController, section, i);
+                slot.Bind(sourceModel, interactionController, section, i);
             }
             else
             {
@@ -294,16 +348,7 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
     {
         if (!forceScreenSpace) return;
 
-        var canvas = FindFirstObjectByType<Canvas>();
-        if (canvas == null)
-        {
-            var canvasGO = new GameObject("InteractionUICanvas_Auto");
-            canvas = canvasGO.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvasGO.AddComponent<CanvasScaler>();
-            canvasGO.AddComponent<GraphicRaycaster>();
-            Debug.LogWarning("[ChestInteractionMenuUI] Canvas non trovato: creato automaticamente.", this);
-        }
+        var canvas = FindOrCreateScreenSpaceCanvas();
 
         if (transform.parent != canvas.transform)
             transform.SetParent(canvas.transform, false);
@@ -328,5 +373,47 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
 
         if (GetComponent<GraphicRaycaster>() == null)
             gameObject.AddComponent<GraphicRaycaster>();
+    }
+
+    private Canvas FindOrCreateScreenSpaceCanvas()
+    {
+        if (screenSpaceRootCanvas != null)
+        {
+            if (screenSpaceRootCanvas.renderMode == RenderMode.ScreenSpaceOverlay ||
+                screenSpaceRootCanvas.renderMode == RenderMode.ScreenSpaceCamera)
+            {
+                return screenSpaceRootCanvas;
+            }
+
+            Debug.LogWarning("[ChestInteractionMenuUI] Il canvas assegnato non e screen-space, uso fallback automatico.", this);
+        }
+
+        var canvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+        Canvas cameraCanvas = null;
+
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            var c = canvases[i];
+            if (c == null) continue;
+            if (!c.isRootCanvas) continue; // Evita canvas nidificati (es. tooltip, popup secondari).
+
+            if (c.renderMode == RenderMode.ScreenSpaceOverlay)
+                return c;
+
+            if (cameraCanvas == null && c.renderMode == RenderMode.ScreenSpaceCamera)
+                cameraCanvas = c;
+        }
+
+        if (cameraCanvas != null)
+            return cameraCanvas;
+
+        var canvasGO = new GameObject("InteractionUICanvas_Auto");
+        var canvas = canvasGO.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvasGO.AddComponent<CanvasScaler>();
+        canvasGO.AddComponent<GraphicRaycaster>();
+        Debug.LogWarning("[ChestInteractionMenuUI] Canvas screen-space non trovato: creato automaticamente.", this);
+        screenSpaceRootCanvas = canvas;
+        return canvas;
     }
 }
