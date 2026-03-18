@@ -134,6 +134,8 @@ public class HotbarHUD : MonoBehaviour
 
     private void HandleScrollWheel()
     {
+        if (hotbarSize <= 0) return;
+
         float scroll = Input.mouseScrollDelta.y;
         if (Mathf.Abs(scroll) < 0.01f) return;
 
@@ -203,7 +205,7 @@ public class HotbarHUD : MonoBehaviour
 
     private void EnsureLayoutComponent()
     {
-        if (GetComponent<HorizontalLayoutGroup>() != null) return;
+        if (GetComponent<LayoutGroup>() != null) return;
 
         var layout = gameObject.AddComponent<HorizontalLayoutGroup>();
         layout.spacing = 4f;
