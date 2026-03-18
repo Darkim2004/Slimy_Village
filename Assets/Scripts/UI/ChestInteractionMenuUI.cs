@@ -14,11 +14,16 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
     [SerializeField] private InventorySlotUI slotPrefab;
     [SerializeField] private string playerSectionName = "Main";
 
+    [Header("Player Lock")]
+    [SerializeField] private PlayerTopDown playerTopDown;
+
     [Header("Matrices Root")]
     [Tooltip("Root della matrice player (sinistra). Deve essere assegnato in scena/prefab.")]
     [SerializeField] private RectTransform playerSlotsRoot;
     [Tooltip("Root della matrice chest (destra). Deve essere assegnato in scena/prefab.")]
     [SerializeField] private RectTransform chestSlotsRoot;
+    [Tooltip("Root della matrice hotbar player. Deve essere assegnato in scena/prefab.")]
+    [SerializeField] private RectTransform playerHotbarSlotsRoot;
 
     [Header("Layout")]
     [SerializeField] private int rows = 5;
@@ -55,8 +60,10 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
 
     private readonly List<InventorySlotUI> playerSlotViews = new List<InventorySlotUI>();
     private readonly List<InventorySlotUI> chestSlotViews = new List<InventorySlotUI>();
+    private readonly List<InventorySlotUI> hotbarSlotViews = new List<InventorySlotUI>();
     private InventorySection activePlayerSection;
     private InventorySection activeChestSection;
+    private InventorySection activeHotbarSection;
     private RectTransform selfRect;
     private Canvas runtimeSceneCanvas;
     private int openedFrame = -1;
@@ -68,8 +75,9 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
         ApplyRootStretchLayoutOnce();
         EnsureMatricesRoots();
         ValidateMatricesRoots();
-        SetupSlotsRootGrid(playerSlotsRoot);
-        SetupSlotsRootGrid(chestSlotsRoot);
+        SetupSlotsRootGrid(playerSlotsRoot, false);
+        SetupSlotsRootGrid(chestSlotsRoot, false);
+        SetupSlotsRootGrid(playerHotbarSlotsRoot, true);
     }
 
     private void OnDestroy()
@@ -109,15 +117,22 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
 
         BindChestSection(chestSection);
         BindPlayerSection(playerSection);
+        BindHotbarSection(playerInventory?.Hotbar);
 
         EnsureSceneCanvasParent();
 
         base.Show(placedObject);
         openedFrame = Time.frameCount;
+
+        if (playerTopDown != null)
+            playerTopDown.SetInputLocked(true);
     }
 
     public override void Hide()
     {
+        if (playerTopDown != null)
+            playerTopDown.SetInputLocked(false);
+
         interactionController?.TryReturnCursorToInventory();
         base.Hide();
     }
@@ -129,6 +144,9 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
 
         if (playerInventory == null)
             playerInventory = FindFirstObjectByType<InventoryModel>();
+
+        if (playerTopDown == null)
+            playerTopDown = FindFirstObjectByType<PlayerTopDown>();
     }
 
     private void ValidateMatricesRoots()
@@ -168,6 +186,9 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
         if (chestSlotsRoot == null)
             chestSlotsRoot = CreateMatrixRoot("ChestSlotsRoot", container);
             
+        if (playerHotbarSlotsRoot == null)
+            playerHotbarSlotsRoot = CreateMatrixRoot("PlayerHotbarSlotsRoot", container);
+
         ApplyFreePositions();
     }
 
@@ -245,16 +266,30 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
         return null;
     }
 
-    private void SetupSlotsRootGrid(RectTransform slotsRoot)
+    private void SetupSlotsRootGrid(RectTransform slotsRoot, bool isHotbar)
     {
         if (slotsRoot == null) return;
 
         var grid = slotsRoot.GetComponent<GridLayoutGroup>();
-        if (grid == null)
-            grid = slotsRoot.gameObject.AddComponent<GridLayoutGroup>();
+        if (grid != null)
+        {
+            // Se esiste già, l'utente lo ha configurato manualmente dall'Inspector.
+            // Rispettiamo le sue impostazioni in modo da poter ridimensionare gli slot graficamente.
+            return;
+        }
 
-        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        grid.constraintCount = Mathf.Max(1, columns);
+        grid = slotsRoot.gameObject.AddComponent<GridLayoutGroup>();
+
+        if (isHotbar)
+        {
+            grid.constraint = GridLayoutGroup.Constraint.FixedRowCount;
+            grid.constraintCount = 1;
+        }
+        else
+        {
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid.constraintCount = Mathf.Max(1, columns);
+        }
         grid.cellSize = cellSize;
         grid.spacing = spacing;
         grid.childAlignment = TextAnchor.UpperCenter;
@@ -295,7 +330,7 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
         activePlayerSection = section;
         activePlayerSection.OnSlotChanged += HandlePlayerSlotChanged;
 
-        RebuildSlotViews(playerInventory, activePlayerSection, playerSlotsRoot, playerSlotViews, "PlayerSlot");
+        RebuildSlotViews(playerInventory, activePlayerSection, playerSlotsRoot, playerSlotViews, "PlayerSlot", true);
     }
 
     private void BindChestSection(InventorySection section)
@@ -326,16 +361,47 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
         activeChestSection = section;
         activeChestSection.OnSlotChanged += HandleChestSlotChanged;
 
-        RebuildSlotViews(null, activeChestSection, chestSlotsRoot, chestSlotViews, "ChestSlot");
+        RebuildSlotViews(null, activeChestSection, chestSlotsRoot, chestSlotViews, "ChestSlot", true);
     }
 
-    private void RebuildSlotViews(InventoryModel sourceModel, InventorySection section, RectTransform root, List<InventorySlotUI> targetList, string namePrefix)
+    private void BindHotbarSection(InventorySection section)
+    {
+        if (section == null || playerHotbarSlotsRoot == null) return;
+
+        if (slotPrefab == null)
+        {
+            Debug.LogError("[ChestInteractionMenuUI] Slot prefab non assegnato.", this);
+            return;
+        }
+
+        if (interactionController == null)
+        {
+            Debug.LogError("[ChestInteractionMenuUI] InventoryInteractionController non trovato.", this);
+            return;
+        }
+
+        if (playerInventory == null)
+        {
+            Debug.LogError("[ChestInteractionMenuUI] InventoryModel player non trovato.", this);
+            return;
+        }
+
+        if (activeHotbarSection != null)
+            activeHotbarSection.OnSlotChanged -= HandleHotbarSlotChanged;
+
+        activeHotbarSection = section;
+        activeHotbarSection.OnSlotChanged += HandleHotbarSlotChanged;
+
+        RebuildSlotViews(playerInventory, activeHotbarSection, playerHotbarSlotsRoot, hotbarSlotViews, "HotbarSlot", false);
+    }
+
+    private void RebuildSlotViews(InventoryModel sourceModel, InventorySection section, RectTransform root, List<InventorySlotUI> targetList, string namePrefix, bool useFixedGrid = true)
     {
         if (root == null) return;
 
         ClearSlotViews(targetList);
 
-        int totalCount = rows * columns;
+        int totalCount = useFixedGrid ? (rows * columns) : section.Size;
         for (int i = 0; i < totalCount; i++)
         {
             var slot = Instantiate(slotPrefab, root);
@@ -369,6 +435,12 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
         chestSlotViews[index].Refresh();
     }
 
+    private void HandleHotbarSlotChanged(int index)
+    {
+        if (index < 0 || index >= hotbarSlotViews.Count) return;
+        hotbarSlotViews[index].Refresh();
+    }
+
     private void RefreshSlotList(List<InventorySlotUI> slots)
     {
         for (int i = 0; i < slots.Count; i++)
@@ -382,6 +454,9 @@ public class ChestInteractionMenuUI : PlaceableInteractionMenuBase
 
         if (activeChestSection != null)
             activeChestSection.OnSlotChanged -= HandleChestSlotChanged;
+
+        if (activeHotbarSection != null)
+            activeHotbarSection.OnSlotChanged -= HandleHotbarSlotChanged;
     }
 
     private void ClearSlotViews(List<InventorySlotUI> slots)

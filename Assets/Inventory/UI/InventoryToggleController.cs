@@ -48,6 +48,12 @@ public class InventoryToggleController : MonoBehaviour
     {
         if (Input.GetKeyDown(toggleKey))
         {
+            // Non permettere l'apertura se l'input è già bloccato da altri menu (es. Chest)
+            if (!IsOpen && playerTopDown != null && playerTopDown.IsInputLocked)
+            {
+                return;
+            }
+
             GameDebug.Log(GameDebugCategory.Inventory, $"[InventoryToggle] Key '{toggleKey}' pressed → toggling (was {(IsOpen ? "open" : "closed")})", this);
             Toggle();
         }

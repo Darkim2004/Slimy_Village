@@ -34,6 +34,8 @@ public class PlayerTopDown : EntityBase2D
     [SerializeField] private float dropSpreadRadius = 0.3f;
 
     private bool inputLocked;
+    public bool IsInputLocked => inputLocked;
+
     private HotbarEffectManager hotbarEffects;
     private Vector3 respawnPoint;
 
@@ -237,9 +239,17 @@ public class PlayerTopDown : EntityBase2D
     // ══════════════════════════════════════════════════════════
     private void UpdateInteraction()
     {
-        if (inputLocked || state == State.Death || state == State.Hurt)
+        if (state == State.Death || state == State.Hurt)
         {
             CloseActiveInteractionMenu();
+            if (WorldInteractionTooltipUI.Instance != null) WorldInteractionTooltipUI.Instance.Hide();
+            return;
+        }
+
+        if (inputLocked)
+        {
+            // Evitiamo di chiudere i menu di interazione già attivi (come la chest),
+            // altrimenti si chiuderebbero nello stesso frame in cui bloccano il player.
             if (WorldInteractionTooltipUI.Instance != null) WorldInteractionTooltipUI.Instance.Hide();
             return;
         }
