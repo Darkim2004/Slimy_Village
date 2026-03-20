@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableDefinition
   canInteract: 1
   interactionText: 'Interact [E]'
+  interactionMenuPrefab: {fileID: 2506353683719256950, guid: dc860d4887ee427418a11b197411a6ba, type: 3}
   size: {x: 1, y: 1}
   pivotOffset: {x: 0, y: 0}
   placedPrefab: {fileID: 5069077332930996601, guid: 52baa0da19cd85e4e899a248ee9c85b0, type: 3}
-  ghostSprite: {fileID: 0}
+  ghostSprite: {fileID: 6911056676163173146, guid: 9177ba721a2e6d844b6d5180382e9847, type: 3}
   spawnOffset: {x: 0, y: 0, z: 0}

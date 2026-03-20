@@ -18,5 +18,5 @@ MonoBehaviour:
   size: {x: 1, y: 1}
   pivotOffset: {x: 0, y: 0}
   placedPrefab: {fileID: 8769627727532613429, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
-  ghostSprite: {fileID: 0}
+  ghostSprite: {fileID: 7147842635118902238, guid: 271b56c9b1d536641ba87f4177160172, type: 3}
   spawnOffset: {x: 0, y: 0, z: 0}
