@@ -4,7 +4,8 @@
 - [ ] 
 
 ## Nuove feature 
-- [ ] Aggiungere interazioni con blocchi piazzabili come chest e faló
+- [X] Aggiungere interazioni con blocchi piazzabili come chest e faló
+- [ ] Aggiungi interazione con alberi/rocce
 - [ ] Implementare un sistema di salvataggio
 - [ ] Aggiungere nuovi nemici
 - [ ] Aggiungere UI morte e menu
@@ -15,4 +16,5 @@
 - [ ] Worldgen
 
 ## Idee sparse / Design
-- [ ] Luci mini dinamiche per faló torce ecc  
+- [X] Luci mini dinamiche per faló torce ecc
+- [ ] Aggiungi torce/lamp
