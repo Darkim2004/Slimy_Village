@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edd75b322ebaba24296059dfe0af51e0, type: 3}
+  m_Name: Crafting_table_Placeable
+  m_EditorClassIdentifier: Assembly-CSharp::PlaceableDefinition
+  canInteract: 1
+  interactionText: 'Interact [E]'
+  interactionMenuPrefab: {fileID: 0}
+  size: {x: 1, y: 1}
+  pivotOffset: {x: 0, y: 0}
+  placedPrefab: {fileID: 7439751615436350584, guid: 28f6d993bee80d34cbc18e6973fee1ba, type: 3}
+  ghostSprite: {fileID: -6288071038709849854, guid: fc799f8264ce11f47bd0efe6cf66686d, type: 3}
+  spawnOffset: {x: 0, y: 0, z: 0}

@@ -94,6 +94,7 @@ MonoBehaviour:
   isOpen: 0
   closeWithInteractKey: 1
   interactKey: 101
+  attachToSceneCanvasOnShow: 1
 --- !u!1 &2995658992778247630
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,7 +132,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -300}
-  m_SizeDelta: {x: 300, y: 120}
+  m_SizeDelta: {x: 320, y: 120}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &8627739688723205821
 CanvasRenderer:
@@ -264,7 +265,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -180}
-  m_SizeDelta: {x: 300, y: 60}
+  m_SizeDelta: {x: 320, y: 60}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &3753665982984227887
 CanvasRenderer:
