@@ -15,6 +15,12 @@ MonoBehaviour:
   id: stone
   displayName: Stone
   description: 
-  icon: {fileID: 7778197737187452907, guid: e79d7542ee001c1489bf3338a59ee1d2, type: 3}
+  category: 4
+  icon: {fileID: 5248844365648247204, guid: d9858c6d0fde7e84aa249275650b1723, type: 3}
+  attackDamage: 0
+  isHarvestTool: 0
+  isArmor: 0
+  armorDefense: 0
+  placeableData: {fileID: 0}
   isStackable: 1
   maxStack: 64

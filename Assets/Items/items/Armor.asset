@@ -15,8 +15,12 @@ MonoBehaviour:
   id: armor
   displayName: Armor
   description: 
+  category: 0
   icon: {fileID: -8848596863996917792, guid: 59b5b0ede2d8dcb49bff2f2167061a2e, type: 3}
+  attackDamage: 0
+  isHarvestTool: 1
   isArmor: 1
   armorDefense: 2
+  placeableData: {fileID: 0}
   isStackable: 0
   maxStack: 1

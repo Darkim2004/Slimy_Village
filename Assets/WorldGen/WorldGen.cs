@@ -120,6 +120,26 @@ public class WorldGenTilemap : MonoBehaviour
     [Tooltip("Intervallo di scala applicato alla roccia (es. 0.9..1.1).")]
     public Vector2 rockScaleRange = new Vector2(0.9f, 1.1f);
 
+    [Header("Harvestable Nodes")]
+    [Tooltip("Se true, alberi e rocce spawnati diventano distruttibili con HP.")]
+    public bool makeSpawnedPropsHarvestable = true;
+
+    [Min(1)] public int treeHitPoints = 3;
+    [Min(1)] public int snowTreeHitPoints = 3;
+    [Min(1)] public int rockHitPoints = 5;
+
+    [Tooltip("Loot table per alberi normali (opzionale).")]
+    public LootTable treeLootTable;
+
+    [Tooltip("Loot table per alberi innevati (opzionale).")]
+    public LootTable snowTreeLootTable;
+
+    [Tooltip("Loot table per rocce (opzionale).")]
+    public LootTable rockLootTable;
+
+    [Tooltip("Se true, i nodi richiedono un tool valido equipaggiato per subire danno.")]
+    public bool requireHarvestToolForDamage = true;
+
     [Header("Height Noise (Ocean vs Land)")]
     [Tooltip("Higher = more detail; lower = larger blobs")]
     public float heightScale = 6f;
@@ -432,6 +452,8 @@ public class WorldGenTilemap : MonoBehaviour
 
             go.transform.localScale = new Vector3(s, s, 1f);
         }
+
+        ConfigureHarvestableNode(go, treeHitPoints, treeLootTable);
     }
 
     private void SpawnSnowTreePrefab(Vector3Int cell)
@@ -471,6 +493,8 @@ public class WorldGenTilemap : MonoBehaviour
 
             go.transform.localScale = new Vector3(s, s, 1f);
         }
+
+        ConfigureHarvestableNode(go, snowTreeHitPoints, snowTreeLootTable);
     }
 
     private void SpawnRockPrefab(Vector3Int cell)
@@ -509,6 +533,23 @@ public class WorldGenTilemap : MonoBehaviour
 
             go.transform.localScale = new Vector3(s, s, 1f);
         }
+
+        ConfigureHarvestableNode(go, rockHitPoints, rockLootTable);
+    }
+
+    private void ConfigureHarvestableNode(GameObject go, int hp, LootTable lootTable)
+    {
+        if (!makeSpawnedPropsHarvestable || go == null)
+            return;
+
+        HarvestableNode node = go.GetComponent<HarvestableNode>();
+        if (node == null)
+            node = go.AddComponent<HarvestableNode>();
+
+        node.requireHarvestTool = requireHarvestToolForDamage;
+        node.destroyOnDeath = true;
+        node.lootTable = lootTable;
+        node.SetMaxHpAndReset(Mathf.Max(1, hp));
     }
 
     private void ClearSpawnedProps()

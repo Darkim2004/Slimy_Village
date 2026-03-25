@@ -42,6 +42,10 @@ public class ItemDefinition : ScriptableObject
     [Min(0)]
     public int attackDamage;
 
+    [Header("Tool")]
+    [Tooltip("True se questo item può colpire nodi risorsa (alberi/rocce).")]
+    public bool isHarvestTool;
+
     [Header("Armor")]
     [Tooltip("True se questo item è un'armatura equipaggiabile nello slot armatura.")]
     public bool isArmor;
@@ -67,6 +71,9 @@ public class ItemDefinition : ScriptableObject
 
     /// <summary>True se l'item è un'arma con danno bonus.</summary>
     public bool IsWeapon => category == ItemCategory.Weapon && attackDamage > 0;
+
+    /// <summary>True se l'item è un tool valido per raccolta/mining.</summary>
+    public bool IsHarvestTool => isHarvestTool;
 
     /// <summary>True se l'item è un elemento costruibile.</summary>
     public bool IsBuilding => category == ItemCategory.Building;

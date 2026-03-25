@@ -16,9 +16,11 @@ MonoBehaviour:
   displayName: Sword
   description: 
   category: 1
-  icon: {fileID: 7541167501828912623, guid: 546ecd36c72f0f648bd17a16c2dfa3be, type: 3}
+  icon: {fileID: -2082710374031993758, guid: 89769226a26f0dd44ac574b13846a228, type: 3}
   attackDamage: 3
+  isHarvestTool: 0
   isArmor: 0
   armorDefense: 0
+  placeableData: {fileID: 0}
   isStackable: 0
   maxStack: 1

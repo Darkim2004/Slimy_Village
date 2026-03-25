@@ -13,7 +13,7 @@ public class DamageHitbox2D : MonoBehaviour
     private int _damage;
 
     // Per colpire una sola volta per entità (anche se ha più collider)
-    private readonly HashSet<Health> _alreadyHit = new();
+    private readonly HashSet<Component> _alreadyHit = new();
 
     private void Awake()
     {
@@ -57,6 +57,18 @@ public class DamageHitbox2D : MonoBehaviour
 
         // evita autocolpi
         if (_ownerRoot != null && other.transform.root == _ownerRoot) return;
+
+        var harvestable = other.GetComponentInParent<HarvestableNode>();
+        if (harvestable != null && !harvestable.IsDestroyed)
+        {
+            if (_alreadyHit.Contains(harvestable)) return;
+
+            bool damaged = harvestable.TryTakeDamage(_damage, _ownerRoot != null ? _ownerRoot.gameObject : null);
+            if (damaged)
+                _alreadyHit.Add(harvestable);
+
+            return;
+        }
 
         var health = other.GetComponentInParent<Health>();
         if (health == null || health.IsDead) return;

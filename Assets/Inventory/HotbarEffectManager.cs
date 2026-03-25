@@ -24,6 +24,9 @@ public class HotbarEffectManager : MonoBehaviour
     /// <summary>True se lo slot attivo contiene un item di tipo Building.</summary>
     public bool IsBuildModeRequested { get; private set; }
 
+    /// <summary>True se lo slot attivo contiene un tool valido per nodi risorsa.</summary>
+    public bool IsHarvestToolEquipped { get; private set; }
+
     /// <summary>La definizione dell'item attivo (null se slot vuoto).</summary>
     public ItemDefinition ActiveItemDef { get; private set; }
 
@@ -70,6 +73,7 @@ public class HotbarEffectManager : MonoBehaviour
         var newCategory = def != null ? def.category : ItemCategory.None;
         int newDamage = (def != null && def.IsWeapon) ? def.attackDamage : 0;
         bool newBuild = def != null && def.IsBuilding;
+        bool newHarvestTool = def != null && def.IsHarvestTool;
 
         bool categoryChanged = newCategory != ActiveCategory;
         bool buildChanged = newBuild != IsBuildModeRequested;
@@ -77,6 +81,7 @@ public class HotbarEffectManager : MonoBehaviour
         ActiveCategory = newCategory;
         WeaponBonusDamage = newDamage;
         IsBuildModeRequested = newBuild;
+        IsHarvestToolEquipped = newHarvestTool;
 
         if (categoryChanged)
             OnCategoryChanged?.Invoke(ActiveCategory);
