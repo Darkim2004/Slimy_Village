@@ -97,6 +97,24 @@ public class PlayerTopDown : EntityBase2D
             rb.linearVelocity = Vector2.zero;
     }
 
+    /// <summary>
+    /// Espone query sul fatto che qualunque menu di interazione sia aperto,
+    /// per uso esterno (es. PauseMenuController per priorità ESC).
+    /// </summary>
+    public bool IsAnyInteractionMenuOpenPublic()
+    {
+        return IsAnyInteractionMenuOpen();
+    }
+
+    /// <summary>
+    /// Chiude tutti i menu di interazione attivi (chest, campfire, tooltip, ecc.).
+    /// Per uso esterno (es. PauseMenuController per priorità ESC).
+    /// </summary>
+    public void CloseAllInteractionMenusPublic()
+    {
+        CloseAllInteractionMenus();
+    }
+
     protected override int GetBonusDamage()
     {
         return hotbarEffects != null ? hotbarEffects.WeaponBonusDamage : 0;

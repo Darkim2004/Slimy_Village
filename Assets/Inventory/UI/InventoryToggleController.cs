@@ -54,6 +54,13 @@ public class InventoryToggleController : MonoBehaviour
                 return;
             }
 
+            // Non permettere l'apertura se il gioco è in pausa
+            var pauseController = FindFirstObjectByType<PauseMenuController>();
+            if (pauseController != null && pauseController.IsPaused)
+            {
+                return;
+            }
+
             GameDebug.Log(GameDebugCategory.Inventory, $"[InventoryToggle] Key '{toggleKey}' pressed → toggling (was {(IsOpen ? "open" : "closed")})", this);
             Toggle();
         }
