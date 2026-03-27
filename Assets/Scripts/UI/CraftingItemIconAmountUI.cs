@@ -1,17 +1,28 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CraftingItemIconAmountUI : MonoBehaviour
+public class CraftingItemIconAmountUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private Image iconImage;
     [SerializeField] private Text amountText;
+    [SerializeField] private bool forceReadOnly = true;
 
     private bool amountNormalized;
+    private ItemDefinition currentItem;
+    private Button cachedButton;
 
     private void Awake()
     {
+        cachedButton = GetComponent<Button>();
+        ApplyReadOnlyState();
         NormalizeAmountToSlot();
         Refresh(null, 0);
+    }
+
+    private void OnDisable()
+    {
+        HideTooltip();
     }
 
     private void OnRectTransformDimensionsChange()
@@ -24,6 +35,8 @@ public class CraftingItemIconAmountUI : MonoBehaviour
         if (!amountNormalized)
             NormalizeAmountToSlot();
 
+        currentItem = item;
+
         if (iconImage != null)
         {
             iconImage.enabled = item != null && item.icon != null;
@@ -32,6 +45,21 @@ public class CraftingItemIconAmountUI : MonoBehaviour
 
         if (amountText != null)
             amountText.text = amount > 1 ? amount.ToString() : string.Empty;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (InventoryTooltipUI.Instance == null) return;
+
+        if (currentItem != null)
+            InventoryTooltipUI.Instance.RequestShow(currentItem.displayName);
+        else
+            InventoryTooltipUI.Instance.Hide();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        HideTooltip();
     }
 
     private void NormalizeAmountToSlot()
@@ -62,5 +90,19 @@ public class CraftingItemIconAmountUI : MonoBehaviour
 
         const float ratio = 0.42f;
         amountText.fontSize = Mathf.Clamp(Mathf.RoundToInt(slotRect.rect.height * ratio), 10, 60);
+    }
+
+    private void ApplyReadOnlyState()
+    {
+        if (!forceReadOnly) return;
+        if (cachedButton == null) return;
+
+        cachedButton.interactable = false;
+    }
+
+    private static void HideTooltip()
+    {
+        if (InventoryTooltipUI.Instance != null)
+            InventoryTooltipUI.Instance.Hide();
     }
 }

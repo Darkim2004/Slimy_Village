@@ -152,4 +152,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CraftingStationRecipes
   contextId: crafting_table
   recipes:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 7b71f0fe566e39148b6634f1ba30f85b, type: 2}

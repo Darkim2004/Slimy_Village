@@ -59,7 +59,7 @@ public class CraftingRecipeRowUI : MonoBehaviour
             selectedHighlight.SetActive(isSelected);
 
         if (selectButton != null)
-            selectButton.interactable = true;
+            selectButton.interactable = maxCraftable > 0;
 
         RefreshOutput(recipe);
         RefreshIngredients(recipe);
@@ -75,6 +75,17 @@ public class CraftingRecipeRowUI : MonoBehaviour
     {
         if (ingredientsRoot == null || ingredientSlotPrefab == null)
             return;
+
+        if (recipe == null || recipe.ingredients == null)
+        {
+            for (int i = 0; i < ingredientSlots.Count; i++)
+            {
+                ingredientSlots[i].Refresh(null, 0);
+                ingredientSlots[i].gameObject.SetActive(false);
+            }
+
+            return;
+        }
 
         int validCount = CountValidIngredients(recipe);
         EnsureIngredientSlots(validCount);
