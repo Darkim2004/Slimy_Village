@@ -128,7 +128,7 @@ public class CraftingRecipeRowUI : MonoBehaviour
     {
         while (ingredientSlots.Count < requiredCount)
         {
-            var slot = Instantiate(ingredientSlotPrefab, ingredientsRoot);
+            var slot = Instantiate(ingredientSlotPrefab, ingredientsRoot, false);
             ingredientSlots.Add(slot);
         }
 

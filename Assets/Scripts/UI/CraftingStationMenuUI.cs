@@ -211,7 +211,7 @@ public class CraftingStationMenuUI : PlaceableInteractionMenuBase
 
         for (int i = 0; i < activeRecipes.Count; i++)
         {
-            var row = Instantiate(recipeRowPrefab, recipesRoot);
+            var row = Instantiate(recipeRowPrefab, recipesRoot, false);
             row.Bind(this, i);
             recipeRows.Add(row);
         }

@@ -30,10 +30,6 @@ public class CraftingRecipeDefinition : ScriptableObject
     public ItemDefinition outputItem;
     [Min(1)] public int outputAmount = 1;
 
-    [Header("Visual")]
-    [Tooltip("Se nullo, la UI puo mostrare l'icona dell'output.")]
-    public Sprite icon;
-
     public string DisplayName
     {
         get
@@ -45,6 +41,11 @@ public class CraftingRecipeDefinition : ScriptableObject
                 : name;
         }
     }
+
+    /// <summary>
+    /// Icona ricetta derivata direttamente dall'item di output.
+    /// </summary>
+    public Sprite DisplayIcon => outputItem != null ? outputItem.icon : null;
 
     public bool IsValidRecipe()
     {

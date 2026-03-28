@@ -11,13 +11,20 @@ public class CraftingItemIconAmountUI : MonoBehaviour, IPointerEnterHandler, IPo
     private bool amountNormalized;
     private ItemDefinition currentItem;
     private Button cachedButton;
+    private bool warnedMissingIconImage;
 
     private void Awake()
     {
+        ResolveReferencesIfNeeded();
         cachedButton = GetComponent<Button>();
         ApplyReadOnlyState();
         NormalizeAmountToSlot();
         Refresh(null, 0);
+    }
+
+    private void OnValidate()
+    {
+        ResolveReferencesIfNeeded();
     }
 
     private void OnDisable()
@@ -32,6 +39,8 @@ public class CraftingItemIconAmountUI : MonoBehaviour, IPointerEnterHandler, IPo
 
     public void Refresh(ItemDefinition item, int amount)
     {
+        ResolveReferencesIfNeeded();
+
         if (!amountNormalized)
             NormalizeAmountToSlot();
 
@@ -39,8 +48,21 @@ public class CraftingItemIconAmountUI : MonoBehaviour, IPointerEnterHandler, IPo
 
         if (iconImage != null)
         {
-            iconImage.enabled = item != null && item.icon != null;
-            iconImage.sprite = item != null ? item.icon : null;
+            var sprite = item != null ? item.icon : null;
+            iconImage.enabled = sprite != null;
+            iconImage.sprite = sprite;
+
+            if (sprite != null)
+            {
+                var c = iconImage.color;
+                if (c.a <= 0.01f)
+                    iconImage.color = new Color(c.r, c.g, c.b, 1f);
+            }
+        }
+        else if (!warnedMissingIconImage)
+        {
+            warnedMissingIconImage = true;
+            Debug.LogWarning("[CraftingItemIconAmountUI] iconImage non assegnata nel prefab slot.", this);
         }
 
         if (amountText != null)
@@ -98,6 +120,61 @@ public class CraftingItemIconAmountUI : MonoBehaviour, IPointerEnterHandler, IPo
         if (cachedButton == null) return;
 
         cachedButton.interactable = false;
+    }
+
+    private void ResolveReferencesIfNeeded()
+    {
+        if (iconImage == null)
+            iconImage = FindBestImageReference();
+
+        if (amountText == null)
+            amountText = FindBestTextReference();
+    }
+
+    private Image FindBestImageReference()
+    {
+        var images = GetComponentsInChildren<Image>(true);
+        for (int i = 0; i < images.Length; i++)
+        {
+            var img = images[i];
+            if (img == null) continue;
+            if (img.gameObject == gameObject) continue;
+
+            string n = img.gameObject.name;
+            if (!string.IsNullOrEmpty(n) && n.ToLowerInvariant().Contains("icon"))
+                return img;
+        }
+
+        if (images.Length > 0)
+        {
+            for (int i = 0; i < images.Length; i++)
+            {
+                if (images[i] != null && images[i].gameObject != gameObject)
+                    return images[i];
+            }
+
+            return images[0];
+        }
+
+        return GetComponent<Image>();
+    }
+
+    private Text FindBestTextReference()
+    {
+        var texts = GetComponentsInChildren<Text>(true);
+        for (int i = 0; i < texts.Length; i++)
+        {
+            var txt = texts[i];
+            if (txt == null) continue;
+            string n = txt.gameObject.name;
+            if (string.IsNullOrEmpty(n)) continue;
+
+            string lower = n.ToLowerInvariant();
+            if (lower.Contains("amount") || lower.Contains("count") || lower.Contains("qty"))
+                return txt;
+        }
+
+        return texts.Length > 0 ? texts[0] : null;
     }
 
     private static void HideTooltip()
