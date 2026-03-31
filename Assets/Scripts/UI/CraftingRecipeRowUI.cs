@@ -138,6 +138,15 @@ public class CraftingRecipeRowUI : MonoBehaviour
 
     private void HandleClick()
     {
-        owner?.SelectRecipeByIndex(recipeIndex);
+        if (owner == null)
+            return;
+
+        if (owner.SelectedRecipeIndex == recipeIndex)
+        {
+            owner.CraftRecipeByIndex(recipeIndex, 1);
+            return;
+        }
+
+        owner.SelectRecipeByIndex(recipeIndex);
     }
 }

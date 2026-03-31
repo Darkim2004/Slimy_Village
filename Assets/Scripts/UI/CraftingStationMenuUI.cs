@@ -105,6 +105,11 @@ public class CraftingStationMenuUI : PlaceableInteractionMenuBase
     public bool CraftSelectedX5() => CraftSelectedAmount(5);
     public bool CraftSelectedX10() => CraftSelectedAmount(10);
 
+    // Unity Button.onClick in Inspector supports void methods.
+    public void OnCraftSelectedX1ButtonClicked() => CraftSelectedX1();
+    public void OnCraftSelectedX5ButtonClicked() => CraftSelectedX5();
+    public void OnCraftSelectedX10ButtonClicked() => CraftSelectedX10();
+
     public bool CraftSelectedMax()
     {
         if (selectedRecipeIndex < 0 || selectedRecipeIndex >= activeRecipes.Count)
@@ -116,6 +121,9 @@ public class CraftingStationMenuUI : PlaceableInteractionMenuBase
         return CraftSelectedAmount(max);
     }
 
+    // Unity Button.onClick in Inspector supports void methods.
+    public void OnCraftSelectedMaxButtonClicked() => CraftSelectedMax();
+
     public bool CraftSelectedAmount(int amount)
     {
         if (playerInventory == null || amount <= 0) return false;
@@ -123,6 +131,9 @@ public class CraftingStationMenuUI : PlaceableInteractionMenuBase
 
         var recipe = activeRecipes[selectedRecipeIndex];
         var result = CraftingService.TryCraft(playerInventory, recipe, amount);
+
+        if (!result.Success)
+            Debug.LogWarning($"[CraftingStationMenuUI] Craft fallito: {result.Reason}", this);
 
         RefreshCraftableStates();
         OnCraftExecuted?.Invoke(result, recipe);
