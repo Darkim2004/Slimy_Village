@@ -46,6 +46,10 @@ public class ItemDefinition : ScriptableObject
     [Tooltip("True se questo item può colpire nodi risorsa (alberi/rocce).")]
     public bool isHarvestTool;
 
+    [Tooltip("Livello del tool per raccolta risorse (ignorato se isHarvestTool è false).")]
+    [Min(0)]
+    public int harvestToolLevel = 1;
+
     [Header("Armor")]
     [Tooltip("True se questo item è un'armatura equipaggiabile nello slot armatura.")]
     public bool isArmor;
@@ -75,6 +79,9 @@ public class ItemDefinition : ScriptableObject
     /// <summary>True se l'item è un tool valido per raccolta/mining.</summary>
     public bool IsHarvestTool => isHarvestTool;
 
+    /// <summary>Livello del harvest tool. Ritorna 0 per non-tool, almeno 1 per harvest tools.</summary>
+    public int HarvestToolLevel => isHarvestTool ? Mathf.Max(1, harvestToolLevel) : 0;
+
     /// <summary>True se l'item è un elemento costruibile.</summary>
     public bool IsBuilding => category == ItemCategory.Building;
 
@@ -82,5 +89,6 @@ public class ItemDefinition : ScriptableObject
     {
         if (!isStackable) maxStack = 1;
         if (maxStack < 1) maxStack = 1;
+        if (harvestToolLevel < 0) harvestToolLevel = 0;
     }
 }

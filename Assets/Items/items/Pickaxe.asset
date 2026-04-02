@@ -19,6 +19,7 @@ MonoBehaviour:
   icon: {fileID: -488721925442295091, guid: d9858c6d0fde7e84aa249275650b1723, type: 3}
   attackDamage: 0
   isHarvestTool: 1
+  harvestToolLevel: 2
   isArmor: 0
   armorDefense: 0
   placeableData: {fileID: 0}

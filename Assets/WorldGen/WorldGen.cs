@@ -172,11 +172,21 @@ public class WorldGenTilemap : MonoBehaviour
     [Tooltip("Loot table per rocce (opzionale).")]
     public LootTable rockLootTable;
 
-    [Tooltip("Se true, i nodi richiedono un tool valido equipaggiato per subire danno.")]
-    public bool requireHarvestToolForDamage = true;
+    [Min(0)]
+    [Tooltip("Livello harvesting richiesto per abbattere alberi normali.")]
+    public int treeRequiredHarvestLevel = 1;
 
-    [Tooltip("Se true, i cespugli richiedono un tool valido equipaggiato per subire danno.")]
-    public bool bushRequireHarvestTool = false;
+    [Min(0)]
+    [Tooltip("Livello harvesting richiesto per abbattere alberi innevati.")]
+    public int snowTreeRequiredHarvestLevel = 1;
+
+    [Min(0)]
+    [Tooltip("Livello harvesting richiesto per distruggere cespugli (0 = anche a mani nude).")]
+    public int bushRequiredHarvestLevel = 0;
+
+    [Min(0)]
+    [Tooltip("Livello harvesting richiesto per rompere rocce.")]
+    public int rockRequiredHarvestLevel = 2;
 
     [Header("Height Noise (Ocean vs Land)")]
     [Tooltip("Higher = more detail; lower = larger blobs")]
@@ -509,7 +519,7 @@ public class WorldGenTilemap : MonoBehaviour
             go.transform.localScale = new Vector3(s, s, 1f);
         }
 
-        ConfigureHarvestableNode(go, treeHitPoints, treeLootTable);
+        ConfigureHarvestableNode(go, treeHitPoints, treeLootTable, treeRequiredHarvestLevel);
     }
 
     private void SpawnBushPrefab(Vector3Int cell)
@@ -549,7 +559,7 @@ public class WorldGenTilemap : MonoBehaviour
 
         EnsureBushHitCollider(go);
 
-        ConfigureHarvestableNode(go, bushHitPoints, bushLootTable, bushRequireHarvestTool);
+        ConfigureHarvestableNode(go, bushHitPoints, bushLootTable, bushRequiredHarvestLevel);
     }
 
     private void SpawnSnowTreePrefab(Vector3Int cell)
@@ -590,7 +600,7 @@ public class WorldGenTilemap : MonoBehaviour
             go.transform.localScale = new Vector3(s, s, 1f);
         }
 
-        ConfigureHarvestableNode(go, snowTreeHitPoints, snowTreeLootTable);
+        ConfigureHarvestableNode(go, snowTreeHitPoints, snowTreeLootTable, snowTreeRequiredHarvestLevel);
     }
 
     private void SpawnRockPrefab(Vector3Int cell)
@@ -630,15 +640,10 @@ public class WorldGenTilemap : MonoBehaviour
             go.transform.localScale = new Vector3(s, s, 1f);
         }
 
-        ConfigureHarvestableNode(go, rockHitPoints, rockLootTable);
+        ConfigureHarvestableNode(go, rockHitPoints, rockLootTable, rockRequiredHarvestLevel);
     }
 
-    private void ConfigureHarvestableNode(GameObject go, int hp, LootTable lootTable)
-    {
-        ConfigureHarvestableNode(go, hp, lootTable, requireHarvestToolForDamage);
-    }
-
-    private void ConfigureHarvestableNode(GameObject go, int hp, LootTable lootTable, bool requireHarvestTool)
+    private void ConfigureHarvestableNode(GameObject go, int hp, LootTable lootTable, int requiredHarvestLevel)
     {
         if (!makeSpawnedPropsHarvestable || go == null)
             return;
@@ -647,7 +652,8 @@ public class WorldGenTilemap : MonoBehaviour
         if (node == null)
             node = go.AddComponent<HarvestableNode>();
 
-        node.requireHarvestTool = requireHarvestTool;
+        node.requiredHarvestLevel = Mathf.Max(0, requiredHarvestLevel);
+        node.requireHarvestTool = node.requiredHarvestLevel > 0;
         node.destroyOnDeath = true;
         node.lootTable = lootTable;
         node.SetMaxHpAndReset(Mathf.Max(1, hp));

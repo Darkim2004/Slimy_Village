@@ -27,6 +27,9 @@ public class HotbarEffectManager : MonoBehaviour
     /// <summary>True se lo slot attivo contiene un tool valido per nodi risorsa.</summary>
     public bool IsHarvestToolEquipped { get; private set; }
 
+    /// <summary>Livello del harvest tool equipaggiato (0 se nessun tool).</summary>
+    public int HarvestToolLevel { get; private set; }
+
     /// <summary>La definizione dell'item attivo (null se slot vuoto).</summary>
     public ItemDefinition ActiveItemDef { get; private set; }
 
@@ -73,7 +76,8 @@ public class HotbarEffectManager : MonoBehaviour
         var newCategory = def != null ? def.category : ItemCategory.None;
         int newDamage = (def != null && def.IsWeapon) ? def.attackDamage : 0;
         bool newBuild = def != null && def.IsBuilding;
-        bool newHarvestTool = def != null && def.IsHarvestTool;
+        int newHarvestToolLevel = def != null ? def.HarvestToolLevel : 0;
+        bool newHarvestTool = newHarvestToolLevel > 0;
 
         bool categoryChanged = newCategory != ActiveCategory;
         bool buildChanged = newBuild != IsBuildModeRequested;
@@ -82,6 +86,7 @@ public class HotbarEffectManager : MonoBehaviour
         WeaponBonusDamage = newDamage;
         IsBuildModeRequested = newBuild;
         IsHarvestToolEquipped = newHarvestTool;
+        HarvestToolLevel = newHarvestToolLevel;
 
         if (categoryChanged)
             OnCategoryChanged?.Invoke(ActiveCategory);

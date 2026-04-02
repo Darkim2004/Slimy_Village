@@ -14,6 +14,10 @@ public class HarvestableNode : MonoBehaviour
     [Tooltip("Se true, riceve danno solo se l'attaccante ha un tool valido equipaggiato.")]
     public bool requireHarvestTool = true;
 
+    [Min(0)]
+    [Tooltip("Livello di raccolta richiesto per danneggiare questo nodo. Se > 0, sovrascrive requireHarvestTool.")]
+    public int requiredHarvestLevel = 0;
+
     [Tooltip("Se true, distrugge il GameObject quando gli HP arrivano a zero.")]
     public bool destroyOnDeath = true;
 
@@ -37,7 +41,13 @@ public class HarvestableNode : MonoBehaviour
     public bool TryTakeDamage(int amount, GameObject attacker)
     {
         if (IsDestroyed) return false;
-        if (requireHarvestTool && !HasValidHarvestTool(attacker)) return false;
+
+        int effectiveRequired = requiredHarvestLevel > 0
+            ? requiredHarvestLevel
+            : (requireHarvestTool ? 1 : 0);
+
+        if (effectiveRequired > 0 && GetAttackerHarvestToolLevel(attacker) < effectiveRequired)
+            return false;
 
         int effective = Mathf.Max(1, Mathf.Abs(amount));
         _currentHp -= effective;
@@ -57,20 +67,21 @@ public class HarvestableNode : MonoBehaviour
         return true;
     }
 
-    private bool HasValidHarvestTool(GameObject attacker)
+    private int GetAttackerHarvestToolLevel(GameObject attacker)
     {
-        if (attacker == null) return false;
+        if (attacker == null) return 0;
 
         HotbarEffectManager manager = attacker.GetComponentInChildren<HotbarEffectManager>();
         if (manager == null)
             manager = attacker.GetComponentInParent<HotbarEffectManager>();
 
-        if (manager == null) return false;
-        return manager.IsHarvestToolEquipped;
+        if (manager == null) return 0;
+        return manager.HarvestToolLevel;
     }
 
     private void OnValidate()
     {
         if (maxHp < 1) maxHp = 1;
+        if (requiredHarvestLevel < 0) requiredHarvestLevel = 0;
     }
 }
