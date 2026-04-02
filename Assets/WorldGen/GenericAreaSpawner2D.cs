@@ -124,8 +124,19 @@ public class GenericAreaSpawner2D : MonoBehaviour
 
     private bool IsTimeAllowed(SpawnTimeRule rule)
     {
-        // per ora non hai il tempo: tutto consentito.
-        // Quando lo aggiungi, cambi solo qui.
-        return rule == SpawnTimeRule.Always || rule == SpawnTimeRule.Day || rule == SpawnTimeRule.Night;
+        if (rule == SpawnTimeRule.Always)
+            return true;
+
+        // DayNightScript.NightFactor: 0 = giorno, 1 = notte.
+        // Soglia 0.5 per trattare alba/tramonto in modo bilanciato.
+        bool isNight = DayNightScript.NightFactor >= 0.5f;
+
+        if (rule == SpawnTimeRule.Night)
+            return isNight;
+
+        if (rule == SpawnTimeRule.Day)
+            return !isNight;
+
+        return true;
     }
 }

@@ -31,6 +31,7 @@ public class MeleeAttack2D : MonoBehaviour
     private float attackDuration;
     private float attackElapsed;
     private bool active;
+    private int currentAttackDamage;
 
     private BoxCollider2D box;
 
@@ -55,7 +56,7 @@ public class MeleeAttack2D : MonoBehaviour
         attackElapsed = 0f;
         active = false;
 
-        baseDamage = damage;
+        currentAttackDamage = damage;
 
         PositionHitbox4(facingDir);
         hitbox.End(); // parte spenta
@@ -75,7 +76,7 @@ public class MeleeAttack2D : MonoBehaviour
         if (shouldBeActive && !active)
         {
             active = true;
-            hitbox.Begin(transform, baseDamage);
+            hitbox.Begin(transform, currentAttackDamage);
         }
         else if (!shouldBeActive && active)
         {

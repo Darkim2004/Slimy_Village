@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 4217704237579498679}
   - component: {fileID: 8642761490611947822}
   - component: {fileID: 3923776873343710323}
-  - component: {fileID: 290928077391342749}
   - component: {fileID: 1335603603578274472}
+  - component: {fileID: 290928077391342749}
   m_Layer: 7
   m_Name: SlimeNormal
   m_TagString: Untagged
@@ -195,6 +195,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHp: 3
   inventory: {fileID: 0}
+--- !u!114 &1335603603578274472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9049272925549827451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3c596ebf51206d4daddc07ae8fdbc9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YSort
+  feet: {fileID: 0}
+  precision: 100
+  orderOffset: 0
 --- !u!114 &290928077391342749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,22 +237,8 @@ MonoBehaviour:
   wanderRadius: 3.5
   idleTimeRange: {x: 0.6, y: 1.8}
   moveTimeRange: {x: 0.8, y: 2}
-  runChance: 0.15
+  runChance: 0.1
   aoeDamageTargets:
     serializedVersion: 2
     m_Bits: 64
---- !u!114 &1335603603578274472
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9049272925549827451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3c596ebf51206d4daddc07ae8fdbc9a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::YSort
-  feet: {fileID: 0}
-  precision: 100
-  orderOffset: 0
+  drawDebugHitboxesAlways: 0
