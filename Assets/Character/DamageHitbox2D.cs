@@ -50,14 +50,6 @@ public class DamageHitbox2D : MonoBehaviour
 
     private void TryDamage(Collider2D other)
     {
-        if (ignoreTriggers && other.isTrigger) return;
-
-        bool hasLayerFilter = targetLayers.value != 0;
-        if (hasLayerFilter && ((1 << other.gameObject.layer) & targetLayers) == 0) return;
-
-        // evita autocolpi
-        if (_ownerRoot != null && other.transform.root == _ownerRoot) return;
-
         var harvestable = other.GetComponentInParent<HarvestableNode>();
         if (harvestable != null && !harvestable.IsDestroyed)
         {
@@ -69,6 +61,14 @@ public class DamageHitbox2D : MonoBehaviour
 
             return;
         }
+
+        if (ignoreTriggers && other.isTrigger) return;
+
+        bool hasLayerFilter = targetLayers.value != 0;
+        if (hasLayerFilter && ((1 << other.gameObject.layer) & targetLayers) == 0) return;
+
+        // evita autocolpi
+        if (_ownerRoot != null && other.transform.root == _ownerRoot) return;
 
         var health = other.GetComponentInParent<Health>();
         if (health == null || health.IsDead) return;

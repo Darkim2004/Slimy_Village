@@ -63,6 +63,9 @@ public class WorldGenTilemap : MonoBehaviour
     [Tooltip("Prefab per alberi innevati (SpriteRenderer + tuo YSort sul prefab).")]
     public GameObject snowTreePrefab;
 
+    [Tooltip("Prefab per cespugli di pianura (SpriteRenderer + tuo YSort sul prefab).")]
+    public GameObject bushPrefab;
+
     [Tooltip("Prefab per rocce grandi (spawnate con regole dedicate).")]
     public GameObject rockPrefab;
 
@@ -75,8 +78,23 @@ public class WorldGenTilemap : MonoBehaviour
     [Tooltip("Offset di spawn per alberi innevati (per correggere pivot/ancoraggio).")]
     public Vector3 snowTreeSpawnOffset = Vector3.zero;
 
+    [Tooltip("Offset di spawn per cespugli (per correggere pivot/ancoraggio).")]
+    public Vector3 bushSpawnOffset = Vector3.zero;
+
     [Tooltip("Offset di spawn per rocce prefab (per quando le implementerai).")]
     public Vector3 rockSpawnOffset = Vector3.zero;
+
+    [Header("Decor Placement Jitter")]
+    [Tooltip("Se true, applica un leggero offset casuale (deterministico) ai decor prefab spawnati.")]
+    public bool decorJitterEnabled = true;
+
+    [Min(0f)]
+    [Tooltip("Offset massimo assoluto su asse X per i decor prefab (in unità mondo).")]
+    public float decorJitterMaxX = 0.12f;
+
+    [Min(0f)]
+    [Tooltip("Offset massimo assoluto su asse Y per i decor prefab (in unità mondo).")]
+    public float decorJitterMaxY = 0.08f;
 
     // -----------------------
     // NEW: Tree variants + anti-monotony
@@ -107,6 +125,19 @@ public class WorldGenTilemap : MonoBehaviour
     [Tooltip("Intervallo di scala applicato all'albero innevato (es. 0.95..1.05).")]
     public Vector2 snowTreeScaleRange = new Vector2(0.95f, 1.05f);
 
+    [Header("Bush Variants (Option A)")]
+    [Tooltip("Se assegnato, lo script sostituisce la sprite del prefab del cespuglio con una di queste varianti (deterministico).")]
+    public Sprite[] bushVariantSprites;
+
+    [Tooltip("Se true, applica flipX deterministico per variare l'aspetto dei cespugli.")]
+    public bool bushAllowFlipX = true;
+
+    [Tooltip("Se true, applica una scala deterministica nell'intervallo sotto (per evitare monotonia).")]
+    public bool bushAllowScale = true;
+
+    [Tooltip("Intervallo di scala applicato al cespuglio (es. 0.9..1.1).")]
+    public Vector2 bushScaleRange = new Vector2(0.9f, 1.1f);
+
     [Header("Rock Prefab Variants (Option A)")]
     [Tooltip("Se assegnato, lo script sostituisce la sprite del prefab con una di queste varianti (deterministico).")]
     public Sprite[] rockVariantSprites;
@@ -121,11 +152,12 @@ public class WorldGenTilemap : MonoBehaviour
     public Vector2 rockScaleRange = new Vector2(0.9f, 1.1f);
 
     [Header("Harvestable Nodes")]
-    [Tooltip("Se true, alberi e rocce spawnati diventano distruttibili con HP.")]
+    [Tooltip("Se true, alberi, cespugli e rocce spawnati diventano distruttibili con HP.")]
     public bool makeSpawnedPropsHarvestable = true;
 
     [Min(1)] public int treeHitPoints = 3;
     [Min(1)] public int snowTreeHitPoints = 3;
+    [Min(1)] public int bushHitPoints = 2;
     [Min(1)] public int rockHitPoints = 5;
 
     [Tooltip("Loot table per alberi normali (opzionale).")]
@@ -134,11 +166,17 @@ public class WorldGenTilemap : MonoBehaviour
     [Tooltip("Loot table per alberi innevati (opzionale).")]
     public LootTable snowTreeLootTable;
 
+    [Tooltip("Loot table per cespugli (opzionale).")]
+    public LootTable bushLootTable;
+
     [Tooltip("Loot table per rocce (opzionale).")]
     public LootTable rockLootTable;
 
     [Tooltip("Se true, i nodi richiedono un tool valido equipaggiato per subire danno.")]
     public bool requireHarvestToolForDamage = true;
+
+    [Tooltip("Se true, i cespugli richiedono un tool valido equipaggiato per subire danno.")]
+    public bool bushRequireHarvestTool = false;
 
     [Header("Height Noise (Ocean vs Land)")]
     [Tooltip("Higher = more detail; lower = larger blobs")]
@@ -173,6 +211,13 @@ public class WorldGenTilemap : MonoBehaviour
     [Range(0f, 1f)] public float snowTreeInPatchChance = 0.10f;  // densità dentro patch
     public float snowTreeScatterScale = 14f;
 
+    [Header("Bush Patches (Plains)")]
+    [Tooltip("Basso = macchie più grandi di cespugli.")]
+    public float bushPatchScale = 1.35f;
+    [Range(0f, 1f)] public float bushPatchThreshold = 0.74f;
+    [Range(0f, 1f)] public float bushInPatchChance = 0.12f;
+    public float bushScatterScale = 13f;
+
     [Header("Big Rock Patches (Plains)")]
     [Tooltip("Basso = macchie grandi di rocce prefab.")]
     public float rockPrefabPatchScale = 1.1f;
@@ -191,7 +236,7 @@ public class WorldGenTilemap : MonoBehaviour
     public int clumpRadius = 1;
 
     private enum GroundType { Ocean, Plains, Snomy }
-    private enum DecorType { None, Tree, SnowTree, BigRock, Grass }
+    private enum DecorType { None, Tree, SnowTree, Bush, BigRock, Grass }
 
     private struct TileData
     {
@@ -221,6 +266,10 @@ public class WorldGenTilemap : MonoBehaviour
         // --- TREES: patch mask + scatter ---
         float[,] treePatchMap = GenerateNoiseMap(width, height, treePatchScale, 2, 0.5f, 2f, worldOffset + new Vector2(2011, 3011), seed + 20);
         float[,] treeScatterMap = GenerateNoiseMap(width, height, treeScatterScale, 2, 0.5f, 2f, worldOffset + new Vector2(2012, 3012), seed + 21);
+
+        // --- BUSHES: patch mask + scatter ---
+        float[,] bushPatchMap = GenerateNoiseMap(width, height, bushPatchScale, 2, 0.5f, 2f, worldOffset + new Vector2(2021, 3021), seed + 24);
+        float[,] bushScatterMap = GenerateNoiseMap(width, height, bushScatterScale, 2, 0.5f, 2f, worldOffset + new Vector2(2022, 3022), seed + 25);
 
         // --- SNOW TREES: patch mask + scatter ---
         float[,] snowTreePatchMap = GenerateNoiseMap(width, height, snowTreePatchScale, 2, 0.5f, 2f, worldOffset + new Vector2(2111, 3111), seed + 22);
@@ -264,11 +313,12 @@ public class WorldGenTilemap : MonoBehaviour
                 data[x, y].ground,
                 x, y,
                 treePatchMap, treeScatterMap,
+                bushPatchMap, bushScatterMap,
                 snowTreePatchMap, snowTreeScatterMap,
                 rockPatchMap, rockScatterMap
             );
 
-            if (d == DecorType.Tree || d == DecorType.SnowTree || d == DecorType.BigRock)
+            if (d == DecorType.Tree || d == DecorType.SnowTree || d == DecorType.Bush || d == DecorType.BigRock)
             {
                 if (avoidDecorClumps && HasNearbySameDecor(data, x, y, d, clumpRadius))
                     d = DecorType.None;
@@ -321,6 +371,12 @@ public class WorldGenTilemap : MonoBehaviour
                 if (treeCollisionTilemap != null && snowTreeCollisionTile != null)
                     treeCollisionTilemap.SetTile(cell, snowTreeCollisionTile);
                 continue; // non mettere tile albero
+            }
+
+            if (data[x, y].decor == DecorType.Bush)
+            {
+                SpawnBushPrefab(cell);
+                continue; // non mettere tile cespuglio
             }
 
             if (data[x, y].decor == DecorType.BigRock)
@@ -420,7 +476,7 @@ public class WorldGenTilemap : MonoBehaviour
     {
         if (treePrefab == null) return;
 
-        Vector3 pos = groundTilemap.GetCellCenterWorld(cell) + treeSpawnOffset;
+        Vector3 pos = groundTilemap.GetCellCenterWorld(cell) + treeSpawnOffset + GetDecorJitter(cell, 12001, 12002);
         Transform parent = propsParent != null ? propsParent : transform;
 
         GameObject go = Instantiate(treePrefab, pos, Quaternion.identity, parent);
@@ -456,11 +512,51 @@ public class WorldGenTilemap : MonoBehaviour
         ConfigureHarvestableNode(go, treeHitPoints, treeLootTable);
     }
 
+    private void SpawnBushPrefab(Vector3Int cell)
+    {
+        if (bushPrefab == null) return;
+
+        Vector3 pos = groundTilemap.GetCellCenterWorld(cell) + bushSpawnOffset + GetDecorJitter(cell, 13001, 13002);
+        Transform parent = propsParent != null ? propsParent : transform;
+
+        GameObject go = Instantiate(bushPrefab, pos, Quaternion.identity, parent);
+
+        SpriteRenderer sr = go.GetComponentInChildren<SpriteRenderer>();
+        if (sr != null && bushVariantSprites != null && bushVariantSprites.Length > 0)
+        {
+            int idx = Hash(cell.x, cell.y, 47777) % bushVariantSprites.Length;
+            sr.sprite = bushVariantSprites[idx];
+        }
+
+        if (sr != null && bushAllowFlipX)
+        {
+            bool flip = (Hash(cell.x, cell.y, 48888) & 1) == 1;
+            sr.flipX = flip;
+        }
+
+        if (bushAllowScale)
+        {
+            float minS = Mathf.Min(bushScaleRange.x, bushScaleRange.y);
+            float maxS = Mathf.Max(bushScaleRange.x, bushScaleRange.y);
+            minS = Mathf.Max(0.01f, minS);
+            maxS = Mathf.Max(minS, maxS);
+
+            float t = White01(cell.x, cell.y, 49999);
+            float s = Mathf.Lerp(minS, maxS, t);
+
+            go.transform.localScale = new Vector3(s, s, 1f);
+        }
+
+        EnsureBushHitCollider(go);
+
+        ConfigureHarvestableNode(go, bushHitPoints, bushLootTable, bushRequireHarvestTool);
+    }
+
     private void SpawnSnowTreePrefab(Vector3Int cell)
     {
         if (snowTreePrefab == null) return;
 
-        Vector3 pos = groundTilemap.GetCellCenterWorld(cell) + snowTreeSpawnOffset;
+        Vector3 pos = groundTilemap.GetCellCenterWorld(cell) + snowTreeSpawnOffset + GetDecorJitter(cell, 14001, 14002);
         Transform parent = propsParent != null ? propsParent : transform;
 
         GameObject go = Instantiate(snowTreePrefab, pos, Quaternion.identity, parent);
@@ -501,7 +597,7 @@ public class WorldGenTilemap : MonoBehaviour
     {
         if (rockPrefab == null) return;
 
-        Vector3 pos = groundTilemap.GetCellCenterWorld(cell) + rockSpawnOffset;
+        Vector3 pos = groundTilemap.GetCellCenterWorld(cell) + rockSpawnOffset + GetDecorJitter(cell, 15001, 15002);
         Transform parent = propsParent != null ? propsParent : transform;
 
         GameObject go = Instantiate(rockPrefab, pos, Quaternion.identity, parent);
@@ -539,6 +635,11 @@ public class WorldGenTilemap : MonoBehaviour
 
     private void ConfigureHarvestableNode(GameObject go, int hp, LootTable lootTable)
     {
+        ConfigureHarvestableNode(go, hp, lootTable, requireHarvestToolForDamage);
+    }
+
+    private void ConfigureHarvestableNode(GameObject go, int hp, LootTable lootTable, bool requireHarvestTool)
+    {
         if (!makeSpawnedPropsHarvestable || go == null)
             return;
 
@@ -546,7 +647,7 @@ public class WorldGenTilemap : MonoBehaviour
         if (node == null)
             node = go.AddComponent<HarvestableNode>();
 
-        node.requireHarvestTool = requireHarvestToolForDamage;
+        node.requireHarvestTool = requireHarvestTool;
         node.destroyOnDeath = true;
         node.lootTable = lootTable;
         node.SetMaxHpAndReset(Mathf.Max(1, hp));
@@ -564,6 +665,18 @@ public class WorldGenTilemap : MonoBehaviour
             Destroy(parent.GetChild(i).gameObject);
 #endif
         }
+    }
+
+    private void EnsureBushHitCollider(GameObject go)
+    {
+        if (go == null) return;
+
+        Collider2D col = go.GetComponentInChildren<Collider2D>();
+        if (col == null)
+            col = go.AddComponent<BoxCollider2D>();
+
+        if (col != null)
+            col.isTrigger = true;
     }
 
     // -----------------------
@@ -589,6 +702,26 @@ public class WorldGenTilemap : MonoBehaviour
         return (Hash(x, y, salt) % 100000) / 100000f;
     }
 
+    private float WhiteSigned(int x, int y, int salt)
+    {
+        return White01(x, y, salt) * 2f - 1f;
+    }
+
+    private Vector3 GetDecorJitter(Vector3Int cell, int saltX, int saltY)
+    {
+        if (!decorJitterEnabled)
+            return Vector3.zero;
+
+        float maxX = Mathf.Max(0f, decorJitterMaxX);
+        float maxY = Mathf.Max(0f, decorJitterMaxY);
+        if (maxX <= 0f && maxY <= 0f)
+            return Vector3.zero;
+
+        float jx = WhiteSigned(cell.x, cell.y, saltX) * maxX;
+        float jy = WhiteSigned(cell.x, cell.y, saltY) * maxY;
+        return new Vector3(jx, jy, 0f);
+    }
+
     private TileBase PickVariant(TileBase[] variants, int x, int y, int salt)
     {
         if (variants == null || variants.Length == 0) return null;
@@ -607,6 +740,7 @@ public class WorldGenTilemap : MonoBehaviour
         GroundType ground,
         int x, int y,
         float[,] treePatchMap, float[,] treeScatterMap,
+        float[,] bushPatchMap, float[,] bushScatterMap,
         float[,] snowTreePatchMap, float[,] snowTreeScatterMap,
         float[,] rockPatchMap, float[,] rockScatterMap
     )
@@ -622,6 +756,16 @@ public class WorldGenTilemap : MonoBehaviour
 
                 if (patch > treePatchThreshold && scatter < treeInPatchChance)
                     return DecorType.Tree;
+            }
+
+            // BUSHES: patch mask + scatter (cespugli di pianura)
+            if (bushPrefab != null)
+            {
+                float patch = bushPatchMap[x, y];
+                float scatter = bushScatterMap[x, y];
+
+                if (patch > bushPatchThreshold && scatter < bushInPatchChance)
+                    return DecorType.Bush;
             }
 
             // BIG ROCKS: patch mask + scatter (prefab)
