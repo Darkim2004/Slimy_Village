@@ -7,11 +7,12 @@
 - [X] Aggiungere interazioni con blocchi piazzabili come chest e faló
 - [X] Aggiungi interazione con alberi/rocce
 - [ ] Implementare un sistema di salvataggio
-- [ ] Aggiungere nuovi nemici
+- [ ] Aggiungere nuovi nemici 1/2
 - [ ] Aggiungere menu principale
 - [X] Aggiungere sistema di crafting
 - [ ] Aggiungi ricette varie
 - [X] Aggiungere sistema di piazzamento blocchi
+- [ ] Agiungi boss
 
 ## Refactoring e Ottimizzazione
 - [ ] Worldgen
