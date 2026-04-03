@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerTopDown : EntityBase2D
 {
@@ -224,7 +225,7 @@ public class PlayerTopDown : EntityBase2D
         Vector2 input = new Vector2(x, y);
 
         bool run = Input.GetKey(runKey);
-        bool attackPressed = Input.GetKeyDown(attackKey);
+        bool attackPressed = Input.GetKeyDown(attackKey) || IsMouseAttackPressed();
 
         if (attackPressed)
         {
@@ -288,6 +289,8 @@ public class PlayerTopDown : EntityBase2D
     // ══════════════════════════════════════════════════════════
     private void UpdateInteraction()
     {
+        bool interactPressed = Input.GetKeyDown(interactKey) || IsMouseInteractPressed();
+
         if (state == State.Death || state == State.Hurt)
         {
             CloseActiveInteractionMenu();
@@ -305,7 +308,7 @@ public class PlayerTopDown : EntityBase2D
 
         // Toggle robusto: se qualunque menu di interazione è aperto,
         // premere E lo richiude anche se il riferimento attivo non è più valido.
-        if (Input.GetKeyDown(interactKey) && IsAnyInteractionMenuOpen())
+        if (interactPressed && IsAnyInteractionMenuOpen())
         {
             CloseAllInteractionMenus();
             if (WorldInteractionTooltipUI.Instance != null)
@@ -322,7 +325,7 @@ public class PlayerTopDown : EntityBase2D
 
         if (activeInteractionMenu != null && activeInteractionMenu.IsOpen)
         {
-            if (Input.GetKeyDown(interactKey))
+            if (interactPressed)
                 CloseActiveInteractionMenu();
 
             if (WorldInteractionTooltipUI.Instance != null)
@@ -343,7 +346,7 @@ public class PlayerTopDown : EntityBase2D
                 WorldInteractionTooltipUI.Instance.Show(text, currentInteractable.transform);
             }
 
-            if (Input.GetKeyDown(interactKey))
+            if (interactPressed)
             {
                 var menuToOpen = ResolveMenuFor(currentInteractable);
 
@@ -361,6 +364,31 @@ public class PlayerTopDown : EntityBase2D
                 WorldInteractionTooltipUI.Instance.Hide();
             }
         }
+    }
+
+    private bool IsMouseAttackPressed()
+    {
+        if (!Input.GetMouseButtonDown(0))
+            return false;
+
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            return false;
+
+        return true;
+    }
+
+    private bool IsMouseInteractPressed()
+    {
+        if (!Input.GetMouseButtonDown(1))
+            return false;
+
+        if (hotbarEffects != null && hotbarEffects.IsBuildModeRequested)
+            return false;
+
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            return false;
+
+        return true;
     }
 
     private PlaceableInteractionMenuBase ResolveMenuFor(PlacedObject interactable)
