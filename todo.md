@@ -12,7 +12,7 @@
 - [X] Aggiungere sistema di crafting
 - [ ] Aggiungi ricette varie
 - [X] Aggiungere sistema di piazzamento blocchi
-- [ ] Agiungi boss
+- [ ] Aggiungi boss
 
 ## Refactoring e Ottimizzazione
 - [ ] Worldgen

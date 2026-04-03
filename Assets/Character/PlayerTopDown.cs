@@ -25,6 +25,7 @@ public class PlayerTopDown : EntityBase2D
     private PlaceableInteractionMenuBase activeInteractionMenu;
     private readonly Dictionary<PlaceableInteractionMenuBase, PlaceableInteractionMenuBase> menuInstances =
         new Dictionary<PlaceableInteractionMenuBase, PlaceableInteractionMenuBase>();
+    private WorldGenTilemap worldGen;
 
     [Header("Respawn")]
     [Tooltip("Secondi di attesa dopo la morte prima del respawn.")]
@@ -48,15 +49,15 @@ public class PlayerTopDown : EntityBase2D
     private void Start()
     {
         hotbarEffects = FindFirstObjectByType<HotbarEffectManager>();
+        worldGen = FindFirstObjectByType<WorldGenTilemap>();
 
         if (interactionMenu == null)
             interactionMenu = FindFirstObjectByType<WorldInteractionMenuPlaceholderUI>();
 
         // Inizializza respawnPoint dal WorldGen
-        var world = FindFirstObjectByType<WorldGenTilemap>();
-        if (world != null && world.HasGenerated)
+        if (worldGen != null && worldGen.HasGenerated)
         {
-            respawnPoint = world.WorldSpawnPoint;
+            respawnPoint = worldGen.WorldSpawnPoint;
             // Posiziona il player allo spawn iniziale
             transform.position = respawnPoint;
         }
@@ -64,6 +65,28 @@ public class PlayerTopDown : EntityBase2D
         {
             respawnPoint = transform.position;
         }
+    }
+
+    private WorldGenTilemap GetWorldGen()
+    {
+        if (worldGen == null)
+            worldGen = FindFirstObjectByType<WorldGenTilemap>();
+
+        return worldGen;
+    }
+
+    private bool CanMoveTo(Vector2 velocity)
+    {
+        if (velocity.sqrMagnitude <= 0.0001f)
+            return true;
+
+        var world = GetWorldGen();
+        if (world == null || world.GroundTilemap == null)
+            return true;
+
+        Vector2 nextPosition = rb.position + velocity * Time.fixedDeltaTime;
+        Vector3Int nextCell = world.GroundTilemap.WorldToCell(nextPosition);
+        return world.IsLandCell(nextCell.x, nextCell.y);
     }
 
     private void OnDestroy()
@@ -222,6 +245,14 @@ public class PlayerTopDown : EntityBase2D
             Vector2 dir = input.normalized;
             float speed = run ? runSpeed : walkSpeed;
             Vector2 vel = dir * speed;
+
+            if (!CanMoveTo(vel))
+            {
+                EnterIdle();
+                if (rb != null)
+                    rb.linearVelocity = Vector2.zero;
+                return;
+            }
 
             if (run) EnterRun(vel);
             else EnterWalk(vel);
