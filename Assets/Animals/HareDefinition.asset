@@ -15,7 +15,7 @@ MonoBehaviour:
   timeRule: 0
   allowedBiomes: 0100000002000000
   weight: 1
-  lootTable: {fileID: 0}
+  lootTable: {fileID: 11400000, guid: bb194e1edbfc44443a19161990a9ef16, type: 2}
   animatorController: {fileID: 0}
   wanderRadius: 5
   idleTimeRange: {x: 0.7, y: 1.8}

@@ -74,7 +74,7 @@ BoxCollider2D:
   m_Offset: {x: -0.016109467, y: -0.065776825}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0.23}
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -154,8 +154,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 978398353
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 5626864012189183005, guid: e9504c58587146941aa6490d55d6cf17, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbb29a39a5ac68140b26ab7c472ee5e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HareAI
-  definition: {fileID: 0}
+  definition: {fileID: 11400000, guid: 681480a0b5924e74aa9c4d1c2b650ccf, type: 2}
   walkSpeed: 1.4
   runSpeed: 2
   hurtDurationFallback: 0.25

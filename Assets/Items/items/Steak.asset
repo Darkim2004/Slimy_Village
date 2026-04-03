@@ -15,7 +15,7 @@ MonoBehaviour:
   id: steak
   displayName: Steak
   description: 
-  category: 0
+  category: 4
   icon: {fileID: -2821042892349479055, guid: d9858c6d0fde7e84aa249275650b1723, type: 3}
   attackDamage: 0
   isHarvestTool: 0

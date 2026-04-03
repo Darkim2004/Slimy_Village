@@ -35,7 +35,8 @@ public class LootTable : ScriptableObject
 
             int lo = Mathf.Min(d.min, d.max);
             int hi = Mathf.Max(d.min, d.max);
-            int qty = Random.Range(lo, hi + 1);
+            // Difesa da asset legacy con min/max <= 0: un drop valido deve avere qty >= 1.
+            int qty = Mathf.Max(1, Random.Range(lo, hi + 1));
 
             // Offset leggero per non sovrapporre tutti i drop
             Vector2 offset = Random.insideUnitCircle * 0.3f;

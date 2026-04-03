@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -44,6 +45,7 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
     protected bool deathAnimFrozen;
 
     protected readonly Dictionary<string, float> clipLength = new();
+    private readonly HashSet<string> missingStateLogged = new();
 
     // movimento “proposto” dalla AI/derivata (in world space)
     protected Vector2 desiredVelocity = Vector2.zero;
@@ -62,6 +64,7 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
 
         health.onHurt += EnterHurt;
         health.onDeath += EnterDeath;
+        health.onDeath += HandleDropLoot;
 
         EnterIdle();
     }
@@ -77,8 +80,8 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
             CacheClipLengths();
         }
 
-        // Drop loot generico (opzionale)
-        health.onDeath -= HandleDropLoot; // evita doppioni
+        // Mantiene il listener di drop unico anche dopo re-inizializzazioni.
+        health.onDeath -= HandleDropLoot;
         health.onDeath += HandleDropLoot;
     }
 
@@ -293,6 +296,9 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
 
     protected void PlayAnim()
     {
+        if (animator == null || animator.runtimeAnimatorController == null)
+            return;
+
         Dir d = (state == State.Hurt || state == State.Death || state == State.Attack) ? lockedDir : facing;
 
         string baseName = state switch
@@ -308,6 +314,32 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
 
         string clip = $"{baseName}_{d.ToString().ToLower()}";
         if (clip == currentAnim) return;
+
+        int stateHash = Animator.StringToHash(clip);
+        if (!animator.HasState(0, stateHash))
+        {
+            // Logga una sola volta per clip mancante per evitare spam in console.
+            if (missingStateLogged.Add(clip))
+            {
+                string controllerName = animator.runtimeAnimatorController != null
+                    ? animator.runtimeAnimatorController.name
+                    : "<none>";
+
+                string available = string.Join(", ",
+                    animator.runtimeAnimatorController.animationClips
+                        .Where(c => c != null)
+                        .Select(c => c.name)
+                        .Distinct()
+                        .OrderBy(n => n));
+
+                Debug.LogError(
+                    $"[{name}] Missing animator state '{clip}' in controller '{controllerName}'. " +
+                    $"State={state}, Facing={facing}, LockedDir={lockedDir}. Available clips: {available}",
+                    this);
+            }
+
+            return;
+        }
 
         animator.Play(clip, 0, 0f);
         currentAnim = clip;
