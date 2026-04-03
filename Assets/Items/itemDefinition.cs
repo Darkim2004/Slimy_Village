@@ -10,7 +10,8 @@ public enum ItemCategory
     Weapon,
     Building,
     Consumable,
-    Resource
+    Resource,
+    Food
 }
 
 /// <summary>
@@ -41,6 +42,11 @@ public class ItemDefinition : ScriptableObject
     [Tooltip("Danno bonus quando l'item è nello slot attivo della hotbar (solo Weapon).")]
     [Min(0)]
     public int attackDamage;
+
+    [Header("Food")]
+    [Tooltip("Punti vita recuperati consumando questo item (solo Food).")]
+    [Min(0)]
+    public int healAmount;
 
     [Header("Tool")]
     [Tooltip("True se questo item può colpire nodi risorsa (alberi/rocce).")]
@@ -84,6 +90,9 @@ public class ItemDefinition : ScriptableObject
 
     /// <summary>True se l'item è un elemento costruibile.</summary>
     public bool IsBuilding => category == ItemCategory.Building;
+
+    /// <summary>True se l'item è un alimento consumabile per recuperare HP.</summary>
+    public bool IsFood => category == ItemCategory.Food && healAmount > 0;
 
     private void OnValidate()
     {

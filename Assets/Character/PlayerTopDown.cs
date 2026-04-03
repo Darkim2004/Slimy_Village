@@ -39,6 +39,8 @@ public class PlayerTopDown : EntityBase2D
     public bool IsInputLocked => inputLocked;
 
     private HotbarEffectManager hotbarEffects;
+    private HotbarHUD hotbarHUD;
+    private InventoryModel inventoryModel;
     private Vector3 respawnPoint;
 
     protected override void Awake()
@@ -50,6 +52,11 @@ public class PlayerTopDown : EntityBase2D
     private void Start()
     {
         hotbarEffects = FindFirstObjectByType<HotbarEffectManager>();
+        hotbarHUD = FindFirstObjectByType<HotbarHUD>();
+        inventoryModel = GetComponentInParent<InventoryModel>();
+        if (inventoryModel == null)
+            inventoryModel = FindFirstObjectByType<InventoryModel>();
+
         worldGen = FindFirstObjectByType<WorldGenTilemap>();
 
         if (interactionMenu == null)
@@ -233,6 +240,9 @@ public class PlayerTopDown : EntityBase2D
             if (hotbarEffects != null && hotbarEffects.IsBuildModeRequested)
                 return;
 
+            if (TryConsumeActiveFood())
+                return;
+
             StartAttack();
             return;
         }
@@ -388,6 +398,33 @@ public class PlayerTopDown : EntityBase2D
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return false;
 
+        return true;
+    }
+
+    private bool TryConsumeActiveFood()
+    {
+        var activeDef = hotbarEffects != null ? hotbarEffects.ActiveItemDef : null;
+        if (activeDef == null || !activeDef.IsFood)
+            return false;
+
+        if (health == null || health.IsDead || health.CurrentHp >= health.MaxHp)
+            return false;
+
+        if (inventoryModel == null || hotbarHUD == null || inventoryModel.Hotbar == null)
+            return false;
+
+        int selectedIndex = hotbarHUD.SelectedIndex;
+        var selectedStack = inventoryModel.Hotbar.GetSlot(selectedIndex);
+        if (selectedStack == null || selectedStack.IsEmpty || selectedStack.def != activeDef)
+            return false;
+
+        selectedStack.amount -= 1;
+        if (selectedStack.amount <= 0)
+            inventoryModel.Hotbar.SetSlot(selectedIndex, null);
+        else
+            inventoryModel.Hotbar.SetSlot(selectedIndex, selectedStack);
+
+        health.Heal(activeDef.healAmount);
         return true;
     }
 
