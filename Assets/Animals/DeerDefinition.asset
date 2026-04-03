@@ -15,12 +15,12 @@ MonoBehaviour:
   timeRule: 0
   allowedBiomes: 0100000002000000
   weight: 1
-  lootTable: {fileID: 0}
+  lootTable: {fileID: 11400000, guid: c5c875966e495d146a649ab3d5bb9376, type: 2}
   animatorController: {fileID: 0}
   wanderRadius: 5
   idleTimeRange: {x: 0.7, y: 1.8}
   moveTimeRange: {x: 1, y: 2.4}
-  wanderRunChance: 0.25
+  wanderRunChance: 0.1
   fleeDuration: 3.5
   fleeSpeedMultiplier: 1.7
   fleePreferredDistance: 5.5
