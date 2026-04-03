@@ -30,4 +30,11 @@ public abstract class EntityDefinition : ScriptableObject
 
     public LootTable LootTable => lootTable;
     public RuntimeAnimatorController AnimatorController => animatorController;
+
+    protected void ApplySpawnDefaults(SpawnTimeRule rule, WorldGenTilemap.Biome[] biomes, float spawnWeight)
+    {
+        timeRule = rule;
+        allowedBiomes = biomes;
+        weight = Mathf.Max(0f, spawnWeight);
+    }
 }
