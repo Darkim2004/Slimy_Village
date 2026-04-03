@@ -8,6 +8,7 @@
 - [X] Aggiungi interazione con alberi/rocce
 - [ ] Implementare un sistema di salvataggio
 - [ ] Aggiungere nuovi nemici 1/2
+- [ ] Aggiungi animali
 - [ ] Aggiungere menu principale
 - [X] Aggiungere sistema di crafting
 - [ ] Aggiungi ricette varie
