@@ -99,6 +99,8 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     private float musicVolume = 1f;
     private bool isFullscreen = true;
     private int aspectRatioIndex;
+    private Vector3 lastMousePosition;
+    private bool hasMousePositionSnapshot;
 
     private MenuScreen currentScreen;
 
@@ -154,12 +156,16 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         ApplyOptionsToUi();
         ApplyRuntimeAudioVolumes();
         ApplyDisplaySettings();
+        lastMousePosition = Input.mousePosition;
+        hasMousePositionSnapshot = true;
 
         ShowMain();
     }
 
     private void Update()
     {
+        HandleMixedNavigationSelection();
+
         if ((currentScreen == MenuScreen.Options || currentScreen == MenuScreen.Credits) && Input.GetKeyDown(KeyCode.Escape))
             ShowMain();
     }
@@ -906,6 +912,63 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         }
 
         return firstOptionsSelectable;
+    }
+
+    private void HandleMixedNavigationSelection()
+    {
+        if (EventSystem.current == null)
+            return;
+
+        if (WasPointerUsedThisFrame() && EventSystem.current.currentSelectedGameObject != null)
+            EventSystem.current.SetSelectedGameObject(null);
+
+        if (IsKeyboardNavigationInputThisFrame() && EventSystem.current.currentSelectedGameObject == null)
+            SelectCurrentScreenDefault();
+    }
+
+    private bool WasPointerUsedThisFrame()
+    {
+        var mousePosition = Input.mousePosition;
+        bool moved = hasMousePositionSnapshot && (mousePosition - lastMousePosition).sqrMagnitude > 0.01f;
+        lastMousePosition = mousePosition;
+        hasMousePositionSnapshot = true;
+
+        return moved
+            || Input.GetMouseButtonDown(0)
+            || Input.GetMouseButtonDown(1)
+            || Mathf.Abs(Input.mouseScrollDelta.y) > 0.01f;
+    }
+
+    private bool IsKeyboardNavigationInputThisFrame()
+    {
+        return Input.GetKeyDown(KeyCode.Tab)
+            || Input.GetKeyDown(KeyCode.UpArrow)
+            || Input.GetKeyDown(KeyCode.DownArrow)
+            || Input.GetKeyDown(KeyCode.LeftArrow)
+            || Input.GetKeyDown(KeyCode.RightArrow)
+            || Input.GetKeyDown(KeyCode.W)
+            || Input.GetKeyDown(KeyCode.A)
+            || Input.GetKeyDown(KeyCode.S)
+            || Input.GetKeyDown(KeyCode.D)
+            || Input.GetKeyDown(KeyCode.Return)
+            || Input.GetKeyDown(KeyCode.KeypadEnter)
+            || Input.GetKeyDown(KeyCode.Space);
+    }
+
+    private void SelectCurrentScreenDefault()
+    {
+        switch (currentScreen)
+        {
+            case MenuScreen.Main:
+                SelectElement(firstMainButton);
+                break;
+            case MenuScreen.Options:
+                SelectElement(GetFirstOptionsSelectable());
+                break;
+            case MenuScreen.Credits:
+                SelectElement(creditsBackButton);
+                break;
+        }
     }
 
     private void SelectElement(Selectable selectable)
