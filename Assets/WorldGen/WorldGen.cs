@@ -531,42 +531,56 @@ public class WorldGenTilemap : MonoBehaviour
     }
 
     /// <summary>
-    /// Cerca una cella valida per lo spawn del player partendo dal centro della mappa
-    /// e muovendosi a spirale verso l'esterno. La cella deve essere terra (non Ocean),
-    /// non bloccata (alberi/rocce) e non adiacente all'oceano.
+    /// Cerca una cella valida per lo spawn del player il piu vicino possibile a world (0,0),
+    /// espandendo la ricerca ad anelli verso l'esterno.
+    /// La cella deve essere terra (non Ocean) e non bloccata (alberi/rocce).
     /// </summary>
     private Vector3 FindWorldSpawnPoint()
     {
-        int cx = width / 2;
-        int cy = height / 2;
+        Vector3Int worldOriginCell = groundTilemap != null
+            ? groundTilemap.WorldToCell(Vector3.zero)
+            : new Vector3Int(0, 0, 0);
 
-        // Prova il centro prima
-        if (IsValidSpawnCell(cx, cy))
-            return CellCenterWorld(cx, cy);
+        int sx = Mathf.Clamp(worldOriginCell.x, 0, Mathf.Max(0, width - 1));
+        int sy = Mathf.Clamp(worldOriginCell.y, 0, Mathf.Max(0, height - 1));
 
-        // Spirale dal centro verso l'esterno
+        // Prova prima la cella mappa corrispondente a world (0,0).
+        if (IsValidSpawnCell(sx, sy))
+            return CellCenterWorld(sx, sy);
+
+        // Ricerca ad anelli (distanza crescente da world 0,0).
         int maxRadius = Mathf.Max(width, height);
         for (int r = 1; r < maxRadius; r++)
         {
-            for (int dx = -r; dx <= r; dx++)
-            {
-                int[] dyValues = (Mathf.Abs(dx) == r)
-                    ? GetRange(-r, r)
-                    : new int[] { -r, r };
+            int minX = sx - r;
+            int maxX = sx + r;
+            int minY = sy - r;
+            int maxY = sy + r;
 
-                foreach (int dy in dyValues)
-                {
-                    int x = cx + dx;
-                    int y = cy + dy;
-                    if (IsValidSpawnCell(x, y))
-                        return CellCenterWorld(x, y);
-                }
+            // Bordo alto + basso
+            for (int x = minX; x <= maxX; x++)
+            {
+                if (IsValidSpawnCell(x, minY))
+                    return CellCenterWorld(x, minY);
+
+                if (minY != maxY && IsValidSpawnCell(x, maxY))
+                    return CellCenterWorld(x, maxY);
+            }
+
+            // Bordo sinistro + destro (senza ricontrollare gli angoli)
+            for (int y = minY + 1; y <= maxY - 1; y++)
+            {
+                if (IsValidSpawnCell(minX, y))
+                    return CellCenterWorld(minX, y);
+
+                if (minX != maxX && IsValidSpawnCell(maxX, y))
+                    return CellCenterWorld(maxX, y);
             }
         }
 
-        // Fallback: centro mappa
-        Debug.LogWarning("[WorldGen] Nessuna cella valida per spawn! Usando il centro della mappa.");
-        return CellCenterWorld(cx, cy);
+        // Fallback: cella interna piu vicina a world (0,0).
+        Debug.LogWarning("[WorldGen] Nessuna cella valida per spawn! Uso la cella piu vicina a world (0,0).");
+        return CellCenterWorld(sx, sy);
     }
 
     private bool IsValidSpawnCell(int x, int y)
@@ -574,17 +588,7 @@ public class WorldGenTilemap : MonoBehaviour
         if (!IsInside(x, y)) return false;
         if (!IsLandCell(x, y)) return false;
         if (IsBlockedCell(x, y)) return false;
-        if (_generated != null && IsAdjacentToOcean(_generated, x, y)) return false;
         return true;
-    }
-
-    private static int[] GetRange(int from, int to)
-    {
-        int count = to - from + 1;
-        int[] result = new int[count];
-        for (int i = 0; i < count; i++)
-            result[i] = from + i;
-        return result;
     }
 
     public void Clear()
