@@ -13,6 +13,8 @@ using UnityEngine.UI;
 [DefaultExecutionOrder(-500)]
 public sealed class MainMenuScreenRouter : MonoBehaviour
 {
+    private static MainMenuScreenRouter instance;
+
     [System.Serializable]
     private struct AspectRatioPreset
     {
@@ -191,7 +193,8 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         if (!scene.IsValid() || scene.name != "MainMenu")
             return;
 
-        if (UnityEngine.Object.FindFirstObjectByType<MainMenuScreenRouter>() != null)
+        var existingRouters = UnityEngine.Object.FindObjectsByType<MainMenuScreenRouter>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        if (existingRouters != null && existingRouters.Length > 0)
             return;
 
         var routerGo = new GameObject("MainMenuScreenRouter");
@@ -200,12 +203,24 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
     private void Awake()
     {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+        Time.timeScale = 1f;
+        ForceHideOverlayGroupsInScene();
+
         if (!TryFindCanvas(out cachedCanvas))
         {
             Debug.LogWarning("[MainMenuScreenRouter] Canvas not found, router disabled.", this);
             enabled = false;
             return;
         }
+
+        ForceHideOverlayGroups(cachedCanvas.transform);
 
         CacheMainButtons(cachedCanvas.transform);
         if (mainButtons.Count == 0 || optionsOpenButton == null)
@@ -256,6 +271,13 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         ShowMain();
     }
 
+    private void Start()
+    {
+        // Safety pass after all Awake calls: guarantees a clean main-menu state on scene re-entry.
+        ForceHideOverlayGroupsInScene();
+        ShowMain();
+    }
+
     private void Update()
     {
         HandleMixedNavigationSelection();
@@ -266,6 +288,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (instance == this)
+            instance = null;
+
         if (newGameOpenButton != null)
             newGameOpenButton.onClick.RemoveListener(ShowWorldCreation);
 
@@ -313,6 +338,55 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
         if (worldCreationCreateButton != null)
             worldCreationCreateButton.onClick.RemoveListener(OnCreateWorldPressed);
+    }
+
+    private void ForceHideOverlayGroups(Transform canvasRoot)
+    {
+        if (canvasRoot == null)
+            return;
+
+        SetGroupActiveByName(canvasRoot, loadGameGroupName, false);
+        SetGroupActiveByName(canvasRoot, optionsGroupName, false);
+        SetGroupActiveByName(canvasRoot, creditsGroupName, false);
+        SetGroupActiveByName(canvasRoot, worldCreationGroupName, false);
+    }
+
+    private void ForceHideOverlayGroupsInScene()
+    {
+        var scene = SceneManager.GetActiveScene();
+        if (!scene.IsValid())
+            return;
+
+        var roots = scene.GetRootGameObjects();
+        for (int i = 0; i < roots.Length; i++)
+            ForceHideOverlayGroupsRecursive(roots[i].transform);
+    }
+
+    private void ForceHideOverlayGroupsRecursive(Transform node)
+    {
+        if (node == null)
+            return;
+
+        if (node.name == loadGameGroupName ||
+            node.name == optionsGroupName ||
+            node.name == creditsGroupName ||
+            node.name == worldCreationGroupName)
+        {
+            node.gameObject.SetActive(false);
+        }
+
+        for (int i = 0; i < node.childCount; i++)
+            ForceHideOverlayGroupsRecursive(node.GetChild(i));
+    }
+
+    private void SetGroupActiveByName(Transform root, string objectName, bool active)
+    {
+        if (string.IsNullOrWhiteSpace(objectName))
+            return;
+
+        var group = FindChildByName(root, objectName);
+        if (group != null)
+            group.gameObject.SetActive(active);
     }
 
     public void ShowMain()

@@ -6,9 +6,9 @@
 ## Nuove feature 
 - [X] Aggiungere interazioni con blocchi piazzabili come chest e faló
 - [X] Aggiungi interazione con alberi/rocce
-- [ ] Implementare un sistema di salvataggio
+- [X] Implementare un sistema di salvataggio
 - [ ] Aggiungere nuovi nemici 1/2
-- [ ] Aggiungi animali
+- [X] Aggiungi animali
 - [ ] Aggiungere menu principale
 - [X] Aggiungere sistema di crafting
 - [ ] Aggiungi ricette varie
