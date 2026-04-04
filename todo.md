@@ -9,11 +9,12 @@
 - [X] Implementare un sistema di salvataggio
 - [ ] Aggiungere nuovi nemici 1/2
 - [X] Aggiungi animali
-- [ ] Aggiungere menu principale
+- [X] Aggiungere menu principale
 - [X] Aggiungere sistema di crafting
-- [ ] Aggiungi ricette varie
+- [X] Aggiungi ricette varie
 - [X] Aggiungere sistema di piazzamento blocchi
 - [ ] Aggiungi boss
+- [ ] Aggiungi crafting da inventario per crafting table
 
 ## Refactoring e Ottimizzazione
 - [ ] Worldgen
