@@ -70,6 +70,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     private Canvas cachedCanvas;
     private GameObject optionsGroup;
     private Button optionsOpenButton;
+    private Button quitMainButton;
     private Button firstMainButton;
     private Button backButton;
     private Button displayModeButton;
@@ -119,6 +120,12 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         optionsOpenButton.onClick.RemoveListener(ShowOptions);
         optionsOpenButton.onClick.AddListener(ShowOptions);
 
+        if (quitMainButton != null)
+        {
+            quitMainButton.onClick.RemoveListener(OnQuitPressed);
+            quitMainButton.onClick.AddListener(OnQuitPressed);
+        }
+
         LoadSavedOptions();
         BuildOrFindOptionsGroup(cachedCanvas.transform);
         ApplyOptionsToUi();
@@ -138,6 +145,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     {
         if (optionsOpenButton != null)
             optionsOpenButton.onClick.RemoveListener(ShowOptions);
+
+        if (quitMainButton != null)
+            quitMainButton.onClick.RemoveListener(OnQuitPressed);
 
         if (sfxSlider != null)
             sfxSlider.onValueChanged.RemoveListener(OnSfxSliderChanged);
@@ -202,6 +212,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
         firstMainButton = FindButton(canvasRoot, newGameButtonName);
         optionsOpenButton = FindButton(canvasRoot, optionsButtonName);
+        quitMainButton = FindButton(canvasRoot, quitButtonName);
 
         AddButtonObject(FindButton(canvasRoot, newGameButtonName));
         AddButtonObject(FindButton(canvasRoot, loadGameButtonName));
@@ -500,6 +511,15 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         PlayerPrefs.SetFloat(PrefMusicVolume, musicVolume);
         PlayerPrefs.Save();
         ApplyRuntimeAudioVolumes();
+    }
+
+    private void OnQuitPressed()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     private void ApplyRuntimeAudioVolumes()
