@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Gestisce il menu pausa attivato con ESC.
@@ -10,7 +11,9 @@ public class PauseMenuController : MonoBehaviour
 {
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private Button resumeButton;
+    [SerializeField] private Button saveButton;
     [SerializeField] private Button quitButton;
+    [SerializeField] private string mainMenuSceneName = "MainMenu";
 
     private PlayerTopDown playerTopDown;
     private InventoryToggleController inventoryToggleController;
@@ -27,6 +30,9 @@ public class PauseMenuController : MonoBehaviour
         if (resumeButton != null)
             resumeButton.onClick.AddListener(ClosePause);
 
+        if (saveButton != null)
+            saveButton.onClick.AddListener(OnSaveClicked);
+
         if (quitButton != null)
             quitButton.onClick.AddListener(OnQuitClicked);
 
@@ -40,6 +46,9 @@ public class PauseMenuController : MonoBehaviour
     {
         if (resumeButton != null)
             resumeButton.onClick.RemoveListener(ClosePause);
+
+        if (saveButton != null)
+            saveButton.onClick.RemoveListener(OnSaveClicked);
 
         if (quitButton != null)
             quitButton.onClick.RemoveListener(OnQuitClicked);
@@ -141,13 +150,16 @@ public class PauseMenuController : MonoBehaviour
 
     private void OnQuitClicked()
     {
-        // Debug/placeholder: puoi aggiungere logica menu principale
-        Debug.Log("[PauseMenu] Quit button clicked. Implement menu navigation as needed.");
-
-        // Per ora, ripristina tempo e disattiva pausa
+        WorldSaveSystem.Instance?.SaveNow("save-and-quit");
         ClosePause();
 
-        // Eventuale: caricare scena menu principale
-        // SceneManager.LoadScene("MainMenu");
+        if (!string.IsNullOrWhiteSpace(mainMenuSceneName) && Application.CanStreamedLevelBeLoaded(mainMenuSceneName))
+            SceneManager.LoadScene(mainMenuSceneName);
+    }
+
+    private void OnSaveClicked()
+    {
+        bool success = WorldSaveSystem.Instance != null && WorldSaveSystem.Instance.SaveNow("manual");
+        Debug.Log(success ? "[PauseMenu] Manual save completed." : "[PauseMenu] Manual save skipped or failed.");
     }
 }

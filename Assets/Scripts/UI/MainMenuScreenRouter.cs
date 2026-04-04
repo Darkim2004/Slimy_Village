@@ -34,7 +34,10 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     private const string PrefAspectRatioIndex = "MainMenu.AspectRatioIndex";
     private const string PrefPendingWorldName = "MainMenu.PendingWorldName";
     private const string PrefPendingWorldSeed = "MainMenu.PendingWorldSeed";
+    private const string PrefPendingWorldId = "MainMenu.PendingWorldId";
     private const string PrefHasPendingWorldCreation = "MainMenu.HasPendingWorldCreation";
+    private const string PrefCurrentWorldId = "MainMenu.CurrentWorldId";
+    private const string PrefCurrentWorldName = "MainMenu.CurrentWorldName";
 
     [Header("Auto Find")]
     [SerializeField] private string canvasName = "Canvas";
@@ -837,13 +840,17 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     {
         string worldName = GetResolvedWorldName();
         int seed = GetResolvedWorldSeed();
+        string worldId = Guid.NewGuid().ToString("N");
 
         PlayerPrefs.SetString(PrefPendingWorldName, worldName);
         PlayerPrefs.SetInt(PrefPendingWorldSeed, seed);
+        PlayerPrefs.SetString(PrefPendingWorldId, worldId);
         PlayerPrefs.SetInt(PrefHasPendingWorldCreation, 1);
+        PlayerPrefs.SetString(PrefCurrentWorldId, worldId);
+        PlayerPrefs.SetString(PrefCurrentWorldName, worldName);
         PlayerPrefs.Save();
 
-        Debug.Log("[MainMenuScreenRouter] Create world requested. Name: '" + worldName + "' Seed: " + seed, this);
+        Debug.Log("[MainMenuScreenRouter] Create world requested. Name: '" + worldName + "' Seed: " + seed + " WorldId: " + worldId, this);
 
         if (!string.IsNullOrEmpty(gameSceneName) && Application.CanStreamedLevelBeLoaded(gameSceneName))
         {

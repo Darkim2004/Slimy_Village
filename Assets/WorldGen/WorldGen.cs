@@ -10,6 +10,7 @@ public class WorldGenTilemap : MonoBehaviour
 {
     private const string PrefPendingWorldName = "MainMenu.PendingWorldName";
     private const string PrefPendingWorldSeed = "MainMenu.PendingWorldSeed";
+    private const string PrefPendingWorldId = "MainMenu.PendingWorldId";
     private const string PrefHasPendingWorldCreation = "MainMenu.HasPendingWorldCreation";
 
     [Header("Tilemaps (same Grid)")]
@@ -278,6 +279,7 @@ public class WorldGenTilemap : MonoBehaviour
 
         PlayerPrefs.DeleteKey(PrefPendingWorldName);
         PlayerPrefs.DeleteKey(PrefPendingWorldSeed);
+        PlayerPrefs.DeleteKey(PrefPendingWorldId);
         PlayerPrefs.DeleteKey(PrefHasPendingWorldCreation);
         PlayerPrefs.Save();
 
@@ -359,18 +361,95 @@ public class WorldGenTilemap : MonoBehaviour
             data[x, y].decor = d;
         }
 
-        // Render
+        RenderGeneratedData(data);
+    }
+
+    public WorldGridData CreateGridSnapshot()
+    {
+        var snapshot = new WorldGridData();
+        snapshot.width = width;
+        snapshot.height = height;
+        snapshot.seed = seed;
+
+        int total = Mathf.Max(0, width * height);
+        snapshot.ground = new int[total];
+        snapshot.decor = new int[total];
+
+        if (_generated == null || _generated.GetLength(0) != width || _generated.GetLength(1) != height)
+            return snapshot;
+
+        int index = 0;
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                snapshot.ground[index] = (int)_generated[x, y].ground;
+                snapshot.decor[index] = (int)_generated[x, y].decor;
+                index++;
+            }
+        }
+
+        return snapshot;
+    }
+
+    public bool TryApplyGridSnapshot(WorldGridData snapshot)
+    {
+        if (snapshot == null)
+            return false;
+
+        if (snapshot.width <= 0 || snapshot.height <= 0)
+            return false;
+
+        int total = snapshot.width * snapshot.height;
+        if (snapshot.ground == null || snapshot.decor == null)
+            return false;
+
+        if (snapshot.ground.Length != total || snapshot.decor.Length != total)
+            return false;
+
+        width = snapshot.width;
+        height = snapshot.height;
+        seed = snapshot.seed;
+
+        var data = new TileData[width, height];
+        int index = 0;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                data[x, y] = new TileData
+                {
+                    ground = DeserializeGround(snapshot.ground[index]),
+                    decor = DeserializeDecor(snapshot.decor[index])
+                };
+
+                index++;
+            }
+        }
+
+        _generated = data;
+        RenderGeneratedData(data);
+        return true;
+    }
+
+    private void RenderGeneratedData(TileData[,] data)
+    {
+        if (data == null)
+            return;
+
         groundTilemap.ClearAllTiles();
         decorTilemap.ClearAllTiles();
         if (treeCollisionTilemap != null)
             treeCollisionTilemap.ClearAllTiles();
+
+        ClearSpawnedProps();
 
         for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
         {
             Vector3Int cell = new Vector3Int(x, y, 0);
 
-            // --- ground ---
             TileBase groundTile;
             if (data[x, y].ground == GroundType.Ocean)
             {
@@ -388,13 +467,12 @@ public class WorldGenTilemap : MonoBehaviour
 
             groundTilemap.SetTile(cell, groundTile);
 
-            // --- decor / props ---
             if (data[x, y].decor == DecorType.Tree)
             {
                 SpawnTreePrefab(cell);
                 if (treeCollisionTilemap != null && treeCollisionTile != null)
                     treeCollisionTilemap.SetTile(cell, treeCollisionTile);
-                continue; // non mettere tile albero
+                continue;
             }
 
             if (data[x, y].decor == DecorType.SnowTree)
@@ -402,19 +480,19 @@ public class WorldGenTilemap : MonoBehaviour
                 SpawnSnowTreePrefab(cell);
                 if (treeCollisionTilemap != null && snowTreeCollisionTile != null)
                     treeCollisionTilemap.SetTile(cell, snowTreeCollisionTile);
-                continue; // non mettere tile albero
+                continue;
             }
 
             if (data[x, y].decor == DecorType.Bush)
             {
                 SpawnBushPrefab(cell);
-                continue; // non mettere tile cespuglio
+                continue;
             }
 
             if (data[x, y].decor == DecorType.BigRock)
             {
                 SpawnRockPrefab(cell);
-                continue; // non mettere tile roccia grande
+                continue;
             }
 
             TileBase decorTile = data[x, y].decor switch
@@ -427,16 +505,29 @@ public class WorldGenTilemap : MonoBehaviour
                 decorTilemap.SetTile(cell, decorTile);
         }
 
-        // CompressBounds DOPO aver piazzato le tile
         groundTilemap.CompressBounds();
         decorTilemap.CompressBounds();
         if (treeCollisionTilemap != null)
             treeCollisionTilemap.CompressBounds();
 
         _hasGenerated = true;
-
-        // Calcola il punto di spawn del player
         WorldSpawnPoint = FindWorldSpawnPoint();
+    }
+
+    private static GroundType DeserializeGround(int value)
+    {
+        if (value < 0 || value > (int)GroundType.Snomy)
+            return GroundType.Ocean;
+
+        return (GroundType)value;
+    }
+
+    private static DecorType DeserializeDecor(int value)
+    {
+        if (value < 0 || value > (int)DecorType.Grass)
+            return DecorType.None;
+
+        return (DecorType)value;
     }
 
     /// <summary>

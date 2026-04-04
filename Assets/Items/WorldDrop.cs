@@ -33,6 +33,9 @@ public class WorldDrop : MonoBehaviour
     private float spawnTime;
     private Vector3 basePosition;
 
+    public ItemDefinition ItemDefinition => itemDef;
+    public int Amount => amount;
+
     // ══════════════════════════════════════════════════════════
     //  Factory statica — usata da LootTable.SpawnLoot
     // ══════════════════════════════════════════════════════════
