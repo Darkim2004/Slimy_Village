@@ -153,8 +153,13 @@ public class PauseMenuController : MonoBehaviour
         WorldSaveSystem.Instance?.SaveNow("save-and-quit");
         ClosePause();
 
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
+
+        Time.timeScale = 1f;
+
         if (!string.IsNullOrWhiteSpace(mainMenuSceneName) && Application.CanStreamedLevelBeLoaded(mainMenuSceneName))
-            SceneManager.LoadScene(mainMenuSceneName);
+            SceneManager.LoadScene(mainMenuSceneName, LoadSceneMode.Single);
     }
 
     private void OnSaveClicked()
