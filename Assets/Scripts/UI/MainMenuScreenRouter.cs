@@ -22,7 +22,8 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     private enum MenuScreen
     {
         Main,
-        Options
+        Options,
+        Credits
     }
 
     private const string PrefSfxVolume = "MainMenu.SfxVolume";
@@ -33,6 +34,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     [Header("Auto Find")]
     [SerializeField] private string canvasName = "Canvas";
     [SerializeField] private string optionsGroupName = "OptionsButtonsGroup";
+    [SerializeField] private string creditsGroupName = "CreditsGroup";
 
     [Header("Main Buttons Names")]
     [SerializeField] private string newGameButtonName = "NewGame";
@@ -64,20 +66,35 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     [SerializeField] private string aspectRatioControlObjectName = "AspectRatioButton";
     [SerializeField] private string backControlObjectName = "BackButton";
 
+    [Header("Credits")]
+    [SerializeField] private bool rebuildCreditsUiWhenMissing;
+    [SerializeField] private string creditsBackButtonObjectName = "CreditsBackButton";
+    [SerializeField] private Vector2 creditsPanelSize = new Vector2(1050f, 620f);
+    [SerializeField] private string[] creditsArtists =
+    {
+        "Aggiungi qui i nomi degli artisti.",
+        "Esempio: Jane Doe - https://example.com",
+        "Esempio: Pixel Studio - https://example.com"
+    };
+
     private readonly List<GameObject> mainButtons = new List<GameObject>();
     private readonly List<Selectable> optionsSelectables = new List<Selectable>();
 
     private Canvas cachedCanvas;
     private GameObject optionsGroup;
+    private GameObject creditsGroup;
     private Button optionsOpenButton;
+    private Button creditsOpenButton;
     private Button quitMainButton;
     private Button firstMainButton;
     private Button backButton;
+    private Button creditsBackButton;
     private Button displayModeButton;
     private Button aspectRatioButton;
     private Slider sfxSlider;
     private Slider musicSlider;
     private Selectable firstOptionsSelectable;
+    private ScrollRect creditsScrollRect;
 
     private float sfxVolume = 1f;
     private float musicVolume = 1f;
@@ -120,6 +137,12 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         optionsOpenButton.onClick.RemoveListener(ShowOptions);
         optionsOpenButton.onClick.AddListener(ShowOptions);
 
+        if (creditsOpenButton != null)
+        {
+            creditsOpenButton.onClick.RemoveListener(ShowCredits);
+            creditsOpenButton.onClick.AddListener(ShowCredits);
+        }
+
         if (quitMainButton != null)
         {
             quitMainButton.onClick.RemoveListener(OnQuitPressed);
@@ -128,6 +151,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
         LoadSavedOptions();
         BuildOrFindOptionsGroup(cachedCanvas.transform);
+        BuildOrFindCreditsGroup(cachedCanvas.transform);
         ApplyOptionsToUi();
         ApplyRuntimeAudioVolumes();
         ApplyDisplaySettings();
@@ -137,7 +161,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
     private void Update()
     {
-        if (currentScreen == MenuScreen.Options && Input.GetKeyDown(KeyCode.Escape))
+        if ((currentScreen == MenuScreen.Options || currentScreen == MenuScreen.Credits) && Input.GetKeyDown(KeyCode.Escape))
             ShowMain();
     }
 
@@ -145,6 +169,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     {
         if (optionsOpenButton != null)
             optionsOpenButton.onClick.RemoveListener(ShowOptions);
+
+        if (creditsOpenButton != null)
+            creditsOpenButton.onClick.RemoveListener(ShowCredits);
 
         if (quitMainButton != null)
             quitMainButton.onClick.RemoveListener(OnQuitPressed);
@@ -163,6 +190,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
         if (backButton != null)
             backButton.onClick.RemoveListener(ShowMain);
+
+        if (creditsBackButton != null)
+            creditsBackButton.onClick.RemoveListener(ShowMain);
     }
 
     public void ShowMain()
@@ -171,6 +201,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
         if (optionsGroup != null)
             optionsGroup.SetActive(false);
+
+        if (creditsGroup != null)
+            creditsGroup.SetActive(false);
 
         currentScreen = MenuScreen.Main;
         SelectElement(firstMainButton);
@@ -183,8 +216,28 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         if (optionsGroup != null)
             optionsGroup.SetActive(true);
 
+        if (creditsGroup != null)
+            creditsGroup.SetActive(false);
+
         currentScreen = MenuScreen.Options;
         SelectElement(GetFirstOptionsSelectable());
+    }
+
+    public void ShowCredits()
+    {
+        SetMainButtonsVisible(false);
+
+        if (optionsGroup != null)
+            optionsGroup.SetActive(false);
+
+        if (creditsGroup != null)
+            creditsGroup.SetActive(true);
+
+        currentScreen = MenuScreen.Credits;
+        SelectElement(creditsBackButton);
+
+        if (creditsScrollRect != null)
+            creditsScrollRect.verticalNormalizedPosition = 1f;
     }
 
     public string GetCurrentScreenName()
@@ -212,6 +265,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
         firstMainButton = FindButton(canvasRoot, newGameButtonName);
         optionsOpenButton = FindButton(canvasRoot, optionsButtonName);
+        creditsOpenButton = FindButton(canvasRoot, creditsButtonName);
         quitMainButton = FindButton(canvasRoot, quitButtonName);
 
         AddButtonObject(FindButton(canvasRoot, newGameButtonName));
@@ -273,6 +327,229 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         }
 
         optionsGroup.SetActive(false);
+    }
+
+    private void BuildOrFindCreditsGroup(Transform canvasRoot)
+    {
+        var existing = FindChildByName(canvasRoot, creditsGroupName);
+        if (existing != null)
+            creditsGroup = existing.gameObject;
+
+        if (creditsGroup == null)
+        {
+            creditsGroup = new GameObject(creditsGroupName, typeof(RectTransform));
+            var groupRect = creditsGroup.GetComponent<RectTransform>();
+            groupRect.SetParent(canvasRoot, false);
+            groupRect.anchorMin = new Vector2(0.5f, 0.5f);
+            groupRect.anchorMax = new Vector2(0.5f, 0.5f);
+            groupRect.pivot = new Vector2(0.5f, 0.5f);
+            groupRect.anchoredPosition = Vector2.zero;
+            groupRect.sizeDelta = Vector2.zero;
+
+            BuildCreditsControls(clearExisting: true);
+        }
+        else
+        {
+            bool hasCreditsControls = TryBindCreditsControlsFromScene();
+            if (!hasCreditsControls && rebuildCreditsUiWhenMissing)
+            {
+                BuildCreditsControls(clearExisting: true);
+            }
+            else if (!hasCreditsControls)
+            {
+                Debug.LogWarning("[MainMenuScreenRouter] Credits group found, but one or more controls are missing. " +
+                                 "Scene objects are preserved (no runtime overwrite).", this);
+            }
+        }
+
+        if (creditsGroup != null)
+            creditsGroup.SetActive(false);
+    }
+
+    private bool TryBindCreditsControlsFromScene()
+    {
+        creditsBackButton = null;
+        creditsScrollRect = null;
+
+        if (creditsGroup == null)
+            return false;
+
+        var backChild = FindChildByName(creditsGroup.transform, creditsBackButtonObjectName);
+        if (backChild != null)
+            creditsBackButton = backChild.GetComponent<Button>();
+
+        if (creditsBackButton == null)
+        {
+            var buttons = creditsGroup.GetComponentsInChildren<Button>(true);
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                if (buttons[i].gameObject.name.ToLowerInvariant().Contains("back"))
+                {
+                    creditsBackButton = buttons[i];
+                    break;
+                }
+            }
+        }
+
+        creditsScrollRect = creditsGroup.GetComponentInChildren<ScrollRect>(true);
+
+        if (creditsBackButton != null)
+        {
+            creditsBackButton.onClick.RemoveListener(ShowMain);
+            creditsBackButton.onClick.AddListener(ShowMain);
+        }
+
+        return creditsBackButton != null && creditsScrollRect != null;
+    }
+
+    private void BuildCreditsControls(bool clearExisting)
+    {
+        if (creditsGroup == null)
+            return;
+
+        if (clearExisting)
+            ClearChildren(creditsGroup.transform);
+
+        var panelGo = new GameObject("CreditsPanel", typeof(RectTransform), typeof(Image));
+        var panelRect = panelGo.GetComponent<RectTransform>();
+        panelRect.SetParent(creditsGroup.transform, false);
+        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.pivot = new Vector2(0.5f, 0.5f);
+        panelRect.sizeDelta = creditsPanelSize;
+        panelRect.anchoredPosition = Vector2.zero;
+
+        var panelImage = panelGo.GetComponent<Image>();
+        panelImage.color = new Color(0f, 0f, 0f, 0.72f);
+
+        var titleGo = new GameObject("CreditsTitle", typeof(RectTransform), typeof(Text));
+        var titleRect = titleGo.GetComponent<RectTransform>();
+        titleRect.SetParent(panelRect, false);
+        titleRect.anchorMin = new Vector2(0f, 1f);
+        titleRect.anchorMax = new Vector2(1f, 1f);
+        titleRect.pivot = new Vector2(0.5f, 1f);
+        titleRect.offsetMin = new Vector2(24f, -58f);
+        titleRect.offsetMax = new Vector2(-24f, -8f);
+
+        var titleText = titleGo.GetComponent<Text>();
+        titleText.text = "Credits";
+        titleText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        titleText.alignment = TextAnchor.MiddleCenter;
+        titleText.fontStyle = FontStyle.Bold;
+        titleText.fontSize = 34;
+        titleText.color = Color.white;
+
+        var scrollGo = DefaultControls.CreateScrollView(new DefaultControls.Resources());
+        scrollGo.name = "CreditsScrollView";
+        var scrollRectTransform = scrollGo.GetComponent<RectTransform>();
+        scrollRectTransform.SetParent(panelRect, false);
+        scrollRectTransform.anchorMin = new Vector2(0f, 0f);
+        scrollRectTransform.anchorMax = new Vector2(1f, 1f);
+        scrollRectTransform.offsetMin = new Vector2(32f, 82f);
+        scrollRectTransform.offsetMax = new Vector2(-32f, -76f);
+
+        creditsScrollRect = scrollGo.GetComponent<ScrollRect>();
+        if (creditsScrollRect != null)
+        {
+            creditsScrollRect.horizontal = false;
+            creditsScrollRect.vertical = true;
+            creditsScrollRect.movementType = ScrollRect.MovementType.Clamped;
+            creditsScrollRect.scrollSensitivity = 24f;
+
+            var scrollbar = creditsScrollRect.verticalScrollbar;
+            if (scrollbar != null)
+            {
+                var sbRect = scrollbar.GetComponent<RectTransform>();
+                sbRect.anchorMin = new Vector2(1f, 0f);
+                sbRect.anchorMax = new Vector2(1f, 1f);
+                sbRect.pivot = new Vector2(1f, 1f);
+                sbRect.sizeDelta = new Vector2(18f, 0f);
+            }
+        }
+
+        PopulateCreditsScrollContent(creditsScrollRect);
+
+        var backTemplate = optionsOpenButton;
+        GameObject backGo;
+        if (backTemplate != null)
+        {
+            backGo = Instantiate(backTemplate.gameObject, panelRect);
+        }
+        else
+        {
+            backGo = DefaultControls.CreateButton(new DefaultControls.Resources());
+            backGo.transform.SetParent(panelRect, false);
+        }
+
+        backGo.name = creditsBackButtonObjectName;
+        var backRect = backGo.GetComponent<RectTransform>();
+        backRect.anchorMin = new Vector2(0.5f, 0f);
+        backRect.anchorMax = new Vector2(0.5f, 0f);
+        backRect.pivot = new Vector2(0.5f, 0f);
+        backRect.anchoredPosition = new Vector2(0f, 16f);
+        backRect.sizeDelta = new Vector2(320f, 56f);
+
+        creditsBackButton = backGo.GetComponent<Button>();
+        if (creditsBackButton != null)
+        {
+            creditsBackButton.onClick.RemoveAllListeners();
+            creditsBackButton.onClick.AddListener(ShowMain);
+        }
+
+        var backText = backGo.GetComponentInChildren<Text>(true);
+        if (backText != null)
+            backText.text = backLabel;
+    }
+
+    private void PopulateCreditsScrollContent(ScrollRect scrollRect)
+    {
+        if (scrollRect == null || scrollRect.content == null)
+            return;
+
+        var content = scrollRect.content;
+        ClearChildren(content);
+
+        var vlg = content.GetComponent<VerticalLayoutGroup>();
+        if (vlg == null)
+            vlg = content.gameObject.AddComponent<VerticalLayoutGroup>();
+
+        vlg.childControlHeight = true;
+        vlg.childControlWidth = true;
+        vlg.childForceExpandHeight = false;
+        vlg.childForceExpandWidth = true;
+        vlg.spacing = 10f;
+        vlg.padding = new RectOffset(8, 32, 8, 8);
+
+        var fitter = content.GetComponent<ContentSizeFitter>();
+        if (fitter == null)
+            fitter = content.gameObject.AddComponent<ContentSizeFitter>();
+
+        fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        var contentRect = content.GetComponent<RectTransform>();
+        contentRect.anchorMin = new Vector2(0f, 1f);
+        contentRect.anchorMax = new Vector2(1f, 1f);
+        contentRect.pivot = new Vector2(0.5f, 1f);
+        contentRect.anchoredPosition = Vector2.zero;
+        contentRect.sizeDelta = new Vector2(0f, 0f);
+
+        for (int i = 0; i < creditsArtists.Length; i++)
+        {
+            var rowGo = new GameObject("CreditRow_" + i, typeof(RectTransform), typeof(Text));
+            var rowRect = rowGo.GetComponent<RectTransform>();
+            rowRect.SetParent(content, false);
+            rowRect.sizeDelta = new Vector2(0f, 38f);
+
+            var rowText = rowGo.GetComponent<Text>();
+            rowText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            rowText.fontSize = 24;
+            rowText.alignment = TextAnchor.MiddleLeft;
+            rowText.color = Color.white;
+            rowText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            rowText.verticalOverflow = VerticalWrapMode.Overflow;
+            rowText.text = creditsArtists[i];
+        }
     }
 
     private void BuildOptionsControls(bool clearExisting)
