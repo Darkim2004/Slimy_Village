@@ -8,6 +8,10 @@ using UnityEditor;
 
 public class WorldGenTilemap : MonoBehaviour
 {
+    private const string PrefPendingWorldName = "MainMenu.PendingWorldName";
+    private const string PrefPendingWorldSeed = "MainMenu.PendingWorldSeed";
+    private const string PrefHasPendingWorldCreation = "MainMenu.HasPendingWorldCreation";
+
     [Header("Tilemaps (same Grid)")]
     [SerializeField] private Tilemap groundTilemap;
     [SerializeField] private Tilemap decorTilemap;
@@ -258,8 +262,26 @@ public class WorldGenTilemap : MonoBehaviour
     public bool generateOnStart = true;
     private void Start()
     {
+        ApplyPendingWorldCreationSettings();
+
         if (generateOnStart)
             Generate();
+    }
+
+    private void ApplyPendingWorldCreationSettings()
+    {
+        if (PlayerPrefs.GetInt(PrefHasPendingWorldCreation, 0) != 1)
+            return;
+
+        string pendingWorldName = PlayerPrefs.GetString(PrefPendingWorldName, string.Empty);
+        seed = PlayerPrefs.GetInt(PrefPendingWorldSeed, seed);
+
+        PlayerPrefs.DeleteKey(PrefPendingWorldName);
+        PlayerPrefs.DeleteKey(PrefPendingWorldSeed);
+        PlayerPrefs.DeleteKey(PrefHasPendingWorldCreation);
+        PlayerPrefs.Save();
+
+        Debug.Log("[WorldGenTilemap] Applying pending world setup. Name: '" + pendingWorldName + "' Seed: " + seed, this);
     }
 
 

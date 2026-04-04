@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -23,18 +24,23 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     {
         Main,
         Options,
-        Credits
+        Credits,
+        WorldCreation
     }
 
     private const string PrefSfxVolume = "MainMenu.SfxVolume";
     private const string PrefMusicVolume = "MainMenu.MusicVolume";
     private const string PrefFullscreen = "MainMenu.IsFullscreen";
     private const string PrefAspectRatioIndex = "MainMenu.AspectRatioIndex";
+    private const string PrefPendingWorldName = "MainMenu.PendingWorldName";
+    private const string PrefPendingWorldSeed = "MainMenu.PendingWorldSeed";
+    private const string PrefHasPendingWorldCreation = "MainMenu.HasPendingWorldCreation";
 
     [Header("Auto Find")]
     [SerializeField] private string canvasName = "Canvas";
     [SerializeField] private string optionsGroupName = "OptionsButtonsGroup";
     [SerializeField] private string creditsGroupName = "CreditsGroup";
+    [SerializeField] private string worldCreationGroupName = "WorldCreationGroup";
 
     [Header("Main Buttons Names")]
     [SerializeField] private string newGameButtonName = "NewGame";
@@ -77,12 +83,33 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         "Esempio: Pixel Studio - https://example.com"
     };
 
+    [Header("World Creation")]
+    [SerializeField] private bool rebuildWorldCreationUiWhenMissing;
+    [SerializeField] private string worldNameRowObjectName = "WorldNameInputRow";
+    [SerializeField] private string worldSeedRowObjectName = "WorldSeedInputRow";
+    [SerializeField] private string worldCreationBackButtonObjectName = "WorldCreationBackButton";
+    [SerializeField] private string worldCreationCreateButtonObjectName = "WorldCreationCreateButton";
+    [SerializeField] private string worldCreationTitle = "Create World";
+    [SerializeField] private string worldNameLabel = "World Name";
+    [SerializeField] private string worldSeedLabel = "Seed";
+    [SerializeField] private string worldNameDefaultValue = "New World";
+    [SerializeField] private string worldNamePlaceholder = "Inserisci nome mondo";
+    [SerializeField] private string worldSeedPlaceholder = "Vuoto = seed casuale";
+    [SerializeField] private string createButtonLabel = "Create";
+    [SerializeField] private string gameSceneName = "Game";
+    [SerializeField] private Vector2 worldCreationPanelSize = new Vector2(980f, 520f);
+    [SerializeField] private Vector2 worldCreationInputStartPosition = new Vector2(0f, 70f);
+    [SerializeField] private float worldCreationInputSpacing = 110f;
+
     private readonly List<GameObject> mainButtons = new List<GameObject>();
     private readonly List<Selectable> optionsSelectables = new List<Selectable>();
+    private readonly List<Selectable> worldCreationSelectables = new List<Selectable>();
 
     private Canvas cachedCanvas;
     private GameObject optionsGroup;
     private GameObject creditsGroup;
+    private GameObject worldCreationGroup;
+    private Button newGameOpenButton;
     private Button optionsOpenButton;
     private Button creditsOpenButton;
     private Button quitMainButton;
@@ -91,9 +118,14 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     private Button creditsBackButton;
     private Button displayModeButton;
     private Button aspectRatioButton;
+    private Button worldCreationBackButton;
+    private Button worldCreationCreateButton;
     private Slider sfxSlider;
     private Slider musicSlider;
+    private InputField worldNameInputField;
+    private InputField worldSeedInputField;
     private Selectable firstOptionsSelectable;
+    private Selectable firstWorldCreationSelectable;
 
     private float sfxVolume = 1f;
     private float musicVolume = 1f;
@@ -111,7 +143,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         if (!scene.IsValid() || scene.name != "MainMenu")
             return;
 
-        if (Object.FindFirstObjectByType<MainMenuScreenRouter>() != null)
+        if (UnityEngine.Object.FindFirstObjectByType<MainMenuScreenRouter>() != null)
             return;
 
         var routerGo = new GameObject("MainMenuScreenRouter");
@@ -135,6 +167,12 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
             return;
         }
 
+        if (newGameOpenButton != null)
+        {
+            newGameOpenButton.onClick.RemoveListener(ShowWorldCreation);
+            newGameOpenButton.onClick.AddListener(ShowWorldCreation);
+        }
+
         optionsOpenButton.onClick.RemoveListener(ShowOptions);
         optionsOpenButton.onClick.AddListener(ShowOptions);
 
@@ -153,6 +191,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         LoadSavedOptions();
         BuildOrFindOptionsGroup(cachedCanvas.transform);
         BuildOrFindCreditsGroup(cachedCanvas.transform);
+        BuildOrFindWorldCreationGroup(cachedCanvas.transform);
         ApplyOptionsToUi();
         ApplyRuntimeAudioVolumes();
         ApplyDisplaySettings();
@@ -166,12 +205,15 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     {
         HandleMixedNavigationSelection();
 
-        if ((currentScreen == MenuScreen.Options || currentScreen == MenuScreen.Credits) && Input.GetKeyDown(KeyCode.Escape))
+        if ((currentScreen == MenuScreen.Options || currentScreen == MenuScreen.Credits || currentScreen == MenuScreen.WorldCreation) && Input.GetKeyDown(KeyCode.Escape))
             ShowMain();
     }
 
     private void OnDestroy()
     {
+        if (newGameOpenButton != null)
+            newGameOpenButton.onClick.RemoveListener(ShowWorldCreation);
+
         if (optionsOpenButton != null)
             optionsOpenButton.onClick.RemoveListener(ShowOptions);
 
@@ -198,6 +240,12 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
         if (creditsBackButton != null)
             creditsBackButton.onClick.RemoveListener(ShowMain);
+
+        if (worldCreationBackButton != null)
+            worldCreationBackButton.onClick.RemoveListener(ShowMain);
+
+        if (worldCreationCreateButton != null)
+            worldCreationCreateButton.onClick.RemoveListener(OnCreateWorldPressed);
     }
 
     public void ShowMain()
@@ -209,6 +257,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
         if (creditsGroup != null)
             creditsGroup.SetActive(false);
+
+        if (worldCreationGroup != null)
+            worldCreationGroup.SetActive(false);
 
         currentScreen = MenuScreen.Main;
         SelectElement(firstMainButton);
@@ -224,6 +275,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         if (creditsGroup != null)
             creditsGroup.SetActive(false);
 
+        if (worldCreationGroup != null)
+            worldCreationGroup.SetActive(false);
+
         currentScreen = MenuScreen.Options;
         SelectElement(GetFirstOptionsSelectable());
     }
@@ -238,8 +292,28 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         if (creditsGroup != null)
             creditsGroup.SetActive(true);
 
+        if (worldCreationGroup != null)
+            worldCreationGroup.SetActive(false);
+
         currentScreen = MenuScreen.Credits;
         SelectElement(creditsBackButton);
+    }
+
+    public void ShowWorldCreation()
+    {
+        SetMainButtonsVisible(false);
+
+        if (optionsGroup != null)
+            optionsGroup.SetActive(false);
+
+        if (creditsGroup != null)
+            creditsGroup.SetActive(false);
+
+        if (worldCreationGroup != null)
+            worldCreationGroup.SetActive(true);
+
+        currentScreen = MenuScreen.WorldCreation;
+        SelectElement(GetFirstWorldCreationSelectable());
     }
 
     public string GetCurrentScreenName()
@@ -265,7 +339,8 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     {
         mainButtons.Clear();
 
-        firstMainButton = FindButton(canvasRoot, newGameButtonName);
+        newGameOpenButton = FindButton(canvasRoot, newGameButtonName);
+        firstMainButton = newGameOpenButton;
         optionsOpenButton = FindButton(canvasRoot, optionsButtonName);
         creditsOpenButton = FindButton(canvasRoot, creditsButtonName);
         quitMainButton = FindButton(canvasRoot, quitButtonName);
@@ -366,6 +441,43 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
         if (creditsGroup != null)
             creditsGroup.SetActive(false);
+    }
+
+    private void BuildOrFindWorldCreationGroup(Transform canvasRoot)
+    {
+        var existing = FindChildByName(canvasRoot, worldCreationGroupName);
+        if (existing != null)
+            worldCreationGroup = existing.gameObject;
+
+        if (worldCreationGroup == null)
+        {
+            worldCreationGroup = new GameObject(worldCreationGroupName, typeof(RectTransform));
+            var groupRect = worldCreationGroup.GetComponent<RectTransform>();
+            groupRect.SetParent(canvasRoot, false);
+            groupRect.anchorMin = new Vector2(0.5f, 0.5f);
+            groupRect.anchorMax = new Vector2(0.5f, 0.5f);
+            groupRect.pivot = new Vector2(0.5f, 0.5f);
+            groupRect.anchoredPosition = Vector2.zero;
+            groupRect.sizeDelta = Vector2.zero;
+
+            BuildWorldCreationControls(clearExisting: true);
+        }
+        else
+        {
+            bool hasWorldCreationControls = TryBindWorldCreationControlsFromScene();
+            if (!hasWorldCreationControls && rebuildWorldCreationUiWhenMissing)
+            {
+                BuildWorldCreationControls(clearExisting: true);
+            }
+            else if (!hasWorldCreationControls)
+            {
+                Debug.LogWarning("[MainMenuScreenRouter] World creation group found, but one or more controls are missing. " +
+                                 "Scene objects are preserved (no runtime overwrite).", this);
+            }
+        }
+
+        if (worldCreationGroup != null)
+            worldCreationGroup.SetActive(false);
     }
 
     private bool TryBindCreditsControlsFromScene()
@@ -478,6 +590,292 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         var backText = backGo.GetComponentInChildren<Text>(true);
         if (backText != null)
             backText.text = backLabel;
+    }
+
+    private bool TryBindWorldCreationControlsFromScene()
+    {
+        worldCreationSelectables.Clear();
+        worldNameInputField = null;
+        worldSeedInputField = null;
+        worldCreationBackButton = null;
+        worldCreationCreateButton = null;
+
+        if (worldCreationGroup == null)
+            return false;
+
+        var worldNameRow = FindChildByName(worldCreationGroup.transform, worldNameRowObjectName);
+        if (worldNameRow != null)
+            worldNameInputField = worldNameRow.GetComponentInChildren<InputField>(true);
+
+        var worldSeedRow = FindChildByName(worldCreationGroup.transform, worldSeedRowObjectName);
+        if (worldSeedRow != null)
+            worldSeedInputField = worldSeedRow.GetComponentInChildren<InputField>(true);
+
+        var backChild = FindChildByName(worldCreationGroup.transform, worldCreationBackButtonObjectName);
+        if (backChild != null)
+            worldCreationBackButton = backChild.GetComponent<Button>();
+
+        var createChild = FindChildByName(worldCreationGroup.transform, worldCreationCreateButtonObjectName);
+        if (createChild != null)
+            worldCreationCreateButton = createChild.GetComponent<Button>();
+
+        if (worldNameInputField != null) worldCreationSelectables.Add(worldNameInputField);
+        if (worldSeedInputField != null) worldCreationSelectables.Add(worldSeedInputField);
+        if (worldCreationBackButton != null) worldCreationSelectables.Add(worldCreationBackButton);
+        if (worldCreationCreateButton != null) worldCreationSelectables.Add(worldCreationCreateButton);
+
+        firstWorldCreationSelectable = worldNameInputField != null
+            ? worldNameInputField
+            : (worldCreationBackButton != null ? worldCreationBackButton : worldCreationCreateButton);
+
+        WireWorldCreationControlListeners();
+
+        return worldNameInputField != null
+            && worldSeedInputField != null
+            && worldCreationBackButton != null
+            && worldCreationCreateButton != null;
+    }
+
+    private void BuildWorldCreationControls(bool clearExisting)
+    {
+        if (worldCreationGroup == null)
+            return;
+
+        if (clearExisting)
+            ClearChildren(worldCreationGroup.transform);
+
+        worldCreationSelectables.Clear();
+
+        var panelGo = new GameObject("WorldCreationPanel", typeof(RectTransform), typeof(Image));
+        var panelRect = panelGo.GetComponent<RectTransform>();
+        panelRect.SetParent(worldCreationGroup.transform, false);
+        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.pivot = new Vector2(0.5f, 0.5f);
+        panelRect.sizeDelta = worldCreationPanelSize;
+        panelRect.anchoredPosition = Vector2.zero;
+
+        var panelImage = panelGo.GetComponent<Image>();
+        panelImage.color = new Color(0f, 0f, 0f, 0.72f);
+
+        var titleGo = new GameObject("WorldCreationTitle", typeof(RectTransform), typeof(Text));
+        var titleRect = titleGo.GetComponent<RectTransform>();
+        titleRect.SetParent(panelRect, false);
+        titleRect.anchorMin = new Vector2(0f, 1f);
+        titleRect.anchorMax = new Vector2(1f, 1f);
+        titleRect.pivot = new Vector2(0.5f, 1f);
+        titleRect.offsetMin = new Vector2(24f, -58f);
+        titleRect.offsetMax = new Vector2(-24f, -8f);
+
+        var titleText = titleGo.GetComponent<Text>();
+        titleText.text = worldCreationTitle;
+        titleText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        titleText.alignment = TextAnchor.MiddleCenter;
+        titleText.fontStyle = FontStyle.Bold;
+        titleText.fontSize = 34;
+        titleText.color = Color.white;
+
+        worldNameInputField = CreateWorldCreationInputRow(panelRect, worldNameRowObjectName, 0, worldNameLabel, worldNamePlaceholder, false);
+        worldSeedInputField = CreateWorldCreationInputRow(panelRect, worldSeedRowObjectName, 1, worldSeedLabel, worldSeedPlaceholder, true);
+
+        worldCreationBackButton = CreateWorldCreationActionButton(panelRect, worldCreationBackButtonObjectName, new Vector2(-180f, 26f), backLabel, ShowMain);
+        worldCreationCreateButton = CreateWorldCreationActionButton(panelRect, worldCreationCreateButtonObjectName, new Vector2(180f, 26f), createButtonLabel, OnCreateWorldPressed);
+
+        if (worldNameInputField != null) worldCreationSelectables.Add(worldNameInputField);
+        if (worldSeedInputField != null) worldCreationSelectables.Add(worldSeedInputField);
+        if (worldCreationBackButton != null) worldCreationSelectables.Add(worldCreationBackButton);
+        if (worldCreationCreateButton != null) worldCreationSelectables.Add(worldCreationCreateButton);
+
+        firstWorldCreationSelectable = worldNameInputField != null
+            ? worldNameInputField
+            : (worldCreationBackButton != null ? worldCreationBackButton : worldCreationCreateButton);
+
+        WireWorldCreationControlListeners();
+    }
+
+    private InputField CreateWorldCreationInputRow(RectTransform parent, string rowName, int rowIndex, string label, string placeholderText, bool integerOnly)
+    {
+        if (optionsOpenButton == null)
+            return null;
+
+        var row = Instantiate(optionsOpenButton.gameObject, parent);
+        row.name = rowName;
+
+        var rowRect = row.GetComponent<RectTransform>();
+        if (rowRect != null)
+        {
+            rowRect.anchorMin = new Vector2(0.5f, 0.5f);
+            rowRect.anchorMax = new Vector2(0.5f, 0.5f);
+            rowRect.pivot = new Vector2(0.5f, 0.5f);
+            rowRect.anchoredPosition = worldCreationInputStartPosition + (Vector2.down * worldCreationInputSpacing * rowIndex);
+            rowRect.sizeDelta = new Vector2(760f, 72f);
+        }
+
+        var rowButton = row.GetComponent<Button>();
+        if (rowButton != null)
+            Destroy(rowButton);
+
+        var rowHover = row.GetComponent<UIButtonHoverSprite>();
+        if (rowHover != null)
+            Destroy(rowHover);
+
+        var rowImage = row.GetComponent<Image>();
+        if (rowImage != null)
+            rowImage.raycastTarget = false;
+
+        var labelText = row.GetComponentInChildren<Text>(true);
+        if (labelText != null)
+        {
+            labelText.text = label;
+            labelText.alignment = TextAnchor.MiddleLeft;
+
+            var textRect = labelText.rectTransform;
+            textRect.anchorMin = new Vector2(0.05f, 0.18f);
+            textRect.anchorMax = new Vector2(0.38f, 0.82f);
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+        }
+
+        var inputGo = DefaultControls.CreateInputField(new DefaultControls.Resources());
+        inputGo.name = "InputField";
+        inputGo.transform.SetParent(row.transform, false);
+
+        var inputRect = inputGo.GetComponent<RectTransform>();
+        if (inputRect != null)
+        {
+            inputRect.anchorMin = new Vector2(0.40f, 0.18f);
+            inputRect.anchorMax = new Vector2(0.95f, 0.82f);
+            inputRect.offsetMin = Vector2.zero;
+            inputRect.offsetMax = Vector2.zero;
+        }
+
+        var inputField = inputGo.GetComponent<InputField>();
+        if (inputField != null)
+        {
+            inputField.text = string.Empty;
+            inputField.lineType = InputField.LineType.SingleLine;
+            inputField.contentType = integerOnly ? InputField.ContentType.IntegerNumber : InputField.ContentType.Standard;
+
+            var placeholder = inputField.placeholder as Text;
+            if (placeholder != null)
+            {
+                placeholder.text = placeholderText;
+                placeholder.fontSize = 20;
+            }
+
+            var text = inputField.textComponent;
+            if (text != null)
+                text.fontSize = 22;
+        }
+
+        return inputField;
+    }
+
+    private Button CreateWorldCreationActionButton(RectTransform parent, string buttonName, Vector2 anchoredPosition, string label, UnityEngine.Events.UnityAction action)
+    {
+        GameObject buttonGo;
+        if (optionsOpenButton != null)
+            buttonGo = Instantiate(optionsOpenButton.gameObject, parent);
+        else
+            buttonGo = DefaultControls.CreateButton(new DefaultControls.Resources());
+
+        buttonGo.name = buttonName;
+        buttonGo.transform.SetParent(parent, false);
+
+        var buttonRect = buttonGo.GetComponent<RectTransform>();
+        if (buttonRect != null)
+        {
+            buttonRect.anchorMin = new Vector2(0.5f, 0f);
+            buttonRect.anchorMax = new Vector2(0.5f, 0f);
+            buttonRect.pivot = new Vector2(0.5f, 0f);
+            buttonRect.anchoredPosition = anchoredPosition;
+            buttonRect.sizeDelta = new Vector2(300f, 58f);
+        }
+
+        var button = buttonGo.GetComponent<Button>();
+        if (button != null)
+        {
+            button.onClick.RemoveAllListeners();
+            if (action != null)
+                button.onClick.AddListener(action);
+        }
+
+        var buttonText = buttonGo.GetComponentInChildren<Text>(true);
+        if (buttonText != null)
+            buttonText.text = label;
+
+        return button;
+    }
+
+    private void WireWorldCreationControlListeners()
+    {
+        if (worldCreationBackButton != null)
+        {
+            worldCreationBackButton.onClick.RemoveListener(ShowMain);
+            worldCreationBackButton.onClick.AddListener(ShowMain);
+        }
+
+        if (worldCreationCreateButton != null)
+        {
+            worldCreationCreateButton.onClick.RemoveListener(OnCreateWorldPressed);
+            worldCreationCreateButton.onClick.AddListener(OnCreateWorldPressed);
+        }
+    }
+
+    private Selectable GetFirstWorldCreationSelectable()
+    {
+        for (int i = 0; i < worldCreationSelectables.Count; i++)
+        {
+            if (worldCreationSelectables[i] != null && worldCreationSelectables[i].isActiveAndEnabled)
+                return worldCreationSelectables[i];
+        }
+
+        return firstWorldCreationSelectable;
+    }
+
+    private void OnCreateWorldPressed()
+    {
+        string worldName = GetResolvedWorldName();
+        int seed = GetResolvedWorldSeed();
+
+        PlayerPrefs.SetString(PrefPendingWorldName, worldName);
+        PlayerPrefs.SetInt(PrefPendingWorldSeed, seed);
+        PlayerPrefs.SetInt(PrefHasPendingWorldCreation, 1);
+        PlayerPrefs.Save();
+
+        Debug.Log("[MainMenuScreenRouter] Create world requested. Name: '" + worldName + "' Seed: " + seed, this);
+
+        if (!string.IsNullOrEmpty(gameSceneName) && Application.CanStreamedLevelBeLoaded(gameSceneName))
+        {
+            SceneManager.LoadScene(gameSceneName);
+            return;
+        }
+
+        Debug.LogWarning("[MainMenuScreenRouter] Game scene '" + gameSceneName + "' is not loadable. " +
+                         "Pending world settings were saved and will be used when the game scene starts.", this);
+    }
+
+    private string GetResolvedWorldName()
+    {
+        string rawName = worldNameInputField != null ? worldNameInputField.text : string.Empty;
+        string trimmedName = string.IsNullOrWhiteSpace(rawName) ? string.Empty : rawName.Trim();
+        return string.IsNullOrEmpty(trimmedName) ? worldNameDefaultValue : trimmedName;
+    }
+
+    private int GetResolvedWorldSeed()
+    {
+        string rawSeed = worldSeedInputField != null ? worldSeedInputField.text : string.Empty;
+        string trimmedSeed = string.IsNullOrWhiteSpace(rawSeed) ? string.Empty : rawSeed.Trim();
+
+        if (string.IsNullOrEmpty(trimmedSeed))
+            return Guid.NewGuid().GetHashCode();
+
+        int parsedSeed;
+        if (int.TryParse(trimmedSeed, out parsedSeed))
+            return parsedSeed;
+
+        Debug.LogWarning("[MainMenuScreenRouter] Invalid world seed input. Falling back to random seed.", this);
+        return Guid.NewGuid().GetHashCode();
     }
 
     private void PopulateCreditsContent(RectTransform contentRect)
@@ -967,6 +1365,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
                 break;
             case MenuScreen.Credits:
                 SelectElement(creditsBackButton);
+                break;
+            case MenuScreen.WorldCreation:
+                SelectElement(GetFirstWorldCreationSelectable());
                 break;
         }
     }
