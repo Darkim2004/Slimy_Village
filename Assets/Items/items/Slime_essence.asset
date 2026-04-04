@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 360cc822f75e8ea47a02e4491f3151f7, type: 3}
   m_Name: Slime_essence
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
-  id: 
-  displayName: 
+  id: slime_essence
+  displayName: Slime Essence
   description: 
-  category: 0
-  icon: {fileID: 0}
+  category: 4
+  icon: {fileID: 437131383937699757, guid: fc359380804c1e448aa2d5765c8cb28b, type: 3}
   attackDamage: 0
   healAmount: 0
   isHarvestTool: 0

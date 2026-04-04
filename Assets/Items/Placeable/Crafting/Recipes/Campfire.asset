@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 630dd14c6f7990846a284f63306273c3, type: 3}
-  m_Name: Axe
+  m_Name: Campfire
   m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipeDefinition
-  recipeId: axe
-  displayName: Axe
+  recipeId: campfire
+  displayName: Campfire
   description: 
   ingredients:
-  - item: {fileID: 11400000, guid: 395c22ca001bd0342b37108e2bdd3ccd, type: 2}
-    amount: 6
-  - item: {fileID: 11400000, guid: d940152f927bf864183b91eb9955b0d4, type: 2}
-    amount: 2
-  outputItem: {fileID: 11400000, guid: 119d5ab3a247dac4f9d627bf20929975, type: 2}
+  - item: {fileID: 11400000, guid: f12c1aa11f54b134ca2ee35b10244315, type: 2}
+    amount: 4
+  - item: {fileID: 11400000, guid: bb23652b2bb5e9f4fbf47f2030c6d2ce, type: 2}
+    amount: 4
+  outputItem: {fileID: 11400000, guid: fda70ec1c60ce554ebe7a16817a2c74d, type: 2}
   outputAmount: 1
