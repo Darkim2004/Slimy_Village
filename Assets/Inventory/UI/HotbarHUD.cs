@@ -139,9 +139,24 @@ public class HotbarHUD : MonoBehaviour
         float scroll = Input.mouseScrollDelta.y;
         if (Mathf.Abs(scroll) < 0.01f) return;
 
+        if (IsAnyCraftingMenuOpen())
+            return;
+
         int dir = scroll > 0f ? -1 : 1;
         int next = (selectedIndex + dir + hotbarSize) % hotbarSize;
         SetSelected(next);
+    }
+
+    private bool IsAnyCraftingMenuOpen()
+    {
+        var menus = FindObjectsByType<CraftingStationMenuUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < menus.Length; i++)
+        {
+            if (menus[i] != null && menus[i].IsOpen)
+                return true;
+        }
+
+        return false;
     }
 
     public void SetSelected(int index)
