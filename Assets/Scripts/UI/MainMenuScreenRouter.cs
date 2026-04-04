@@ -132,10 +132,14 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     [SerializeField] private string loadGamePlayButtonObjectName = "LoadGamePlayButton";
     [SerializeField] private string loadGameDeleteButtonObjectName = "LoadGameDeleteButton";
     [SerializeField] private string loadGameListObjectName = "LoadGameList";
+    [SerializeField] private string loadGameContentObjectName = "Content";
+    [SerializeField] private string loadGameWorldRowTextObjectName = "Text";
     [SerializeField] private string loadGameTitle = "Load Game";
     [SerializeField] private string loadGameEmptyLabel = "Nessun mondo salvato trovato.";
     [SerializeField] private string loadGamePlayLabel = "Play";
     [SerializeField] private string loadGameDeleteLabel = "Delete";
+    [SerializeField] private string loadGameLastPlayedLabel = "Ultima partita";
+    [SerializeField] private GameObject loadGameWorldRowPrefab;
     [SerializeField] private Vector2 loadGamePanelSize = new Vector2(980f, 560f);
     [SerializeField] private float loadGameRowHeight = 64f;
     [SerializeField] private float loadGameListSpacing = 8f;
@@ -171,6 +175,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     private Slider musicSlider;
     private InputField worldNameInputField;
     private InputField worldSeedInputField;
+    private ScrollRect loadGameScrollRect;
     private RectTransform loadGameListRoot;
     private Selectable firstLoadGameSelectable;
     private Selectable firstOptionsSelectable;
@@ -604,6 +609,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     {
         loadGameSelectables.Clear();
         loadGameWorldButtons.Clear();
+        loadGameScrollRect = null;
         loadGameListRoot = null;
         loadGameBackButton = null;
         loadGamePlayButton = null;
@@ -615,7 +621,44 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
         var listChild = FindChildByName(loadGameGroup.transform, loadGameListObjectName);
         if (listChild != null)
-            loadGameListRoot = listChild as RectTransform;
+        {
+            loadGameScrollRect = listChild.GetComponent<ScrollRect>();
+            if (loadGameScrollRect == null)
+                loadGameScrollRect = listChild.GetComponentInChildren<ScrollRect>(true);
+
+            if (loadGameScrollRect != null)
+            {
+                if (loadGameScrollRect.content != null)
+                {
+                    loadGameListRoot = loadGameScrollRect.content;
+                }
+                else
+                {
+                    var contentChild = FindChildByName(loadGameScrollRect.transform, loadGameContentObjectName);
+                    if (contentChild != null)
+                    {
+                        loadGameListRoot = contentChild as RectTransform;
+                        loadGameScrollRect.content = loadGameListRoot;
+                    }
+                    else
+                    {
+                        // Do not auto-generate a Content child: use LoadGameList itself as list root.
+                        loadGameListRoot = loadGameScrollRect.transform as RectTransform;
+                        loadGameScrollRect.content = loadGameListRoot;
+                    }
+                }
+
+                if (loadGameScrollRect.viewport == null)
+                    loadGameScrollRect.viewport = loadGameScrollRect.transform as RectTransform;
+            }
+            else
+            {
+                // Backward compatibility: upgrade legacy list root into ScrollRect at runtime.
+                var legacyRoot = listChild as RectTransform;
+                if (legacyRoot != null)
+                    EnsureLoadGameScrollStructure(legacyRoot);
+            }
+        }
 
         var backChild = FindChildByName(loadGameGroup.transform, loadGameBackButtonObjectName);
         if (backChild != null)
@@ -639,7 +682,8 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         WireLoadGameControlListeners();
         RefreshLoadGameWorlds();
 
-        return loadGameListRoot != null
+        return loadGameScrollRect != null
+            && loadGameListRoot != null
             && loadGameBackButton != null
             && loadGamePlayButton != null;
     }
@@ -684,15 +728,37 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         titleText.fontSize = 34;
         titleText.color = Color.white;
 
-        var listGo = new GameObject(loadGameListObjectName, typeof(RectTransform));
-        loadGameListRoot = listGo.GetComponent<RectTransform>();
-        loadGameListRoot.SetParent(panelRect, false);
-        loadGameListRoot.anchorMin = new Vector2(0f, 0f);
-        loadGameListRoot.anchorMax = new Vector2(1f, 1f);
-        loadGameListRoot.offsetMin = new Vector2(28f, 108f);
-        loadGameListRoot.offsetMax = new Vector2(-28f, -96f);
+        var scrollGo = new GameObject(loadGameListObjectName, typeof(RectTransform), typeof(Image), typeof(Mask), typeof(ScrollRect));
+        var scrollRectTransform = scrollGo.GetComponent<RectTransform>();
+        scrollRectTransform.SetParent(panelRect, false);
+        scrollRectTransform.anchorMin = new Vector2(0f, 0f);
+        scrollRectTransform.anchorMax = new Vector2(1f, 1f);
+        scrollRectTransform.offsetMin = new Vector2(28f, 108f);
+        scrollRectTransform.offsetMax = new Vector2(-28f, -96f);
 
-        var listLayout = listGo.AddComponent<VerticalLayoutGroup>();
+        var scrollImage = scrollGo.GetComponent<Image>();
+        scrollImage.color = new Color(1f, 1f, 1f, 0.06f);
+
+        var scrollMask = scrollGo.GetComponent<Mask>();
+        scrollMask.showMaskGraphic = false;
+
+        loadGameScrollRect = scrollGo.GetComponent<ScrollRect>();
+        loadGameScrollRect.horizontal = false;
+        loadGameScrollRect.vertical = true;
+        loadGameScrollRect.movementType = ScrollRect.MovementType.Clamped;
+        loadGameScrollRect.viewport = scrollRectTransform;
+
+        var contentGo = new GameObject(loadGameContentObjectName, typeof(RectTransform));
+        loadGameListRoot = contentGo.GetComponent<RectTransform>();
+        loadGameListRoot.SetParent(scrollRectTransform, false);
+        loadGameListRoot.anchorMin = new Vector2(0f, 1f);
+        loadGameListRoot.anchorMax = new Vector2(1f, 1f);
+        loadGameListRoot.pivot = new Vector2(0.5f, 1f);
+        loadGameListRoot.offsetMin = new Vector2(4f, 0f);
+        loadGameListRoot.offsetMax = new Vector2(-4f, 0f);
+        loadGameListRoot.anchoredPosition = Vector2.zero;
+
+        var listLayout = contentGo.AddComponent<VerticalLayoutGroup>();
         listLayout.childControlWidth = true;
         listLayout.childControlHeight = false;
         listLayout.childForceExpandWidth = true;
@@ -700,9 +766,11 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         listLayout.spacing = Mathf.Max(0f, loadGameListSpacing);
         listLayout.padding = new RectOffset(4, 4, 4, 4);
 
-        var listFitter = listGo.AddComponent<ContentSizeFitter>();
+        var listFitter = contentGo.AddComponent<ContentSizeFitter>();
         listFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-        listFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+        listFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        loadGameScrollRect.content = loadGameListRoot;
 
         loadGameBackButton = CreateWorldCreationActionButton(panelRect, loadGameBackButtonObjectName, new Vector2(-180f, 26f), backLabel, ShowMain);
         loadGameDeleteButton = CreateWorldCreationActionButton(panelRect, loadGameDeleteButtonObjectName, new Vector2(0f, 26f), loadGameDeleteLabel, OnLoadGameDeletePressed);
@@ -778,6 +846,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
         UpdateLoadGameRowLabels();
 
+        if (loadGameScrollRect != null)
+            loadGameScrollRect.verticalNormalizedPosition = 1f;
+
         if (savedWorlds.Count > 0 && selectedSavedWorldIndex >= 0 && selectedSavedWorldIndex < loadGameWorldButtons.Count)
             firstLoadGameSelectable = loadGameWorldButtons[selectedSavedWorldIndex];
         else
@@ -791,6 +862,10 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         emptyRect.SetParent(loadGameListRoot, false);
         emptyRect.sizeDelta = new Vector2(0f, loadGameRowHeight);
 
+        var layoutElement = emptyGo.AddComponent<LayoutElement>();
+        layoutElement.preferredHeight = loadGameRowHeight;
+        layoutElement.flexibleHeight = 0f;
+
         var text = emptyGo.GetComponent<Text>();
         text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         text.alignment = TextAnchor.MiddleCenter;
@@ -802,7 +877,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     private void CreateLoadGameWorldRow(int index, SavedWorldEntry entry)
     {
         GameObject rowGo;
-        if (optionsOpenButton != null)
+        if (loadGameWorldRowPrefab != null)
+            rowGo = Instantiate(loadGameWorldRowPrefab, loadGameListRoot);
+        else if (optionsOpenButton != null)
             rowGo = Instantiate(optionsOpenButton.gameObject, loadGameListRoot);
         else
             rowGo = DefaultControls.CreateButton(new DefaultControls.Resources());
@@ -814,7 +891,27 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         if (rowRect != null)
             rowRect.sizeDelta = new Vector2(0f, loadGameRowHeight);
 
+        var layoutElement = rowGo.GetComponent<LayoutElement>();
+        if (layoutElement == null)
+            layoutElement = rowGo.AddComponent<LayoutElement>();
+
+        layoutElement.preferredHeight = loadGameRowHeight;
+        layoutElement.flexibleHeight = 0f;
+
         var button = rowGo.GetComponent<Button>();
+        if (button == null)
+            button = rowGo.AddComponent<Button>();
+
+        var buttonImage = rowGo.GetComponent<Image>();
+        if (buttonImage == null)
+        {
+            buttonImage = rowGo.AddComponent<Image>();
+            buttonImage.color = new Color(1f, 1f, 1f, 0.08f);
+        }
+
+        if (button != null && button.targetGraphic == null)
+            button.targetGraphic = buttonImage;
+
         if (button != null)
         {
             int capturedIndex = index;
@@ -824,9 +921,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
             loadGameSelectables.Add(button);
         }
 
-        var text = rowGo.GetComponentInChildren<Text>(true);
-        if (text != null)
-            text.text = FormatLoadGameRowLabel(entry, index == selectedSavedWorldIndex);
+        SetLoadGameRowDisplayText(rowGo, FormatLoadGameRowLabel(entry, index == selectedSavedWorldIndex));
     }
 
     private void OnLoadGameRowClicked(int index)
@@ -851,11 +946,90 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         int count = Mathf.Min(loadGameWorldButtons.Count, savedWorlds.Count);
         for (int i = 0; i < count; i++)
         {
-            var text = loadGameWorldButtons[i] != null ? loadGameWorldButtons[i].GetComponentInChildren<Text>(true) : null;
-            if (text == null)
+            var rowGo = loadGameWorldButtons[i] != null ? loadGameWorldButtons[i].gameObject : null;
+            if (rowGo == null)
                 continue;
 
-            text.text = FormatLoadGameRowLabel(savedWorlds[i], i == selectedSavedWorldIndex);
+            SetLoadGameRowDisplayText(rowGo, FormatLoadGameRowLabel(savedWorlds[i], i == selectedSavedWorldIndex));
+        }
+    }
+
+    private void EnsureLoadGameScrollStructure(RectTransform legacyRoot)
+    {
+        if (legacyRoot == null)
+            return;
+
+        loadGameScrollRect = legacyRoot.GetComponent<ScrollRect>();
+        if (loadGameScrollRect == null)
+            loadGameScrollRect = legacyRoot.gameObject.AddComponent<ScrollRect>();
+
+        var mask = legacyRoot.GetComponent<Mask>();
+        if (mask == null)
+            mask = legacyRoot.gameObject.AddComponent<Mask>();
+
+        mask.showMaskGraphic = false;
+
+        var image = legacyRoot.GetComponent<Image>();
+        if (image == null)
+            image = legacyRoot.gameObject.AddComponent<Image>();
+
+        image.color = new Color(1f, 1f, 1f, 0.06f);
+
+        loadGameScrollRect.viewport = legacyRoot;
+        loadGameScrollRect.horizontal = false;
+        loadGameScrollRect.vertical = true;
+        loadGameScrollRect.movementType = ScrollRect.MovementType.Clamped;
+
+        var layout = legacyRoot.GetComponent<VerticalLayoutGroup>();
+        if (layout == null)
+            layout = legacyRoot.gameObject.AddComponent<VerticalLayoutGroup>();
+
+        layout.childControlWidth = true;
+        layout.childControlHeight = false;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = false;
+        layout.spacing = Mathf.Max(0f, loadGameListSpacing);
+        layout.padding = new RectOffset(4, 4, 4, 4);
+
+        var fitter = legacyRoot.GetComponent<ContentSizeFitter>();
+        if (fitter == null)
+            fitter = legacyRoot.gameObject.AddComponent<ContentSizeFitter>();
+
+        fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        loadGameListRoot = legacyRoot;
+        loadGameScrollRect.content = loadGameListRoot;
+    }
+
+    private void SetLoadGameRowDisplayText(GameObject rowGo, string value)
+    {
+        if (rowGo == null)
+            return;
+
+        Text rowText = null;
+        if (!string.IsNullOrWhiteSpace(loadGameWorldRowTextObjectName))
+        {
+            var namedTextTransform = FindChildByName(rowGo.transform, loadGameWorldRowTextObjectName);
+            if (namedTextTransform != null)
+                rowText = namedTextTransform.GetComponent<Text>();
+        }
+
+        if (rowText == null)
+            rowText = rowGo.GetComponentInChildren<Text>(true);
+
+        if (rowText != null)
+        {
+            rowText.text = value;
+            return;
+        }
+
+        var input = rowGo.GetComponentInChildren<InputField>(true);
+        if (input != null)
+        {
+            input.readOnly = true;
+            input.interactable = false;
+            input.text = value;
         }
     }
 
@@ -871,7 +1045,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         if (!DateTime.TryParse(entry.lastPlayedAtUtc, out parsed))
             return marker + name;
 
-        return marker + name + "  (" + parsed.ToLocalTime().ToString("g") + ")";
+        return marker + name + "\n" + loadGameLastPlayedLabel + ": " + parsed.ToLocalTime().ToString("g");
     }
 
     private void CollectSavedWorldEntries(List<SavedWorldEntry> target)
