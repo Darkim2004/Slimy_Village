@@ -34,6 +34,22 @@ public sealed class WorldSaveSystem : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoBootstrap()
     {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        EnsureInstanceInGameScene();
+    }
+
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (!scene.IsValid() || scene.name != "Game")
+            return;
+
+        EnsureInstanceInGameScene();
+    }
+
+    private static void EnsureInstanceInGameScene()
+    {
         var scene = SceneManager.GetActiveScene();
         if (!scene.IsValid() || scene.name != "Game")
             return;
@@ -54,6 +70,12 @@ public sealed class WorldSaveSystem : MonoBehaviour
         }
 
         Instance = this;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
     }
 
     private IEnumerator Start()

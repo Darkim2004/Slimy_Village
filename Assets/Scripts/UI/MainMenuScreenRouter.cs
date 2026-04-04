@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -188,6 +188,24 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoBootstrap()
+    {
+        // Register a persistent callback so the router is re-created
+        // every time the MainMenu scene is loaded (not just on first launch).
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        EnsureRouterInMainMenuScene();
+    }
+
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (!scene.IsValid() || scene.name != "MainMenu")
+            return;
+
+        EnsureRouterInMainMenuScene();
+    }
+
+    private static void EnsureRouterInMainMenuScene()
     {
         var scene = SceneManager.GetActiveScene();
         if (!scene.IsValid() || scene.name != "MainMenu")
