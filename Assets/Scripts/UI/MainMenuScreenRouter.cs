@@ -94,7 +94,6 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     private Slider sfxSlider;
     private Slider musicSlider;
     private Selectable firstOptionsSelectable;
-    private ScrollRect creditsScrollRect;
 
     private float sfxVolume = 1f;
     private float musicVolume = 1f;
@@ -235,9 +234,6 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
         currentScreen = MenuScreen.Credits;
         SelectElement(creditsBackButton);
-
-        if (creditsScrollRect != null)
-            creditsScrollRect.verticalNormalizedPosition = 1f;
     }
 
     public string GetCurrentScreenName()
@@ -369,7 +365,6 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     private bool TryBindCreditsControlsFromScene()
     {
         creditsBackButton = null;
-        creditsScrollRect = null;
 
         if (creditsGroup == null)
             return false;
@@ -391,15 +386,13 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
             }
         }
 
-        creditsScrollRect = creditsGroup.GetComponentInChildren<ScrollRect>(true);
-
         if (creditsBackButton != null)
         {
             creditsBackButton.onClick.RemoveListener(ShowMain);
             creditsBackButton.onClick.AddListener(ShowMain);
         }
 
-        return creditsBackButton != null && creditsScrollRect != null;
+        return creditsBackButton != null;
     }
 
     private void BuildCreditsControls(bool clearExisting)
@@ -439,35 +432,15 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         titleText.fontSize = 34;
         titleText.color = Color.white;
 
-        var scrollGo = DefaultControls.CreateScrollView(new DefaultControls.Resources());
-        scrollGo.name = "CreditsScrollView";
-        var scrollRectTransform = scrollGo.GetComponent<RectTransform>();
-        scrollRectTransform.SetParent(panelRect, false);
-        scrollRectTransform.anchorMin = new Vector2(0f, 0f);
-        scrollRectTransform.anchorMax = new Vector2(1f, 1f);
-        scrollRectTransform.offsetMin = new Vector2(32f, 82f);
-        scrollRectTransform.offsetMax = new Vector2(-32f, -76f);
+        var contentGo = new GameObject("CreditsContent", typeof(RectTransform));
+        var contentRect = contentGo.GetComponent<RectTransform>();
+        contentRect.SetParent(panelRect, false);
+        contentRect.anchorMin = new Vector2(0f, 0f);
+        contentRect.anchorMax = new Vector2(1f, 1f);
+        contentRect.offsetMin = new Vector2(32f, 82f);
+        contentRect.offsetMax = new Vector2(-32f, -76f);
 
-        creditsScrollRect = scrollGo.GetComponent<ScrollRect>();
-        if (creditsScrollRect != null)
-        {
-            creditsScrollRect.horizontal = false;
-            creditsScrollRect.vertical = true;
-            creditsScrollRect.movementType = ScrollRect.MovementType.Clamped;
-            creditsScrollRect.scrollSensitivity = 24f;
-
-            var scrollbar = creditsScrollRect.verticalScrollbar;
-            if (scrollbar != null)
-            {
-                var sbRect = scrollbar.GetComponent<RectTransform>();
-                sbRect.anchorMin = new Vector2(1f, 0f);
-                sbRect.anchorMax = new Vector2(1f, 1f);
-                sbRect.pivot = new Vector2(1f, 1f);
-                sbRect.sizeDelta = new Vector2(18f, 0f);
-            }
-        }
-
-        PopulateCreditsScrollContent(creditsScrollRect);
+        PopulateCreditsContent(contentRect);
 
         var backTemplate = optionsOpenButton;
         GameObject backGo;
@@ -501,17 +474,16 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
             backText.text = backLabel;
     }
 
-    private void PopulateCreditsScrollContent(ScrollRect scrollRect)
+    private void PopulateCreditsContent(RectTransform contentRect)
     {
-        if (scrollRect == null || scrollRect.content == null)
+        if (contentRect == null)
             return;
 
-        var content = scrollRect.content;
-        ClearChildren(content);
+        ClearChildren(contentRect);
 
-        var vlg = content.GetComponent<VerticalLayoutGroup>();
+        var vlg = contentRect.GetComponent<VerticalLayoutGroup>();
         if (vlg == null)
-            vlg = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            vlg = contentRect.gameObject.AddComponent<VerticalLayoutGroup>();
 
         vlg.childControlHeight = true;
         vlg.childControlWidth = true;
@@ -520,16 +492,13 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         vlg.spacing = 10f;
         vlg.padding = new RectOffset(8, 32, 8, 8);
 
-        var fitter = content.GetComponent<ContentSizeFitter>();
+        var fitter = contentRect.GetComponent<ContentSizeFitter>();
         if (fitter == null)
-            fitter = content.gameObject.AddComponent<ContentSizeFitter>();
+            fitter = contentRect.gameObject.AddComponent<ContentSizeFitter>();
 
         fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
         fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        var contentRect = content.GetComponent<RectTransform>();
-        contentRect.anchorMin = new Vector2(0f, 1f);
-        contentRect.anchorMax = new Vector2(1f, 1f);
         contentRect.pivot = new Vector2(0.5f, 1f);
         contentRect.anchoredPosition = Vector2.zero;
         contentRect.sizeDelta = new Vector2(0f, 0f);
@@ -538,7 +507,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         {
             var rowGo = new GameObject("CreditRow_" + i, typeof(RectTransform), typeof(Text));
             var rowRect = rowGo.GetComponent<RectTransform>();
-            rowRect.SetParent(content, false);
+            rowRect.SetParent(contentRect, false);
             rowRect.sizeDelta = new Vector2(0f, 38f);
 
             var rowText = rowGo.GetComponent<Text>();
