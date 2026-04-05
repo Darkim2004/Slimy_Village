@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -34,6 +35,60 @@ public class WorldGenTilemap : MonoBehaviour
     public Vector3 WorldSpawnPoint { get; private set; }
 
     public enum Biome { Ocean, Plains, Snomy }
+
+    [Serializable]
+    public class StructurePrefabEntry
+    {
+        public GameObject prefab;
+
+        [Min(1)]
+        public Vector2Int size = Vector2Int.one;
+
+        public Vector3 spawnOffset = Vector3.zero;
+    }
+
+    [Serializable]
+    public class FixedChestLootEntry
+    {
+        public ItemDefinition item;
+
+        [Min(1)]
+        public int amount = 1;
+    }
+
+    [Serializable]
+    public class StructureGroupDefinition
+    {
+        public string groupName = "Ruins";
+        public bool enabled = true;
+        public Biome spawnBiome = Biome.Plains;
+
+        [Min(1)] public int minStructures = 3;
+        [Min(1)] public int maxStructures = 6;
+
+        [Min(1)]
+        [Tooltip("Distanza massima in celle tra le strutture del gruppo.")]
+        public int maxStructureDistanceCells = 8;
+
+        [Min(1)]
+        [Tooltip("Numero massimo di tentativi per trovare un anchor valido per il gruppo.")]
+        public int anchorAttempts = 120;
+
+        [Min(1)]
+        [Tooltip("Tentativi per piazzare ciascuna struttura del gruppo.")]
+        public int placementAttemptsPerStructure = 80;
+
+        [Min(1)]
+        [Tooltip("Raggio massimo in celle per trovare una cella valida per la chest vicino al centro gruppo.")]
+        public int chestSearchRadius = 8;
+
+        [Header("Structure Pool")]
+        public StructurePrefabEntry[] structurePrefabs;
+
+        [Header("Center Chest")]
+        public PlaceableDefinition chestPlaceable;
+        public FixedChestLootEntry[] chestFixedLoot;
+    }
 
     [Header("World Size (prototype, no chunks yet)")]
     [Min(1)] public int width = 128;
@@ -76,6 +131,19 @@ public class WorldGenTilemap : MonoBehaviour
 
     [Tooltip("Parent opzionale dove mettere tutti i props spawnati (consigliato: Empty 'Props').")]
     public Transform propsParent;
+
+    [Header("Structure Groups")]
+    [Tooltip("Se true, genera gruppi di strutture non distruttibili con chest centrale.")]
+    public bool spawnStructureGroups = true;
+
+    [Tooltip("Collision tile usata per bloccare le celle occupate dalle strutture. Fallback: treeCollisionTile.")]
+    public TileBase structureCollisionTile;
+
+    [Tooltip("Collision tile usata per bloccare la cella/area chest. Fallback: structureCollisionTile/treeCollisionTile.")]
+    public TileBase chestCollisionTile;
+
+    [Tooltip("Definizioni dei gruppi strutture (es. Rovine Plains, Rovine di ghiaccio Snomy).")]
+    public StructureGroupDefinition[] structureGroups;
 
     [Tooltip("Offset di spawn per alberi (per correggere pivot/ancoraggio).")]
     public Vector3 treeSpawnOffset = Vector3.zero;
@@ -259,6 +327,32 @@ public class WorldGenTilemap : MonoBehaviour
         public DecorType decor;
     }
 
+    private struct PlannedStructureSpawn
+    {
+        public GameObject prefab;
+        public Vector2Int origin;
+        public Vector2Int size;
+        public Vector3 spawnOffset;
+    }
+
+    private struct PlannedChestSpawn
+    {
+        public StructureGroupDefinition group;
+        public Vector2Int origin;
+        public Vector2Int size;
+    }
+
+    private struct GroupStructurePlacement
+    {
+        public StructurePrefabEntry entry;
+        public Vector2Int origin;
+        public Vector2 center;
+    }
+
+    private readonly List<PlannedStructureSpawn> _plannedStructureSpawns = new List<PlannedStructureSpawn>();
+    private readonly List<PlannedChestSpawn> _plannedChestSpawns = new List<PlannedChestSpawn>();
+    private bool[,] _reservedStructureCells;
+
     [Header("Auto Generate")]
     public bool generateOnStart = true;
     private void Start()
@@ -361,6 +455,8 @@ public class WorldGenTilemap : MonoBehaviour
             data[x, y].decor = d;
         }
 
+        PlanStructureGroups(data);
+
         RenderGeneratedData(data);
     }
 
@@ -429,6 +525,7 @@ public class WorldGenTilemap : MonoBehaviour
         }
 
         _generated = data;
+        PlanStructureGroups(data);
         RenderGeneratedData(data);
         return true;
     }
@@ -505,6 +602,8 @@ public class WorldGenTilemap : MonoBehaviour
                 decorTilemap.SetTile(cell, decorTile);
         }
 
+        SpawnPlannedStructureGroups();
+
         groundTilemap.CompressBounds();
         decorTilemap.CompressBounds();
         if (treeCollisionTilemap != null)
@@ -512,6 +611,575 @@ public class WorldGenTilemap : MonoBehaviour
 
         _hasGenerated = true;
         WorldSpawnPoint = FindWorldSpawnPoint();
+    }
+
+    private void PlanStructureGroups(TileData[,] data)
+    {
+        _plannedStructureSpawns.Clear();
+        _plannedChestSpawns.Clear();
+        _reservedStructureCells = null;
+
+        if (!spawnStructureGroups || data == null || structureGroups == null || structureGroups.Length == 0)
+            return;
+
+        _reservedStructureCells = new bool[width, height];
+
+        int worldSeed = seed;
+        HashSet<Biome> plannedBiomes = new HashSet<Biome>();
+        for (int i = 0; i < structureGroups.Length; i++)
+        {
+            StructureGroupDefinition group = structureGroups[i];
+            if (!IsValidStructureGroup(group))
+                continue;
+
+            if (plannedBiomes.Contains(group.spawnBiome))
+                continue;
+
+            int groupSeed = unchecked(worldSeed * 397 ^ (i * 486187739) ^ 0x5f3759df);
+            System.Random rng = new System.Random(groupSeed);
+
+            bool planned = TryPlanSingleStructureGroup(data, group, rng);
+            if (planned)
+                plannedBiomes.Add(group.spawnBiome);
+
+            if (!planned)
+                Debug.LogWarning("[WorldGen] Impossibile piazzare il gruppo strutture '" + group.groupName + "'.", this);
+        }
+    }
+
+    private bool TryPlanSingleStructureGroup(TileData[,] data, StructureGroupDefinition group, System.Random rng)
+    {
+        GroundType targetGround = ToGroundType(group.spawnBiome);
+        if (targetGround == GroundType.Ocean)
+            return false;
+
+        List<StructurePrefabEntry> pool = BuildValidStructurePool(group);
+        if (pool.Count == 0)
+            return false;
+
+        int minStructures = Mathf.Max(1, group.minStructures);
+        int maxStructures = Mathf.Max(minStructures, group.maxStructures);
+        int targetCount = rng.Next(minStructures, maxStructures + 1);
+
+        int anchorAttempts = Mathf.Max(1, group.anchorAttempts);
+        int placeAttempts = Mathf.Max(1, group.placementAttemptsPerStructure);
+        int maxDistance = Mathf.Max(1, group.maxStructureDistanceCells);
+
+        for (int anchorTry = 0; anchorTry < anchorAttempts; anchorTry++)
+        {
+            Vector2Int anchor = new Vector2Int(rng.Next(0, width), rng.Next(0, height));
+            if (!IsCellSuitableForGroup(data, anchor.x, anchor.y, targetGround))
+                continue;
+
+            List<GroupStructurePlacement> placements = new List<GroupStructurePlacement>(targetCount);
+
+            if (!TryPlaceStructureAroundAnchor(data, targetGround, pool, placements, anchor, maxDistance, placeAttempts, rng, isFirst: true))
+                continue;
+
+            int safetyBudget = Mathf.Max(placeAttempts * targetCount, placeAttempts);
+            while (placements.Count < targetCount && safetyBudget > 0)
+            {
+                bool added = TryPlaceStructureAroundAnchor(
+                    data,
+                    targetGround,
+                    pool,
+                    placements,
+                    anchor,
+                    maxDistance,
+                    placeAttempts,
+                    rng,
+                    isFirst: false
+                );
+
+                safetyBudget--;
+                if (!added && safetyBudget <= 0)
+                    break;
+            }
+
+            if (placements.Count < minStructures)
+                continue;
+
+            if (!TryPlanChestForGroup(data, group, targetGround, placements, out Vector2Int chestOrigin, out Vector2Int chestSize))
+                continue;
+
+            CommitGroupPlan(data, group, placements, chestOrigin, chestSize);
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryPlanChestForGroup(
+        TileData[,] data,
+        StructureGroupDefinition group,
+        GroundType targetGround,
+        List<GroupStructurePlacement> placements,
+        out Vector2Int chestOrigin,
+        out Vector2Int chestSize)
+    {
+        chestOrigin = Vector2Int.zero;
+        chestSize = Vector2Int.one;
+
+        if (group == null || group.chestPlaceable == null || group.chestPlaceable.placedPrefab == null)
+            return false;
+
+        chestSize = ClampSize(group.chestPlaceable.size);
+
+        Vector2 centroid = Vector2.zero;
+        for (int i = 0; i < placements.Count; i++)
+            centroid += placements[i].center;
+
+        centroid /= Mathf.Max(1, placements.Count);
+        Vector2Int centroidCell = new Vector2Int(Mathf.RoundToInt(centroid.x), Mathf.RoundToInt(centroid.y));
+
+        int searchRadius = Mathf.Max(0, group.chestSearchRadius);
+        for (int radius = 0; radius <= searchRadius; radius++)
+        {
+            for (int dy = -radius; dy <= radius; dy++)
+            {
+                for (int dx = -radius; dx <= radius; dx++)
+                {
+                    if (radius > 0 && Mathf.Abs(dx) != radius && Mathf.Abs(dy) != radius)
+                        continue;
+
+                    Vector2Int center = new Vector2Int(centroidCell.x + dx, centroidCell.y + dy);
+                    Vector2Int candidateOrigin = CenterToOrigin(center, chestSize);
+
+                    if (!CanPlaceArea(data, targetGround, candidateOrigin, chestSize, allowBlockingGrass: true))
+                        continue;
+
+                    if (OverlapsAnyStructure(candidateOrigin, chestSize, placements))
+                        continue;
+
+                    chestOrigin = candidateOrigin;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private bool TryPlaceStructureAroundAnchor(
+        TileData[,] data,
+        GroundType targetGround,
+        List<StructurePrefabEntry> pool,
+        List<GroupStructurePlacement> placements,
+        Vector2Int anchor,
+        int maxDistance,
+        int attempts,
+        System.Random rng,
+        bool isFirst)
+    {
+        int tries = Mathf.Max(1, attempts);
+        for (int attempt = 0; attempt < tries; attempt++)
+        {
+            StructurePrefabEntry entry = pool[rng.Next(pool.Count)];
+            Vector2Int size = ClampSize(entry.size);
+
+            Vector2Int center;
+            if (isFirst && attempt == 0)
+            {
+                center = anchor;
+            }
+            else
+            {
+                center = RandomCenterAroundAnchor(anchor, maxDistance, rng);
+            }
+
+            Vector2Int origin = CenterToOrigin(center, size);
+
+            if (!CanPlaceArea(data, targetGround, origin, size, allowBlockingGrass: true))
+                continue;
+
+            if (!RespectsStructureDistanceRules(origin, size, placements, maxDistance))
+                continue;
+
+            GroupStructurePlacement placement = new GroupStructurePlacement
+            {
+                entry = entry,
+                origin = origin,
+                center = GetRectCenter(origin, size)
+            };
+
+            placements.Add(placement);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void CommitGroupPlan(
+        TileData[,] data,
+        StructureGroupDefinition group,
+        List<GroupStructurePlacement> placements,
+        Vector2Int chestOrigin,
+        Vector2Int chestSize)
+    {
+        for (int i = 0; i < placements.Count; i++)
+        {
+            GroupStructurePlacement p = placements[i];
+            ReserveArea(data, p.origin, ClampSize(p.entry.size));
+
+            _plannedStructureSpawns.Add(new PlannedStructureSpawn
+            {
+                prefab = p.entry.prefab,
+                origin = p.origin,
+                size = ClampSize(p.entry.size),
+                spawnOffset = p.entry.spawnOffset
+            });
+        }
+
+        ReserveArea(data, chestOrigin, chestSize);
+        _plannedChestSpawns.Add(new PlannedChestSpawn
+        {
+            group = group,
+            origin = chestOrigin,
+            size = chestSize
+        });
+    }
+
+    private void SpawnPlannedStructureGroups()
+    {
+        if (_plannedStructureSpawns.Count == 0 && _plannedChestSpawns.Count == 0)
+            return;
+
+        TileBase structureBlockTile = structureCollisionTile != null ? structureCollisionTile : treeCollisionTile;
+        TileBase chestBlockTile = chestCollisionTile != null
+            ? chestCollisionTile
+            : (structureCollisionTile != null ? structureCollisionTile : treeCollisionTile);
+
+        for (int i = 0; i < _plannedStructureSpawns.Count; i++)
+        {
+            PlannedStructureSpawn planned = _plannedStructureSpawns[i];
+            if (planned.prefab == null)
+                continue;
+
+            Vector3 spawnPos = GetAreaWorldCenter(planned.origin, planned.size) + planned.spawnOffset;
+            Transform parent = propsParent != null ? propsParent : transform;
+            GameObject go = Instantiate(planned.prefab, spawnPos, Quaternion.identity, parent);
+            RemoveHarvestableIfAny(go);
+
+            if (treeCollisionTilemap != null && structureBlockTile != null)
+                FillCollisionArea(planned.origin, planned.size, structureBlockTile);
+        }
+
+        for (int i = 0; i < _plannedChestSpawns.Count; i++)
+        {
+            PlannedChestSpawn plannedChest = _plannedChestSpawns[i];
+            SpawnPlannedChest(plannedChest);
+
+            if (treeCollisionTilemap != null && chestBlockTile != null)
+                FillCollisionArea(plannedChest.origin, plannedChest.size, chestBlockTile);
+        }
+    }
+
+    private void SpawnPlannedChest(PlannedChestSpawn planned)
+    {
+        StructureGroupDefinition group = planned.group;
+        if (group == null || group.chestPlaceable == null || group.chestPlaceable.placedPrefab == null)
+            return;
+
+        Vector3 spawnPos = GetAreaWorldCenter(planned.origin, planned.size) + group.chestPlaceable.spawnOffset;
+        Transform parent = propsParent != null ? propsParent : transform;
+        GameObject go = Instantiate(group.chestPlaceable.placedPrefab, spawnPos, Quaternion.identity, parent);
+        RemoveHarvestableIfAny(go);
+
+        PlacedObject placed = go.GetComponent<PlacedObject>();
+        if (placed == null)
+            placed = go.AddComponent<PlacedObject>();
+
+        placed.Initialize(group.chestPlaceable, planned.origin, planned.size);
+
+        if (go.GetComponent<YSort>() == null && go.GetComponentInChildren<YSort>() == null)
+            go.AddComponent<YSort>();
+
+        ChestInventoryStorage chest = go.GetComponent<ChestInventoryStorage>();
+        if (chest == null)
+            chest = go.AddComponent<ChestInventoryStorage>();
+
+        FillChestWithFixedLoot(chest, group.chestFixedLoot);
+    }
+
+    private void FillChestWithFixedLoot(ChestInventoryStorage chest, FixedChestLootEntry[] loot)
+    {
+        if (chest == null || chest.Section == null || loot == null)
+            return;
+
+        chest.Section.Clear();
+
+        for (int i = 0; i < loot.Length; i++)
+        {
+            FixedChestLootEntry entry = loot[i];
+            if (entry == null || entry.item == null || entry.amount <= 0)
+                continue;
+
+            chest.Section.TryAdd(new ItemStack(entry.item, entry.amount));
+        }
+    }
+
+    private void RemoveHarvestableIfAny(GameObject go)
+    {
+        if (go == null) return;
+
+        HarvestableNode[] nodes = go.GetComponentsInChildren<HarvestableNode>(true);
+        for (int i = 0; i < nodes.Length; i++)
+        {
+            HarvestableNode node = nodes[i];
+            if (node == null) continue;
+
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                DestroyImmediate(node);
+            else
+#endif
+                Destroy(node);
+        }
+    }
+
+    private bool IsValidStructureGroup(StructureGroupDefinition group)
+    {
+        if (group == null || !group.enabled)
+            return false;
+
+        if (group.chestPlaceable == null || group.chestPlaceable.placedPrefab == null)
+            return false;
+
+        List<StructurePrefabEntry> pool = BuildValidStructurePool(group);
+        return pool.Count > 0;
+    }
+
+    private List<StructurePrefabEntry> BuildValidStructurePool(StructureGroupDefinition group)
+    {
+        List<StructurePrefabEntry> pool = new List<StructurePrefabEntry>();
+        if (group == null || group.structurePrefabs == null)
+            return pool;
+
+        for (int i = 0; i < group.structurePrefabs.Length; i++)
+        {
+            StructurePrefabEntry entry = group.structurePrefabs[i];
+            if (entry == null || entry.prefab == null)
+                continue;
+
+            entry.size = ClampSize(entry.size);
+            pool.Add(entry);
+        }
+
+        return pool;
+    }
+
+    private bool CanPlaceArea(TileData[,] data, GroundType targetGround, Vector2Int origin, Vector2Int size, bool allowBlockingGrass)
+    {
+        for (int y = origin.y; y < origin.y + size.y; y++)
+        {
+            for (int x = origin.x; x < origin.x + size.x; x++)
+            {
+                if (!IsInside(x, y))
+                    return false;
+
+                if (data[x, y].ground != targetGround)
+                    return false;
+
+                if (_reservedStructureCells != null && _reservedStructureCells[x, y])
+                    return false;
+
+                DecorType decor = data[x, y].decor;
+                if (IsSolidDecor(decor))
+                    return false;
+
+                if (!allowBlockingGrass && decor == DecorType.Grass)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    private bool RespectsStructureDistanceRules(Vector2Int origin, Vector2Int size, List<GroupStructurePlacement> placements, int maxDistance)
+    {
+        if (placements == null || placements.Count == 0)
+            return true;
+
+        Vector2 center = GetRectCenter(origin, size);
+
+        for (int i = 0; i < placements.Count; i++)
+        {
+            GroupStructurePlacement placed = placements[i];
+            Vector2Int placedSize = ClampSize(placed.entry.size);
+
+            int chebyshev = RectChebyshevDistance(origin, size, placed.origin, placedSize);
+            if (chebyshev < 1)
+                return false;
+
+            if (Vector2.Distance(center, placed.center) > maxDistance)
+                return false;
+        }
+
+        return true;
+    }
+
+    private bool OverlapsAnyStructure(Vector2Int origin, Vector2Int size, List<GroupStructurePlacement> placements)
+    {
+        for (int i = 0; i < placements.Count; i++)
+        {
+            GroupStructurePlacement p = placements[i];
+            if (RectanglesOverlap(origin, size, p.origin, ClampSize(p.entry.size)))
+                return true;
+        }
+
+        return false;
+    }
+
+    private void ReserveArea(TileData[,] data, Vector2Int origin, Vector2Int size)
+    {
+        for (int y = origin.y; y < origin.y + size.y; y++)
+        {
+            for (int x = origin.x; x < origin.x + size.x; x++)
+            {
+                if (!IsInside(x, y))
+                    continue;
+
+                if (_reservedStructureCells != null)
+                    _reservedStructureCells[x, y] = true;
+
+                if (data[x, y].decor == DecorType.Grass)
+                    data[x, y].decor = DecorType.None;
+            }
+        }
+    }
+
+    private void FillCollisionArea(Vector2Int origin, Vector2Int size, TileBase tile)
+    {
+        if (treeCollisionTilemap == null || tile == null)
+            return;
+
+        for (int y = origin.y; y < origin.y + size.y; y++)
+        {
+            for (int x = origin.x; x < origin.x + size.x; x++)
+            {
+                if (!IsInside(x, y))
+                    continue;
+
+                treeCollisionTilemap.SetTile(new Vector3Int(x, y, 0), tile);
+            }
+        }
+    }
+
+    private bool IsCellSuitableForGroup(TileData[,] data, int x, int y, GroundType targetGround)
+    {
+        if (!IsInside(x, y))
+            return false;
+
+        if (data[x, y].ground != targetGround)
+            return false;
+
+        if (_reservedStructureCells != null && _reservedStructureCells[x, y])
+            return false;
+
+        return !IsSolidDecor(data[x, y].decor);
+    }
+
+    private GroundType ToGroundType(Biome biome)
+    {
+        return biome switch
+        {
+            Biome.Plains => GroundType.Plains,
+            Biome.Snomy => GroundType.Snomy,
+            _ => GroundType.Ocean
+        };
+    }
+
+    private static bool IsSolidDecor(DecorType decor)
+    {
+        return decor == DecorType.Tree ||
+               decor == DecorType.SnowTree ||
+               decor == DecorType.Bush ||
+               decor == DecorType.BigRock;
+    }
+
+    private static Vector2Int ClampSize(Vector2Int size)
+    {
+        return new Vector2Int(Mathf.Max(1, size.x), Mathf.Max(1, size.y));
+    }
+
+    private static Vector2 GetRectCenter(Vector2Int origin, Vector2Int size)
+    {
+        return new Vector2(
+            origin.x + (size.x - 1) * 0.5f,
+            origin.y + (size.y - 1) * 0.5f
+        );
+    }
+
+    private static Vector2Int CenterToOrigin(Vector2Int center, Vector2Int size)
+    {
+        int ox = Mathf.RoundToInt(center.x - (size.x - 1) * 0.5f);
+        int oy = Mathf.RoundToInt(center.y - (size.y - 1) * 0.5f);
+        return new Vector2Int(ox, oy);
+    }
+
+    private static bool RectanglesOverlap(Vector2Int aOrigin, Vector2Int aSize, Vector2Int bOrigin, Vector2Int bSize)
+    {
+        int aMinX = aOrigin.x;
+        int aMaxX = aOrigin.x + aSize.x - 1;
+        int aMinY = aOrigin.y;
+        int aMaxY = aOrigin.y + aSize.y - 1;
+
+        int bMinX = bOrigin.x;
+        int bMaxX = bOrigin.x + bSize.x - 1;
+        int bMinY = bOrigin.y;
+        int bMaxY = bOrigin.y + bSize.y - 1;
+
+        bool separated = aMaxX < bMinX || bMaxX < aMinX || aMaxY < bMinY || bMaxY < aMinY;
+        return !separated;
+    }
+
+    private static int RectChebyshevDistance(Vector2Int aOrigin, Vector2Int aSize, Vector2Int bOrigin, Vector2Int bSize)
+    {
+        int aMinX = aOrigin.x;
+        int aMaxX = aOrigin.x + aSize.x - 1;
+        int aMinY = aOrigin.y;
+        int aMaxY = aOrigin.y + aSize.y - 1;
+
+        int bMinX = bOrigin.x;
+        int bMaxX = bOrigin.x + bSize.x - 1;
+        int bMinY = bOrigin.y;
+        int bMaxY = bOrigin.y + bSize.y - 1;
+
+        int dx = 0;
+        if (aMaxX < bMinX) dx = bMinX - aMaxX;
+        else if (bMaxX < aMinX) dx = aMinX - bMaxX;
+
+        int dy = 0;
+        if (aMaxY < bMinY) dy = bMinY - aMaxY;
+        else if (bMaxY < aMinY) dy = aMinY - bMaxY;
+
+        return Mathf.Max(dx, dy);
+    }
+
+    private static Vector2Int RandomCenterAroundAnchor(Vector2Int anchor, int maxDistance, System.Random rng)
+    {
+        int range = Mathf.Max(1, maxDistance);
+        int dx = 0;
+        int dy = 0;
+
+        for (int guard = 0; guard < 20; guard++)
+        {
+            dx = rng.Next(-range, range + 1);
+            dy = rng.Next(-range, range + 1);
+
+            int chebyshev = Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
+            if (chebyshev >= 1 && chebyshev <= range)
+                break;
+        }
+
+        return new Vector2Int(anchor.x + dx, anchor.y + dy);
+    }
+
+    private Vector3 GetAreaWorldCenter(Vector2Int origin, Vector2Int size)
+    {
+        Vector3 bottomLeft = CellCenterWorld(origin.x, origin.y);
+        Vector3 topRight = CellCenterWorld(origin.x + size.x - 1, origin.y + size.y - 1);
+        return (bottomLeft + topRight) * 0.5f;
     }
 
     private static GroundType DeserializeGround(int value)
@@ -596,6 +1264,9 @@ public class WorldGenTilemap : MonoBehaviour
         if (groundTilemap != null) groundTilemap.ClearAllTiles();
         if (decorTilemap != null) decorTilemap.ClearAllTiles();
         if (treeCollisionTilemap != null) treeCollisionTilemap.ClearAllTiles();
+        _plannedStructureSpawns.Clear();
+        _plannedChestSpawns.Clear();
+        _reservedStructureCells = null;
         ClearSpawnedProps();
     }
 
