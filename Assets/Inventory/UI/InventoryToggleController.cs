@@ -21,6 +21,13 @@ public class InventoryToggleController : MonoBehaviour
     [SerializeField] private CraftingStationMenuUI inventoryCraftingMenuPrefab;
     [SerializeField] private CraftingRecipeDefinition[] inventoryCraftingRecipes;
 
+    [Header("Craft Button Visual States")]
+    [SerializeField] private Image craftButtonIconImage;
+    [SerializeField] private Sprite craftButtonNormalSprite;
+    [SerializeField] private Sprite craftButtonCraftingSprite;
+    [SerializeField] private Color craftButtonNormalColor = Color.white;
+    [SerializeField] private Color craftButtonCraftingColor = Color.white;
+
     [Header("Player Lock")]
     [SerializeField] private PlayerTopDown playerTopDown;
 
@@ -30,6 +37,8 @@ public class InventoryToggleController : MonoBehaviour
     private readonly List<GameObject> craftingHiddenChildren = new List<GameObject>();
     private CraftingStationMenuUI inventoryCraftingMenuInstance;
     private bool isCraftingModeOpen;
+    private Sprite defaultCraftButtonSprite;
+    private bool hasCachedDefaultCraftButtonSprite;
 
     public bool IsOpen { get; private set; }
 
@@ -55,6 +64,7 @@ public class InventoryToggleController : MonoBehaviour
 
         ResolveInventoryCraftingReferences();
         RegisterCraftButtonListener();
+        RefreshCraftButtonVisualState();
 
         SetOpen(startOpened, true);
     }
@@ -121,6 +131,8 @@ public class InventoryToggleController : MonoBehaviour
 
         if (playerTopDown != null)
             playerTopDown.SetInputLocked(IsOpen);
+
+        RefreshCraftButtonVisualState();
     }
 
     public void ToggleInventoryCraftingMode()
@@ -154,6 +166,7 @@ public class InventoryToggleController : MonoBehaviour
         inventoryCraftingMenuInstance.Show(null);
         HideInventoryChildrenForCrafting();
         isCraftingModeOpen = true;
+        RefreshCraftButtonVisualState();
     }
 
     private void CloseInventoryCraftingMode()
@@ -163,6 +176,7 @@ public class InventoryToggleController : MonoBehaviour
 
         RestoreInventoryChildrenAfterCrafting();
         isCraftingModeOpen = false;
+        RefreshCraftButtonVisualState();
     }
 
     private bool EnsureInventoryCraftingMenu()
@@ -242,6 +256,25 @@ public class InventoryToggleController : MonoBehaviour
             if (inventoryTitleTransform != null)
                 inventoryTitleObject = inventoryTitleTransform.gameObject;
         }
+
+        if (craftButtonIconImage == null && craftButtonInventory != null)
+        {
+            var buttonBackgroundImage = craftButtonInventory.targetGraphic as Image;
+            var images = craftButtonInventory.GetComponentsInChildren<Image>(true);
+            for (int i = 0; i < images.Length; i++)
+            {
+                if (images[i] == null || images[i] == buttonBackgroundImage)
+                    continue;
+
+                craftButtonIconImage = images[i];
+                break;
+            }
+
+            if (craftButtonIconImage == null)
+                craftButtonIconImage = buttonBackgroundImage;
+        }
+
+        CacheDefaultCraftButtonSprite();
     }
 
     private void RegisterCraftButtonListener()
@@ -261,5 +294,39 @@ public class InventoryToggleController : MonoBehaviour
     {
         if (craftButtonInventory != null)
             craftButtonInventory.onClick.RemoveListener(ToggleInventoryCraftingMode);
+    }
+
+    private void CacheDefaultCraftButtonSprite()
+    {
+        if (hasCachedDefaultCraftButtonSprite || craftButtonIconImage == null)
+            return;
+
+        defaultCraftButtonSprite = craftButtonIconImage.sprite;
+        hasCachedDefaultCraftButtonSprite = true;
+    }
+
+    private void RefreshCraftButtonVisualState()
+    {
+        if (craftButtonIconImage == null)
+            return;
+
+        CacheDefaultCraftButtonSprite();
+
+        bool craftingActive = IsOpen && isCraftingModeOpen;
+        if (craftingActive)
+        {
+            if (craftButtonCraftingSprite != null)
+                craftButtonIconImage.sprite = craftButtonCraftingSprite;
+
+            craftButtonIconImage.color = craftButtonCraftingColor;
+            return;
+        }
+
+        if (craftButtonNormalSprite != null)
+            craftButtonIconImage.sprite = craftButtonNormalSprite;
+        else if (hasCachedDefaultCraftButtonSprite)
+            craftButtonIconImage.sprite = defaultCraftButtonSprite;
+
+        craftButtonIconImage.color = craftButtonNormalColor;
     }
 }
