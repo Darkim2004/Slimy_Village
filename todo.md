@@ -14,11 +14,13 @@
 - [X] Aggiungi ricette varie
 - [X] Aggiungere sistema di piazzamento blocchi
 - [ ] Aggiungi boss
-- [ ] Aggiungi crafting da inventario per crafting table
+- [X] Aggiungi crafting da inventario per crafting table
+- [ ] Aggiungere un modo per rompere oggetti piazzati
+- [ ] Aggiungi che i nemici non possono spawnare alla luce
 
 ## Refactoring e Ottimizzazione
 - [ ] Worldgen
 
 ## Idee sparse / Design
 - [X] Luci mini dinamiche per faló torce ecc
-- [ ] Aggiungi torce/lamp
+- [X] Aggiungi torce/lamp

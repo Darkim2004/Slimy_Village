@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edd75b322ebaba24296059dfe0af51e0, type: 3}
+  m_Name: Torch
+  m_EditorClassIdentifier: Assembly-CSharp::PlaceableDefinition
+  canInteract: 0
+  interactionText: 
+  interactionMenuPrefab: {fileID: 0}
+  size: {x: 1, y: 1}
+  pivotOffset: {x: 0, y: 0}
+  placedPrefab: {fileID: 233804468772191164, guid: e1487e4edba63b048a2579a235344f40, type: 3}
+  ghostSprite: {fileID: 8314308955538630803, guid: 1ac05c29adde2a5438a4ce2425b678fc, type: 3}
+  spawnOffset: {x: 0, y: 0, z: 0}
