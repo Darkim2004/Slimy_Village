@@ -114,7 +114,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -120, y: -120}
+  m_SizeDelta: {x: -240, y: -120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6529861649844303086
 CanvasRenderer:
@@ -157,27 +157,36 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Quinto giorno della Festa dell\u2019Alba Dorata\n\nQuesta mattina l\u2019aria
-    profuma di spezie e fiori intrecciati. Le strade sono gi\xE0 vive, anche prima
-    che il sole abbia raggiunto il punto pi\xF9 alto nel cielo. I mercanti cantano
-    mentre montano le loro bancarelle, e i bambini corrono tra le bandiere dorate
-    che sventolano sopra la piazza. \xC8 difficile ricordare un tempo pi\xF9 sereno
-    di questo.\n\nDa anni ormai il nostro regno prospera sotto la guida del grande
-    mago \xC6gis. Le sue magie hanno reso fertili terre un tempo aride, e le mura
-    della citt\xE0 non hanno conosciuto guerra da quando ero bambino. Mio padre dice
-    sempre che viviamo nell\u2019epoca pi\xF9 luminosa che la storia ricordi, e oggi\u2026
-    oggi forse assisteremo a qualcosa che la render\xE0 eterna.\n\nNel pomeriggio,
-    durante la cerimonia, \xC6gis mostrer\xE0 al popolo il suo nuovo incantesimo.
-    Si dice che sar\xE0 in grado di trasformare la pietra in oro. Non solo per ricchezza,
-    ma per garantire che nessuno, mai pi\xF9, conosca la fame o la povert\xE0. \xC8
-    difficile perfino immaginare un mondo simile\u2026 eppure, se qualcuno pu\xF2
-    renderlo reale, \xE8 lui.\n\nLa citt\xE0 intera attende con il cuore colmo di
-    fiducia. Ho visto gli anziani sorridere come non facevano da tempo, e persino
-    le guardie, solitamente cos\xEC rigide, sembrano pi\xF9 leggere oggi. \xC8 come
-    se tutti condividessimo lo stesso sogno.\n\nIo sar\xF2 l\xEC, tra la folla, quando
-    il sole inizier\xE0 a calare. Voglio vedere con i miei occhi l\u2019inizio di
-    una nuova era.\n\nSe questo \xE8 davvero il futuro che ci attende\u2026 allora
-    non ho mai avuto cos\xEC tanta speranza."
+  m_Text: "Non so pi\xF9 quale giorno sia.\n\nIl freddo qui non somiglia a nulla
+    di ci\xF2 che ho conosciuto nella capitale. Non \xE8 il freddo gentile delle
+    mattine d\u2019inverno lungo i canali, n\xE9 quello pungente che si dissolve
+    con il primo sole. Questo \xE8 un gelo che morde, che si insinua nelle ossa e
+    vi resta. Le mie mani tremano mentre scrivo, e temo che presto non saranno pi\xF9
+    in grado di farlo.\n\nNon appartengo a questo luogo. Le pietre sono scure, il
+    cielo \xE8 sempre velato, e il silenzio\u2026 il silenzio \xE8 ci\xF2 che pi\xF9
+    mi tormenta. Dove un tempo vi erano voci, studi, discussioni e vita, ora resta
+    solo un\u2019eco distante \u2014 o forse \xE8 solo la mia memoria che si rifiuta
+    di accettare la realt\xE0.\n\n\xC6gis.\n\nHo pronunciato il tuo nome ad alta
+    voce poco fa, e mi \xE8 parso estraneo.\n\nNoi, che sedevamo tra i banchi del
+    Senato, sapevamo. Tutti noi sapevamo. La magia non dona senza chiedere. Ogni
+    formula, ogni trasmutazione, ogni miracolo\u2026 obbedisce al principio dello
+    scambio equivalente. Era la prima legge che insegnavamo agli apprendisti, la
+    verit\xE0 pi\xF9 antica e pi\xF9 innegabile.\n\nEppure tu \u2014 il pi\xF9 grande
+    tra noi \u2014 hai scelto di ignorarla. O forse credevi di poterla piegare.\n\nMai
+    avrei immaginato un prezzo simile.\n\nLe strade che un tempo brillavano d\u2019oro
+    e di vita\u2026 ora pullulano di quelle forme tremolanti, prive di volont\xE0,
+    che si trascinano senza meta. Non sono pi\xF9 il nostro popolo, eppure ne conservano
+    un\u2019ombra. \xC8 questo che rende tutto insopportabile. Non sono morti. Non
+    sono vivi. Sono\u2026 altro.\n\nE noi siamo stati la causa.\n\nIo sono fuggito.
+    Lo ammetto senza onore. Ho attraversato terre che non avevo mai studiato, guidato
+    solo dal desiderio di allontanarmi da ci\xF2 che avevamo creato. E ora eccomi
+    qui, in un luogo che non mi vuole, dove il freddo sembra deciso a reclamare ci\xF2
+    che resta di me.\n\nMi chiedo quanto a lungo sopravvivr\xF2. Senza le comodit\xE0
+    della capitale, senza le nostre biblioteche, senza il calore della civilt\xE0\u2026
+    la magia stessa sembra pi\xF9 debole, come se anche essa fosse stata spezzata
+    insieme al mondo che conoscevamo.\n\nSe qualcuno trover\xE0 queste parole, sappia
+    questo:\n\nnon esiste grandezza che possa sottrarsi al prezzo delle proprie ambizioni.\n\nE
+    noi\u2026 lo abbiamo pagato con tutto ci\xF2 che eravamo."
 --- !u!1 &6360177696902357256
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,7 +338,7 @@ GameObject:
   - component: {fileID: 3487243266084805016}
   - component: {fileID: 8759056419770944411}
   m_Layer: 5
-  m_Name: BookMenu
+  m_Name: SnowRuin_book
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -384,7 +393,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 7331560371064398680, guid: 4ff69e080d4db5548acd92d52a908399, type: 3}
+  m_Sprite: {fileID: -2775540862943082245, guid: 4ff69e080d4db5548acd92d52a908399, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
