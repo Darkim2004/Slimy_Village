@@ -27,9 +27,12 @@ public sealed class WorldSaveSystem : MonoBehaviour
     private bool initialized;
     private bool saveInProgress;
     private float autosaveTimer;
+    private bool ritualPlatformUnlocked;
 
     private string currentWorldId;
     private string currentWorldName;
+
+    public bool IsRitualPlatformUnlocked => ritualPlatformUnlocked;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoBootstrap()
@@ -156,6 +159,14 @@ public sealed class WorldSaveSystem : MonoBehaviour
         return success;
     }
 
+    public void SetRitualPlatformUnlocked(bool unlocked, bool saveImmediately = true)
+    {
+        ritualPlatformUnlocked = unlocked;
+
+        if (saveImmediately && initialized)
+            SaveNow("ritual-platform-state");
+    }
+
     public bool LoadCurrentWorld()
     {
         if (string.IsNullOrEmpty(currentWorldId))
@@ -171,12 +182,15 @@ public sealed class WorldSaveSystem : MonoBehaviour
 
         try
         {
+            ritualPlatformUnlocked = false;
+
             if (File.Exists(metadataPath))
             {
                 var metadata = JsonUtility.FromJson<WorldMetadataData>(File.ReadAllText(metadataPath));
                 if (metadata != null)
                 {
                     currentWorldName = string.IsNullOrWhiteSpace(metadata.displayName) ? currentWorldName : metadata.displayName;
+                    ritualPlatformUnlocked = metadata.ritualPlatformUnlocked;
                 }
             }
 
@@ -205,6 +219,8 @@ public sealed class WorldSaveSystem : MonoBehaviour
 
     private void InitializeWorldContext()
     {
+        ritualPlatformUnlocked = false;
+
         bool hasPendingWorld = PlayerPrefs.GetInt(PrefHasPendingWorldCreation, 0) == 1;
 
         if (hasPendingWorld)
@@ -266,6 +282,7 @@ public sealed class WorldSaveSystem : MonoBehaviour
         metadata.seed = worldGen != null ? worldGen.seed : 0;
         metadata.lastPlayedAtUtc = now;
         metadata.gameVersion = Application.version;
+        metadata.ritualPlatformUnlocked = ritualPlatformUnlocked;
 
         if (File.Exists(metadataPath))
         {
@@ -275,6 +292,9 @@ public sealed class WorldSaveSystem : MonoBehaviour
                 metadata.createdAtUtc = existing != null && !string.IsNullOrEmpty(existing.createdAtUtc)
                     ? existing.createdAtUtc
                     : now;
+
+                if (existing != null && existing.ritualPlatformUnlocked)
+                    metadata.ritualPlatformUnlocked = true;
             }
             catch
             {
@@ -285,6 +305,8 @@ public sealed class WorldSaveSystem : MonoBehaviour
         {
             metadata.createdAtUtc = now;
         }
+
+        ritualPlatformUnlocked = metadata.ritualPlatformUnlocked;
 
         return metadata;
     }

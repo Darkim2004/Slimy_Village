@@ -383,6 +383,17 @@ public class PlayerTopDown : EntityBase2D
 
             if (interactPressed)
             {
+                var ritualInteraction = currentInteractable.GetComponent<RitualPlatformInteraction>();
+                if (ritualInteraction != null)
+                {
+                    ritualInteraction.TryInteract(this);
+
+                    if (WorldInteractionTooltipUI.Instance != null)
+                        WorldInteractionTooltipUI.Instance.Hide();
+
+                    return;
+                }
+
                 var menuToOpen = ResolveMenuFor(currentInteractable);
 
                 if (menuToOpen != null)

@@ -370,6 +370,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6045476688547057047}
   - component: {fileID: 118955562864323128}
+  - component: {fileID: 1849323709867312456}
   m_Layer: 0
   m_Name: RitualPlatform
   m_TagString: Untagged
@@ -454,3 +455,26 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1849323709867312456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7669546365118023993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f4d6b9e7c5e4a4ba13a9e20f5a7d111, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RitualPlatformInteraction
+  requiredKeyItemId: key
+  consumeKeyOnFirstActivation: 1
+  autoCollectRunesFromChildren: 1
+  runes:
+  - {fileID: 4126834750318704861}
+  - {fileID: 1399649710926977683}
+  - {fileID: 1170100795526030919}
+  - {fileID: 2588674190174302136}
+  secondsBetweenRuneActivations: 1
+  bossBattleSceneName: BossBattle
+  spawnWaitTimeoutSeconds: 10

@@ -12,6 +12,7 @@ public sealed class WorldMetadataData
     public string createdAtUtc;
     public string lastPlayedAtUtc;
     public string gameVersion;
+    public bool ritualPlatformUnlocked;
 }
 
 [Serializable]
