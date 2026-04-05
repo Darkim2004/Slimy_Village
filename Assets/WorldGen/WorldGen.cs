@@ -67,8 +67,15 @@ public class WorldGenTilemap : MonoBehaviour
         [Min(1)] public int maxStructures = 6;
 
         [Min(1)]
+        [Tooltip("Distanza minima in celle (Chebyshev) tra le strutture del gruppo.")]
+        public int minStructureDistanceCells = 1;
+
+        [Min(1)]
         [Tooltip("Distanza massima in celle tra le strutture del gruppo.")]
         public int maxStructureDistanceCells = 8;
+
+        [Tooltip("Se true, tenta prima il piazzamento delle strutture piu grandi per ridurre i casi in cui vengono bloccate dalle piccole.")]
+        public bool placeLargerStructuresFirst = true;
 
         [Min(1)]
         [Tooltip("Numero massimo di tentativi per trovare un anchor valido per il gruppo.")]
@@ -77,6 +84,10 @@ public class WorldGenTilemap : MonoBehaviour
         [Min(1)]
         [Tooltip("Tentativi per piazzare ciascuna struttura del gruppo.")]
         public int placementAttemptsPerStructure = 80;
+
+        [Min(1)]
+        [Tooltip("Numero di retry completi del planner per questo gruppo (nuovo seed locale ad ogni retry).")]
+        public int planningRetries = 2;
 
         [Min(1)]
         [Tooltip("Raggio massimo in celle per trovare una cella valida per la chest vicino al centro gruppo.")]
@@ -428,11 +439,18 @@ public class WorldGenTilemap : MonoBehaviour
             data[x, y] = new TileData { ground = g, decor = DecorType.None };
         }
 
+        // Structure groups first, so decorations become lower-priority and never block them.
+        PlanStructureGroups(data);
+
         // Decor pass (patch-aware)
         for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
         {
             if (data[x, y].ground == GroundType.Ocean) continue;
+
+            // Keep planned structure/chest footprints clear from later decor generation.
+            if (_reservedStructureCells != null && _reservedStructureCells[x, y])
+                continue;
 
             if (avoidDecorNearOcean && IsAdjacentToOcean(data, x, y))
                 continue;
@@ -454,8 +472,6 @@ public class WorldGenTilemap : MonoBehaviour
 
             data[x, y].decor = d;
         }
-
-        PlanStructureGroups(data);
 
         RenderGeneratedData(data);
     }
@@ -636,9 +652,16 @@ public class WorldGenTilemap : MonoBehaviour
                 continue;
 
             int groupSeed = unchecked(worldSeed * 397 ^ (i * 486187739) ^ 0x5f3759df);
-            System.Random rng = new System.Random(groupSeed);
+            int retries = Mathf.Max(1, group.planningRetries);
+            bool planned = false;
 
-            bool planned = TryPlanSingleStructureGroup(data, group, rng);
+            for (int retry = 0; retry < retries && !planned; retry++)
+            {
+                int retrySeed = unchecked(groupSeed ^ (retry * 92821));
+                System.Random rng = new System.Random(retrySeed);
+                planned = TryPlanSingleStructureGroup(data, group, rng);
+            }
+
             if (planned)
                 plannedBiomes.Add(group.spawnBiome);
 
@@ -653,6 +676,12 @@ public class WorldGenTilemap : MonoBehaviour
         if (targetGround == GroundType.Ocean)
             return false;
 
+        List<Vector2Int> anchorCandidates = BuildAnchorCandidates(data, targetGround);
+        if (anchorCandidates.Count == 0)
+            return false;
+
+        ShuffleInPlace(anchorCandidates, rng);
+
         List<StructurePrefabEntry> pool = BuildValidStructurePool(group);
         if (pool.Count == 0)
             return false;
@@ -661,20 +690,63 @@ public class WorldGenTilemap : MonoBehaviour
         int maxStructures = Mathf.Max(minStructures, group.maxStructures);
         int targetCount = rng.Next(minStructures, maxStructures + 1);
 
-        int anchorAttempts = Mathf.Max(1, group.anchorAttempts);
+        int anchorAttempts = Mathf.Min(Mathf.Max(1, group.anchorAttempts), anchorCandidates.Count);
         int placeAttempts = Mathf.Max(1, group.placementAttemptsPerStructure);
+        int minDistance = Mathf.Max(1, group.minStructureDistanceCells);
         int maxDistance = Mathf.Max(1, group.maxStructureDistanceCells);
 
         for (int anchorTry = 0; anchorTry < anchorAttempts; anchorTry++)
         {
-            Vector2Int anchor = new Vector2Int(rng.Next(0, width), rng.Next(0, height));
-            if (!IsCellSuitableForGroup(data, anchor.x, anchor.y, targetGround))
-                continue;
+            Vector2Int anchor = anchorCandidates[anchorTry];
 
             List<GroupStructurePlacement> placements = new List<GroupStructurePlacement>(targetCount);
 
-            if (!TryPlaceStructureAroundAnchor(data, targetGround, pool, placements, anchor, maxDistance, placeAttempts, rng, isFirst: true))
-                continue;
+            List<StructurePrefabEntry> placementOrder = BuildStructurePlacementOrder(
+                pool,
+                targetCount,
+                rng,
+                group.placeLargerStructuresFirst
+            );
+
+            for (int slot = 0; slot < placementOrder.Count; slot++)
+            {
+                bool isFirstPlacement = placements.Count == 0;
+
+                bool added = TryPlaceStructureAroundAnchor(
+                    data,
+                    targetGround,
+                    pool,
+                    placements,
+                    anchor,
+                    maxDistance,
+                    minDistance,
+                    placeAttempts,
+                    rng,
+                    isFirstPlacement,
+                    placementOrder[slot]
+                );
+
+                // Fallback: se l'entry pianificata non entra, prova una scelta libera dal pool.
+                if (!added)
+                {
+                    added = TryPlaceStructureAroundAnchor(
+                        data,
+                        targetGround,
+                        pool,
+                        placements,
+                        anchor,
+                        maxDistance,
+                        minDistance,
+                        placeAttempts,
+                        rng,
+                        isFirstPlacement,
+                        null
+                    );
+                }
+
+                if (!added)
+                    break;
+            }
 
             int safetyBudget = Mathf.Max(placeAttempts * targetCount, placeAttempts);
             while (placements.Count < targetCount && safetyBudget > 0)
@@ -686,9 +758,11 @@ public class WorldGenTilemap : MonoBehaviour
                     placements,
                     anchor,
                     maxDistance,
+                    minDistance,
                     placeAttempts,
                     rng,
-                    isFirst: false
+                    isFirst: placements.Count == 0,
+                    forcedEntry: null
                 );
 
                 safetyBudget--;
@@ -733,6 +807,8 @@ public class WorldGenTilemap : MonoBehaviour
         Vector2Int centroidCell = new Vector2Int(Mathf.RoundToInt(centroid.x), Mathf.RoundToInt(centroid.y));
 
         int searchRadius = Mathf.Max(0, group.chestSearchRadius);
+        int dynamicRadius = Mathf.Max(1, group.maxStructureDistanceCells) + Mathf.Max(chestSize.x, chestSize.y);
+        searchRadius = Mathf.Max(searchRadius, dynamicRadius);
         for (int radius = 0; radius <= searchRadius; radius++)
         {
             for (int dy = -radius; dy <= radius; dy++)
@@ -767,14 +843,16 @@ public class WorldGenTilemap : MonoBehaviour
         List<GroupStructurePlacement> placements,
         Vector2Int anchor,
         int maxDistance,
+        int minDistance,
         int attempts,
         System.Random rng,
-        bool isFirst)
+        bool isFirst,
+        StructurePrefabEntry forcedEntry)
     {
         int tries = Mathf.Max(1, attempts);
         for (int attempt = 0; attempt < tries; attempt++)
         {
-            StructurePrefabEntry entry = pool[rng.Next(pool.Count)];
+            StructurePrefabEntry entry = forcedEntry ?? pool[rng.Next(pool.Count)];
             Vector2Int size = ClampSize(entry.size);
 
             Vector2Int center;
@@ -792,7 +870,7 @@ public class WorldGenTilemap : MonoBehaviour
             if (!CanPlaceArea(data, targetGround, origin, size, allowBlockingGrass: true))
                 continue;
 
-            if (!RespectsStructureDistanceRules(origin, size, placements, maxDistance))
+            if (!RespectsStructureDistanceRules(origin, size, placements, minDistance, maxDistance))
                 continue;
 
             GroupStructurePlacement placement = new GroupStructurePlacement
@@ -995,7 +1073,12 @@ public class WorldGenTilemap : MonoBehaviour
         return true;
     }
 
-    private bool RespectsStructureDistanceRules(Vector2Int origin, Vector2Int size, List<GroupStructurePlacement> placements, int maxDistance)
+    private bool RespectsStructureDistanceRules(
+        Vector2Int origin,
+        Vector2Int size,
+        List<GroupStructurePlacement> placements,
+        int minDistance,
+        int maxDistance)
     {
         if (placements == null || placements.Count == 0)
             return true;
@@ -1008,7 +1091,7 @@ public class WorldGenTilemap : MonoBehaviour
             Vector2Int placedSize = ClampSize(placed.entry.size);
 
             int chebyshev = RectChebyshevDistance(origin, size, placed.origin, placedSize);
-            if (chebyshev < 1)
+            if (chebyshev < minDistance)
                 return false;
 
             if (Vector2.Distance(center, placed.center) > maxDistance)
@@ -1016,6 +1099,53 @@ public class WorldGenTilemap : MonoBehaviour
         }
 
         return true;
+    }
+
+    private static int GetStructureEntryArea(StructurePrefabEntry entry)
+    {
+        if (entry == null)
+            return 1;
+
+        Vector2Int size = ClampSize(entry.size);
+        return Mathf.Max(1, size.x * size.y);
+    }
+
+    private List<StructurePrefabEntry> BuildStructurePlacementOrder(
+        List<StructurePrefabEntry> pool,
+        int targetCount,
+        System.Random rng,
+        bool placeLargerFirst)
+    {
+        List<StructurePrefabEntry> order = new List<StructurePrefabEntry>(Mathf.Max(0, targetCount));
+        if (pool == null || pool.Count == 0 || targetCount <= 0)
+            return order;
+
+        if (placeLargerFirst)
+        {
+            List<StructurePrefabEntry> sorted = new List<StructurePrefabEntry>(pool);
+            sorted.Sort((a, b) =>
+            {
+                int areaA = GetStructureEntryArea(a);
+                int areaB = GetStructureEntryArea(b);
+                return areaB.CompareTo(areaA);
+            });
+
+            // First pass: try largest unique prefabs first.
+            int firstPass = Mathf.Min(targetCount, sorted.Count);
+            for (int i = 0; i < firstPass; i++)
+                order.Add(sorted[i]);
+
+            // Fill remaining slots with random picks (can repeat).
+            for (int i = firstPass; i < targetCount; i++)
+                order.Add(sorted[rng.Next(sorted.Count)]);
+
+            return order;
+        }
+
+        for (int i = 0; i < targetCount; i++)
+            order.Add(pool[rng.Next(pool.Count)]);
+
+        return order;
     }
 
     private bool OverlapsAnyStructure(Vector2Int origin, Vector2Int size, List<GroupStructurePlacement> placements)
@@ -1077,6 +1207,35 @@ public class WorldGenTilemap : MonoBehaviour
             return false;
 
         return !IsSolidDecor(data[x, y].decor);
+    }
+
+    private List<Vector2Int> BuildAnchorCandidates(TileData[,] data, GroundType targetGround)
+    {
+        List<Vector2Int> result = new List<Vector2Int>();
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (IsCellSuitableForGroup(data, x, y, targetGround))
+                    result.Add(new Vector2Int(x, y));
+            }
+        }
+
+        return result;
+    }
+
+    private static void ShuffleInPlace<T>(List<T> list, System.Random rng)
+    {
+        if (list == null || rng == null)
+            return;
+
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = rng.Next(i + 1);
+            T temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
+        }
     }
 
     private GroundType ToGroundType(Biome biome)
