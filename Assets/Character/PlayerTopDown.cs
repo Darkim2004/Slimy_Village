@@ -20,12 +20,17 @@ public class PlayerTopDown : EntityBase2D
     [SerializeField] private float interactRadius = 1.0f;
     [Tooltip("UI fallback se il PlaceableDefinition non ha un menu specifico.")]
     [SerializeField] private WorldInteractionMenuPlaceholderUI interactionMenu;
+    [Tooltip("UI menu usato per leggere i libri dalla hotbar. Se null, viene cercato/creato automaticamente.")]
+    [SerializeField] private BookReadingMenuUI bookReadingMenu;
     [Tooltip("Parent runtime per i menu specifici instanziati da prefab. Se null usa il primo Canvas trovato.")]
     [SerializeField] private Transform interactionMenusRoot;
     private PlacedObject currentInteractable;
     private PlaceableInteractionMenuBase activeInteractionMenu;
+    private BookReadingMenuUI activeBookMenu;
     private readonly Dictionary<PlaceableInteractionMenuBase, PlaceableInteractionMenuBase> menuInstances =
         new Dictionary<PlaceableInteractionMenuBase, PlaceableInteractionMenuBase>();
+    private readonly Dictionary<BookReadingMenuUI, BookReadingMenuUI> bookMenuInstances =
+        new Dictionary<BookReadingMenuUI, BookReadingMenuUI>();
     private WorldGenTilemap worldGen;
 
     [Header("Respawn")]
@@ -61,6 +66,9 @@ public class PlayerTopDown : EntityBase2D
 
         if (interactionMenu == null)
             interactionMenu = FindFirstObjectByType<WorldInteractionMenuPlaceholderUI>();
+
+        if (bookReadingMenu == null)
+            bookReadingMenu = FindFirstObjectByType<BookReadingMenuUI>();
 
         // Inizializza respawnPoint dal WorldGen
         if (worldGen != null && worldGen.HasGenerated)
@@ -105,7 +113,14 @@ public class PlayerTopDown : EntityBase2D
                 Destroy(menu.gameObject);
         }
 
+        foreach (var menu in bookMenuInstances.Values)
+        {
+            if (menu != null)
+                Destroy(menu.gameObject);
+        }
+
         menuInstances.Clear();
+        bookMenuInstances.Clear();
     }
 
     /// <summary>
@@ -299,11 +314,13 @@ public class PlayerTopDown : EntityBase2D
     // ══════════════════════════════════════════════════════════
     private void UpdateInteraction()
     {
-        bool interactPressed = Input.GetKeyDown(interactKey) || IsMouseInteractPressed();
+        bool mouseInteractPressed = IsMouseInteractPressed();
+        bool interactPressed = Input.GetKeyDown(interactKey) || mouseInteractPressed;
 
         if (state == State.Death || state == State.Hurt)
         {
             CloseActiveInteractionMenu();
+            CloseBookMenus();
             if (WorldInteractionTooltipUI.Instance != null) WorldInteractionTooltipUI.Instance.Hide();
             return;
         }
@@ -312,7 +329,15 @@ public class PlayerTopDown : EntityBase2D
         {
             // Evitiamo di chiudere i menu di interazione già attivi (come la chest),
             // altrimenti si chiuderebbero nello stesso frame in cui bloccano il player.
+            CloseBookMenus();
             if (WorldInteractionTooltipUI.Instance != null) WorldInteractionTooltipUI.Instance.Hide();
+            return;
+        }
+
+        if (TryHandleBookInteraction(mouseInteractPressed))
+        {
+            if (WorldInteractionTooltipUI.Instance != null)
+                WorldInteractionTooltipUI.Instance.Hide();
             return;
         }
 
@@ -401,6 +426,119 @@ public class PlayerTopDown : EntityBase2D
         return true;
     }
 
+    private bool TryHandleBookInteraction(bool rightClickPressed)
+    {
+        var activeDef = hotbarEffects != null ? hotbarEffects.ActiveItemDef : null;
+        bool isBookSelected = activeDef != null && activeDef.IsBook;
+        bool rawRightClickPressed = Input.GetMouseButtonDown(1);
+
+        if (!isBookSelected)
+        {
+            if (activeBookMenu != null)
+                activeBookMenu.Hide();
+            activeBookMenu = null;
+            return false;
+        }
+
+        if (activeBookMenu != null && activeBookMenu.IsOpen)
+        {
+            activeBookMenu.SetBook(activeDef);
+
+            if (rightClickPressed || rawRightClickPressed)
+            {
+                activeBookMenu.Hide();
+                activeBookMenu = null;
+                return true;
+            }
+
+            // Quando il libro è aperto blocchiamo le interazioni col mondo.
+            return true;
+        }
+
+        if (!rightClickPressed)
+            return false;
+
+        activeBookMenu = ResolveBookMenuFor(activeDef);
+        if (activeBookMenu == null)
+            return false;
+
+        activeBookMenu.Show(activeDef);
+        return true;
+    }
+
+    private BookReadingMenuUI ResolveBookMenuFor(ItemDefinition bookDef)
+    {
+        if (bookDef == null || !bookDef.IsBook)
+            return null;
+
+        if (bookDef.bookMenuPrefab != null)
+            return GetOrCreateBookMenuInstance(bookDef.bookMenuPrefab);
+
+        if (bookReadingMenu == null)
+            bookReadingMenu = FindFirstObjectByType<BookReadingMenuUI>();
+
+        if (bookReadingMenu == null)
+        {
+            var go = new GameObject("BookReadingMenuUI_Runtime");
+
+            Transform parent = interactionMenusRoot;
+            if (parent == null)
+            {
+                var canvas = FindFirstObjectByType<Canvas>();
+                if (canvas != null)
+                    parent = canvas.transform;
+            }
+
+            if (parent != null)
+                go.transform.SetParent(parent, false);
+
+            bookReadingMenu = go.AddComponent<BookReadingMenuUI>();
+        }
+
+        return bookReadingMenu;
+    }
+
+    private BookReadingMenuUI GetOrCreateBookMenuInstance(BookReadingMenuUI menuPrefab)
+    {
+        if (menuPrefab == null)
+            return null;
+
+        if (bookMenuInstances.TryGetValue(menuPrefab, out var instance) && instance != null)
+            return instance;
+
+        Transform parent = interactionMenusRoot;
+        if (parent == null)
+        {
+            var canvas = FindFirstObjectByType<Canvas>();
+            if (canvas != null)
+                parent = canvas.transform;
+        }
+
+        instance = Instantiate(menuPrefab, parent);
+        instance.gameObject.name = menuPrefab.gameObject.name + "_Runtime";
+        instance.Hide();
+
+        bookMenuInstances[menuPrefab] = instance;
+        return instance;
+    }
+
+    private void CloseBookMenus()
+    {
+        if (activeBookMenu != null && activeBookMenu.IsOpen)
+            activeBookMenu.Hide();
+
+        if (bookReadingMenu != null && bookReadingMenu.IsOpen)
+            bookReadingMenu.Hide();
+
+        foreach (var menu in bookMenuInstances.Values)
+        {
+            if (menu != null && menu.IsOpen)
+                menu.Hide();
+        }
+
+        activeBookMenu = null;
+    }
+
     private bool TryConsumeActiveFood()
     {
         var activeDef = hotbarEffects != null ? hotbarEffects.ActiveItemDef : null;
@@ -478,6 +616,18 @@ public class PlayerTopDown : EntityBase2D
 
     private bool IsAnyInteractionMenuOpen()
     {
+        if (activeBookMenu != null && activeBookMenu.IsOpen)
+            return true;
+
+        if (bookReadingMenu != null && bookReadingMenu.IsOpen)
+            return true;
+
+        foreach (var menu in bookMenuInstances.Values)
+        {
+            if (menu != null && menu.IsOpen)
+                return true;
+        }
+
         if (activeInteractionMenu != null && activeInteractionMenu.IsOpen)
             return true;
 
@@ -495,6 +645,8 @@ public class PlayerTopDown : EntityBase2D
 
     private void CloseAllInteractionMenus()
     {
+        CloseBookMenus();
+
         CloseActiveInteractionMenu();
 
         if (interactionMenu != null && interactionMenu.IsOpen)

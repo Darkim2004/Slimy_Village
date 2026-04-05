@@ -11,7 +11,8 @@ public enum ItemCategory
     Building,
     Consumable,
     Resource,
-    Food
+    Food,
+    Book
 }
 
 /// <summary>
@@ -68,6 +69,10 @@ public class ItemDefinition : ScriptableObject
     [Tooltip("Dati di piazzamento (solo per Building). Se null, l'item non è piazzabile.")]
     public PlaceableDefinition placeableData;
 
+    [Header("Book")]
+    [Tooltip("Prefab del menu libro da aprire con click destro in hotbar. Se nullo usa il menu libro di default.")]
+    public BookReadingMenuUI bookMenuPrefab;
+
     [Header("Stacking")]
     [Tooltip("Se false → maxStack viene forzato a 1 e NBT è permesso.")]
     public bool isStackable = true;
@@ -93,6 +98,9 @@ public class ItemDefinition : ScriptableObject
 
     /// <summary>True se l'item è un alimento consumabile per recuperare HP.</summary>
     public bool IsFood => category == ItemCategory.Food && healAmount > 0;
+
+    /// <summary>True se l'item è un libro leggibile dalla hotbar.</summary>
+    public bool IsBook => category == ItemCategory.Book;
 
     private void OnValidate()
     {

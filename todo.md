@@ -17,6 +17,7 @@
 - [X] Aggiungi crafting da inventario per crafting table
 - [ ] Aggiungere un modo per rompere oggetti piazzati
 - [ ] Aggiungi che i nemici non possono spawnare alla luce
+- [ ] Aggiungi generazione strutture
 
 ## Refactoring e Ottimizzazione
 - [ ] Worldgen
