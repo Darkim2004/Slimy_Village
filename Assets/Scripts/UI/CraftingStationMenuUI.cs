@@ -11,14 +11,17 @@ public class CraftingStationMenuUI : PlaceableInteractionMenuBase
     [SerializeField] private CraftingRecipeRowUI recipeRowPrefab;
 
     [Header("Behavior")]
+    [SerializeField] private bool allowEscapeClose = true;
     [SerializeField] private bool closeWithInteractKey = true;
     [SerializeField] private KeyCode interactKey = KeyCode.E;
     [SerializeField] private bool attachToSceneCanvasOnShow = true;
+    [SerializeField] private bool controlsPlayerInputLock = true;
 
     [Header("State")]
     [SerializeField] private int selectedRecipeIndex = -1;
 
     private readonly List<CraftingRecipeDefinition> activeRecipes = new List<CraftingRecipeDefinition>();
+    private readonly List<CraftingRecipeDefinition> externalRecipes = new List<CraftingRecipeDefinition>();
     private readonly Dictionary<CraftingRecipeDefinition, int> craftableByRecipe = new Dictionary<CraftingRecipeDefinition, int>();
     private readonly List<CraftingRecipeRowUI> recipeRows = new List<CraftingRecipeRowUI>();
 
@@ -45,7 +48,7 @@ public class CraftingStationMenuUI : PlaceableInteractionMenuBase
     {
         if (!IsOpen) return;
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (allowEscapeClose && Input.GetKeyDown(KeyCode.Escape))
             Hide();
 
         if (closeWithInteractKey && Input.GetKeyDown(interactKey) && Time.frameCount > openedFrame)
@@ -60,7 +63,7 @@ public class CraftingStationMenuUI : PlaceableInteractionMenuBase
         base.Show(placedObject);
         openedFrame = Time.frameCount;
 
-        if (playerTopDown != null)
+        if (controlsPlayerInputLock && playerTopDown != null)
             playerTopDown.SetInputLocked(true);
 
         SubscribeInventoryEvents();
@@ -70,11 +73,44 @@ public class CraftingStationMenuUI : PlaceableInteractionMenuBase
 
     public override void Hide()
     {
-        if (playerTopDown != null)
+        if (controlsPlayerInputLock && playerTopDown != null)
             playerTopDown.SetInputLocked(false);
 
         UnsubscribeInventoryEvents();
         base.Hide();
+    }
+
+    public void SetExternalRecipes(IReadOnlyList<CraftingRecipeDefinition> recipes)
+    {
+        externalRecipes.Clear();
+        if (recipes == null) return;
+
+        for (int i = 0; i < recipes.Count; i++)
+        {
+            if (recipes[i] != null)
+                externalRecipes.Add(recipes[i]);
+        }
+    }
+
+    public void ClearExternalRecipes()
+    {
+        externalRecipes.Clear();
+    }
+
+    public void SetControlPlayerInputLock(bool shouldControl)
+    {
+        controlsPlayerInputLock = shouldControl;
+    }
+
+    public void SetCloseBehaviors(bool allowEscape, bool allowInteractClose)
+    {
+        allowEscapeClose = allowEscape;
+        closeWithInteractKey = allowInteractClose;
+    }
+
+    public void SetAttachToSceneCanvasOnShow(bool attachToSceneCanvas)
+    {
+        attachToSceneCanvasOnShow = attachToSceneCanvas;
     }
 
     public void SelectRecipeByIndex(int index)
@@ -160,6 +196,9 @@ public class CraftingStationMenuUI : PlaceableInteractionMenuBase
         activeRecipes.Clear();
         craftableByRecipe.Clear();
 
+        if (TryResolveRecipesFromExternalSource(placedObject))
+            return;
+
         if (placedObject == null)
         {
             selectedRecipeIndex = -1;
@@ -191,6 +230,27 @@ public class CraftingStationMenuUI : PlaceableInteractionMenuBase
 
         RebuildRecipeRows();
         OnRecipesChanged?.Invoke();
+    }
+
+    private bool TryResolveRecipesFromExternalSource(PlacedObject placedObject)
+    {
+        if (placedObject != null || externalRecipes.Count == 0)
+            return false;
+
+        for (int i = 0; i < externalRecipes.Count; i++)
+        {
+            if (externalRecipes[i] != null)
+                activeRecipes.Add(externalRecipes[i]);
+        }
+
+        if (activeRecipes.Count == 0)
+            selectedRecipeIndex = -1;
+        else if (selectedRecipeIndex < 0 || selectedRecipeIndex >= activeRecipes.Count)
+            selectedRecipeIndex = 0;
+
+        RebuildRecipeRows();
+        OnRecipesChanged?.Invoke();
+        return true;
     }
 
     private void RefreshCraftableStates()
