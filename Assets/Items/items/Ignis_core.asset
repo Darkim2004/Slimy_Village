@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 360cc822f75e8ea47a02e4491f3151f7, type: 3}
+  m_Name: Ignis_core
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
+  id: ignis_core
+  displayName: Ignis Core
+  description: 
+  category: 4
+  icon: {fileID: -1552318639955610649, guid: 08f2b0391cb255440ad3032903c34f1a, type: 3}
+  attackDamage: 0
+  healAmount: 0
+  isHarvestTool: 0
+  harvestToolLevel: 1
+  isArmor: 0
+  armorDefense: 0
+  placeableData: {fileID: 0}
+  bookMenuPrefab: {fileID: 0}
+  isStackable: 1
+  maxStack: 64

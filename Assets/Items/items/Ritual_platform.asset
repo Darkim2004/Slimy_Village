@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 360cc822f75e8ea47a02e4491f3151f7, type: 3}
+  m_Name: Ritual_platform
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
+  id: ritual_platform
+  displayName: Ritual platform
+  description: 
+  category: 2
+  icon: {fileID: -3526906408505785437, guid: 09d2702d34afe34498e62dd62e2ff481, type: 3}
+  attackDamage: 0
+  healAmount: 0
+  isHarvestTool: 0
+  harvestToolLevel: 1
+  isArmor: 0
+  armorDefense: 0
+  placeableData: {fileID: 11400000, guid: 4792b7a04ebafd74ca8450209843d0a9, type: 2}
+  bookMenuPrefab: {fileID: 0}
+  isStackable: 1
+  maxStack: 64
