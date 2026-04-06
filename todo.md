@@ -17,10 +17,12 @@
 - [X] Aggiungi crafting da inventario per crafting table
 - [ ] Aggiungere un modo per rompere oggetti piazzati
 - [ ] Aggiungi che i nemici non possono spawnare alla luce
-- [ ] Aggiungi generazione strutture
+- [X] Aggiungi generazione strutture
+- [ ] Aggiungi arena boss battle
 
 ## Refactoring e Ottimizzazione
 - [ ] Worldgen
+- [ ] Risolvi bug che gli alberi respawnano dopo aver chiuso e riaperto il mondo
 
 ## Idee sparse / Design
 - [X] Luci mini dinamiche per faló torce ecc
