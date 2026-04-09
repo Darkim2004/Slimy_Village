@@ -221,9 +221,22 @@ public class BuildingSystem : MonoBehaviour
 
         placedObj.Initialize(placeable, origin, placeable.size);
 
-        // Aggiungi YSort se non presente
-        if (go.GetComponent<YSort>() == null && go.GetComponentInChildren<YSort>() == null)
-            go.AddComponent<YSort>();
+        // Aggiungi/configura YSort solo se richiesto dalla definizione
+        if (placeable.useYSort)
+        {
+            YSort ySort = go.GetComponent<YSort>();
+            if (ySort == null && go.GetComponentInChildren<YSort>() == null)
+                ySort = go.AddComponent<YSort>();
+
+            if (ySort != null)
+                ySort.orderOffset = placeable.ySortOrderOffset;
+        }
+        else
+        {
+            YSort ySort = go.GetComponent<YSort>();
+            if (ySort != null)
+                Destroy(ySort);
+        }
 
         // Occupa le celle sulla griglia
         placementGrid.OccupyCells(origin, placeable.size);

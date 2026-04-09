@@ -969,8 +969,21 @@ public class WorldGenTilemap : MonoBehaviour
 
         placed.Initialize(group.chestPlaceable, planned.origin, planned.size);
 
-        if (go.GetComponent<YSort>() == null && go.GetComponentInChildren<YSort>() == null)
-            go.AddComponent<YSort>();
+        if (group.chestPlaceable.useYSort)
+        {
+            YSort ySort = go.GetComponent<YSort>();
+            if (ySort == null && go.GetComponentInChildren<YSort>() == null)
+                ySort = go.AddComponent<YSort>();
+
+            if (ySort != null)
+                ySort.orderOffset = group.chestPlaceable.ySortOrderOffset;
+        }
+        else
+        {
+            YSort ySort = go.GetComponent<YSort>();
+            if (ySort != null)
+                Destroy(ySort);
+        }
 
         ChestInventoryStorage chest = go.GetComponent<ChestInventoryStorage>();
         if (chest == null)

@@ -494,8 +494,21 @@ public sealed class WorldSaveSystem : MonoBehaviour
             placed.Initialize(placeable, origin, size);
             placed.SetPersistentInstanceId(dto.instanceId);
 
-            if (go.GetComponent<YSort>() == null && go.GetComponentInChildren<YSort>() == null)
-                go.AddComponent<YSort>();
+            if (placeable.useYSort)
+            {
+                YSort ySort = go.GetComponent<YSort>();
+                if (ySort == null && go.GetComponentInChildren<YSort>() == null)
+                    ySort = go.AddComponent<YSort>();
+
+                if (ySort != null)
+                    ySort.orderOffset = placeable.ySortOrderOffset;
+            }
+            else
+            {
+                YSort ySort = go.GetComponent<YSort>();
+                if (ySort != null)
+                    Destroy(ySort);
+            }
 
             if (grid != null)
                 grid.OccupyCells(origin, size);

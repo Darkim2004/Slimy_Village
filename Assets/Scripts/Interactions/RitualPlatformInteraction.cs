@@ -115,20 +115,18 @@ public class RitualPlatformInteraction : MonoBehaviour
 
     private IEnumerator PlayRuneActivationSequence()
     {
-        CollectRunesIfNeeded();
-
-        if (runes == null || runes.Count == 0)
+        var runtimeRunes = GetRuntimeRunes();
+        if (runtimeRunes.Count == 0)
             yield break;
 
-        SetAllRunesActive(false);
+        SetRuneListActive(runtimeRunes, false);
 
         float stepDelay = Mathf.Max(0.01f, secondsBetweenRuneActivations);
-        for (int i = 0; i < runes.Count; i++)
+        for (int i = 0; i < runtimeRunes.Count; i++)
         {
-            if (runes[i] != null)
-                runes[i].SetActive(true);
+            runtimeRunes[i].SetActive(true);
 
-            if (i < runes.Count - 1)
+            if (i < runtimeRunes.Count - 1)
                 yield return new WaitForSeconds(stepDelay);
         }
     }
@@ -280,31 +278,74 @@ public class RitualPlatformInteraction : MonoBehaviour
 
     private void CollectRunesIfNeeded()
     {
-        if (!autoCollectRunesFromChildren || (runes != null && runes.Count > 0))
-            return;
-
-        var children = new List<GameObject>(transform.childCount);
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            var child = transform.GetChild(i);
-            if (child != null)
-                children.Add(child.gameObject);
-        }
-
-        children.Sort(CompareRuneObjects);
-        runes = children;
+        runes = GetRuntimeRunes();
     }
 
     private void SetAllRunesActive(bool active)
     {
-        if (runes == null)
+        SetRuneListActive(GetRuntimeRunes(), active);
+    }
+
+    private void SetRuneListActive(List<GameObject> targetRunes, bool active)
+    {
+        if (targetRunes == null || targetRunes.Count == 0)
             return;
 
-        for (int i = 0; i < runes.Count; i++)
+        for (int i = 0; i < targetRunes.Count; i++)
+            targetRunes[i].SetActive(active);
+    }
+
+    private List<GameObject> GetRuntimeRunes()
+    {
+        var collected = new List<GameObject>();
+
+        if (autoCollectRunesFromChildren)
         {
-            if (runes[i] != null)
-                runes[i].SetActive(active);
+            // Preferiamo i child che sembrano rune (nome + sprite), includendo anche inattivi.
+            Transform[] descendants = GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < descendants.Length; i++)
+            {
+                Transform child = descendants[i];
+                if (child == null || child == transform)
+                    continue;
+
+                GameObject childObject = child.gameObject;
+                if (childObject == null)
+                    continue;
+
+                if (childObject.GetComponent<SpriteRenderer>() == null)
+                    continue;
+
+                if (childObject.name.IndexOf("rune", StringComparison.OrdinalIgnoreCase) >= 0)
+                    collected.Add(childObject);
+            }
+
+            // Fallback: se non troviamo nomi rune, usiamo i child diretti con SpriteRenderer.
+            if (collected.Count == 0)
+            {
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    Transform child = transform.GetChild(i);
+                    if (child == null)
+                        continue;
+
+                    GameObject childObject = child.gameObject;
+                    if (childObject != null && childObject.GetComponent<SpriteRenderer>() != null)
+                        collected.Add(childObject);
+                }
+            }
         }
+        else if (runes != null)
+        {
+            for (int i = 0; i < runes.Count; i++)
+            {
+                if (runes[i] != null)
+                    collected.Add(runes[i]);
+            }
+        }
+
+        collected.Sort(CompareRuneObjects);
+        return collected;
     }
 
     private static int CompareRuneObjects(GameObject left, GameObject right)

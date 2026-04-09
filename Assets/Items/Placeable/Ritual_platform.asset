@@ -20,3 +20,5 @@ MonoBehaviour:
   placedPrefab: {fileID: 7669546365118023993, guid: 645cf60b53e44e540b7d65375b91f902, type: 3}
   ghostSprite: {fileID: -3526906408505785437, guid: 09d2702d34afe34498e62dd62e2ff481, type: 3}
   spawnOffset: {x: 0, y: 0, z: 0}
+  useYSort: 0
+  ySortOrderOffset: 20000

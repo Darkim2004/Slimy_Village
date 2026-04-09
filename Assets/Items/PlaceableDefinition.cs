@@ -37,6 +37,13 @@ public class PlaceableDefinition : ScriptableObject
     [Tooltip("Offset di spawn rispetto al centro della cella pivot.")]
     public Vector3 spawnOffset = Vector3.zero;
 
+    [Header("Sorting")]
+    [Tooltip("Se attivo, il Building/Save system aggiunge YSort all'istanza piazzata.")]
+    public bool useYSort = true;
+
+    [Tooltip("Offset aggiuntivo passato a YSort.orderOffset. Valori alti portano l'oggetto più davanti nel suo sorting layer.")]
+    public int ySortOrderOffset = 0;
+
     /// <summary>
     /// Restituisce la sprite da usare per il ghost:
     /// ghostSprite se assegnata, altrimenti la sprite dal prefab.
