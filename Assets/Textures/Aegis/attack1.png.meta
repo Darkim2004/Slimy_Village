@@ -1,52 +1,94 @@
 fileFormatVersion: 2
-guid: a111d432cf7006c4dad5d5010955edbf
+guid: 0e614a0b668e6f642a773869219d03af
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 858086424201570730
-    second: Agis_0
+      213: 2598868237486306103
+    second: attack1_0
   - first:
-      213: -6370931440440523898
-    second: Agis_1
+      213: -4914715563372401958
+    second: attack1_1
   - first:
-      213: -8584394610199438716
-    second: Agis_2
+      213: 2659852609378229497
+    second: attack1_2
   - first:
-      213: 3078804454902804229
-    second: Agis_3
+      213: -742131402468218244
+    second: attack1_3
   - first:
-      213: -1812118881656161925
-    second: Agis_4
+      213: 4622947799296944477
+    second: attack1_4
   - first:
-      213: 8066437687192066556
-    second: Agis_5
+      213: -5698581097663248921
+    second: attack1_5
   - first:
-      213: 6701719294234715542
-    second: Agis_6
+      213: -774457592843739951
+    second: attack1_6
   - first:
-      213: -4705481355044263178
-    second: Agis_7
+      213: 6747177639697281107
+    second: attack1_7
   - first:
-      213: -4909491823623662109
-    second: Agis_8
+      213: -4180130548990269990
+    second: attack1_8
   - first:
-      213: -2589681477192054344
-    second: Agis_9
+      213: -8265533776673838408
+    second: attack1_9
   - first:
-      213: 9077543457994603161
-    second: Agis_10
+      213: 7893519770463183732
+    second: attack1_10
   - first:
-      213: 1274538348036656558
-    second: Agis_11
+      213: -2537949245888764866
+    second: attack1_11
   - first:
-      213: 7799786883195768703
-    second: Agis_12
+      213: -3395965475811919101
+    second: attack1_12
   - first:
-      213: -8258482466192155030
-    second: Agis_13
+      213: 2857754972585627910
+    second: attack1_13
   - first:
-      213: -633582079021005476
-    second: Agis_14
+      213: -8349410169901115046
+    second: attack1_14
+  - first:
+      213: -1279671036096311410
+    second: attack1_15
+  - first:
+      213: 4218111874637407595
+    second: attack1_16
+  - first:
+      213: 297077854978380810
+    second: attack1_17
+  - first:
+      213: -6608102905341682946
+    second: attack1_18
+  - first:
+      213: 3783204710054134317
+    second: attack1_19
+  - first:
+      213: -8707843758993110321
+    second: attack1_20
+  - first:
+      213: 1006861850403524839
+    second: attack1_21
+  - first:
+      213: -5195665825062828754
+    second: attack1_22
+  - first:
+      213: -7841885747476891162
+    second: attack1_23
+  - first:
+      213: -467676606781819363
+    second: attack1_24
+  - first:
+      213: 3692931110190427260
+    second: attack1_25
+  - first:
+      213: 1391013978614589471
+    second: attack1_26
+  - first:
+      213: -1421392817866609595
+    second: attack1_27
+  - first:
+      213: -2411303393893996261
+    second: attack1_28
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -114,7 +156,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 8192
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -142,331 +184,375 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Agis_0
+      name: attack1_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 224
-        height: 240
+        width: 320
+        height: 320
       alignment: 9
-      pivot: {x: 0.5, y: 0.14}
+      pivot: {x: 0.5, y: 0.13}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: aa9ae157e0988eb00800000000000000
-      internalID: 858086424201570730
+      spriteID: 733ba6184e8011420800000000000000
+      internalID: 2598868237486306103
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Agis_1
+      name: attack1_1
       rect:
         serializedVersion: 2
-        x: 224
+        x: 320
         y: 0
-        width: 224
-        height: 240
+        width: 320
+        height: 320
       alignment: 9
-      pivot: {x: 0.5, y: 0.14}
+      pivot: {x: 0.5, y: 0.13}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 683cc2c0c97e597a0800000000000000
-      internalID: -6370931440440523898
+      spriteID: adaaa110c3c6bcbb0800000000000000
+      internalID: -4914715563372401958
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Agis_2
+      name: attack1_2
       rect:
         serializedVersion: 2
-        x: 448
+        x: 640
         y: 0
-        width: 224
-        height: 240
+        width: 320
+        height: 320
       alignment: 9
-      pivot: {x: 0.5, y: 0.14}
+      pivot: {x: 0.5, y: 0.13}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 48ad847859a1ed880800000000000000
-      internalID: -8584394610199438716
+      spriteID: 9fc92e01bd1b9e420800000000000000
+      internalID: 2659852609378229497
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Agis_3
+      name: attack1_3
       rect:
         serializedVersion: 2
-        x: 672
+        x: 960
         y: 0
-        width: 224
-        height: 240
+        width: 320
+        height: 320
       alignment: 9
-      pivot: {x: 0.5, y: 0.14}
+      pivot: {x: 0.5, y: 0.13}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 50f2f5be65c1aba20800000000000000
-      internalID: 3078804454902804229
+      spriteID: c7a2833eb6b63b5f0800000000000000
+      internalID: -742131402468218244
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Agis_4
+      name: attack1_4
       rect:
         serializedVersion: 2
-        x: 896
+        x: 1280
         y: 0
-        width: 224
-        height: 240
+        width: 320
+        height: 320
       alignment: 9
-      pivot: {x: 0.5, y: 0.14}
+      pivot: {x: 0.5, y: 0.13}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b793b186a7f0ad6e0800000000000000
-      internalID: -1812118881656161925
+      spriteID: d59a440b782082040800000000000000
+      internalID: 4622947799296944477
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Agis_5
+      name: attack1_5
       rect:
         serializedVersion: 2
-        x: 1120
+        x: 1600
         y: 0
-        width: 224
-        height: 240
+        width: 320
+        height: 320
       alignment: 9
-      pivot: {x: 0.5, y: 0.14}
+      pivot: {x: 0.5, y: 0.13}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cf918e3b65eb1ff60800000000000000
-      internalID: 8066437687192066556
+      spriteID: 7e5c60e1fa29ae0b0800000000000000
+      internalID: -5698581097663248921
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Agis_6
+      name: attack1_6
       rect:
         serializedVersion: 2
-        x: 1344
+        x: 1920
         y: 0
-        width: 224
-        height: 240
+        width: 320
+        height: 320
       alignment: 9
-      pivot: {x: 0.5, y: 0.14}
+      pivot: {x: 0.5, y: 0.13}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 695ed3dd03a410d50800000000000000
-      internalID: 6701719294234715542
+      spriteID: 1dcd1fc2ce29045f0800000000000000
+      internalID: -774457592843739951
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Agis_7
-      rect:
-        serializedVersion: 2
-        x: 1568
-        y: 0
-        width: 224
-        height: 240
-      alignment: 9
-      pivot: {x: 0.5, y: 0.14}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 6faec5763a5c2beb0800000000000000
-      internalID: -4705481355044263178
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Agis_8
-      rect:
-        serializedVersion: 2
-        x: 1792
-        y: 0
-        width: 224
-        height: 240
-      alignment: 9
-      pivot: {x: 0.5, y: 0.14}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3e51a31b23bfddbb0800000000000000
-      internalID: -4909491823623662109
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Agis_9
-      rect:
-        serializedVersion: 2
-        x: 2016
-        y: 0
-        width: 224
-        height: 240
-      alignment: 9
-      pivot: {x: 0.5, y: 0.14}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 8b90f8eca6a9f0cd0800000000000000
-      internalID: -2589681477192054344
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Agis_10
+      name: attack1_7
       rect:
         serializedVersion: 2
         x: 2240
         y: 0
-        width: 224
-        height: 240
+        width: 320
+        height: 320
       alignment: 9
-      pivot: {x: 0.5, y: 0.14}
+      pivot: {x: 0.5, y: 0.13}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 99a70fe1ea9e9fd70800000000000000
-      internalID: 9077543457994603161
+      spriteID: 3507d92b05ac2ad50800000000000000
+      internalID: 6747177639697281107
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Agis_11
+      name: attack1_8
       rect:
         serializedVersion: 2
-        x: 2464
+        x: 2560
         y: 0
-        width: 224
-        height: 240
+        width: 320
+        height: 320
       alignment: 9
-      pivot: {x: 0.5, y: 0.14}
+      pivot: {x: 0.5, y: 0.13}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ead865fefd110b110800000000000000
-      internalID: 1274538348036656558
+      spriteID: ad52da8b9613df5c0800000000000000
+      internalID: -4180130548990269990
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Agis_12
+      name: attack1_9
       rect:
         serializedVersion: 2
-        x: 2688
+        x: 2880
         y: 0
-        width: 224
-        height: 240
+        width: 320
+        height: 320
       alignment: 9
-      pivot: {x: 0.5, y: 0.14}
+      pivot: {x: 0.5, y: 0.13}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f7f82a068d86e3c60800000000000000
-      internalID: 7799786883195768703
+      spriteID: 8baec52a2dcea4d80800000000000000
+      internalID: -8265533776673838408
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Agis_13
+      name: attack1_10
       rect:
         serializedVersion: 2
-        x: 2912
+        x: 3200
         y: 0
-        width: 224
-        height: 240
+        width: 320
+        height: 320
       alignment: 9
-      pivot: {x: 0.5, y: 0.14}
+      pivot: {x: 0.5, y: 0.13}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a6e13dac3f9f36d80800000000000000
-      internalID: -8258482466192155030
+      spriteID: 4732bf9d86a6b8d60800000000000000
+      internalID: 7893519770463183732
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Agis_14
+      name: attack1_11
       rect:
         serializedVersion: 2
-        x: 3136
+        x: 3520
         y: 0
-        width: 224
-        height: 240
+        width: 320
+        height: 320
       alignment: 9
-      pivot: {x: 0.5, y: 0.14}
+      pivot: {x: 0.5, y: 0.13}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c5546ebb4701537f0800000000000000
-      internalID: -633582079021005476
+      spriteID: e3464d48b9467ccd0800000000000000
+      internalID: -2537949245888764866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: attack1_12
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30b7db0746b1fd0d0800000000000000
+      internalID: -3395965475811919101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: attack1_13
+      rect:
+        serializedVersion: 2
+        x: 4160
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 601921ca109c8a720800000000000000
+      internalID: 2857754972585627910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: attack1_14
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a59920300bfe02c80800000000000000
+      internalID: -8349410169901115046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: attack1_15
+      rect:
+        serializedVersion: 2
+        x: 4800
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8f8f1009f1bd3ee0800000000000000
+      internalID: -1279671036096311410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: attack1_16
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b65ae96c66eb98a30800000000000000
+      internalID: 4218111874637407595
       vertices: []
       indices: 
       edges: []
@@ -475,7 +561,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 0e830328c3c6fe94589fb1025a91a71b
+    spriteID: 4bd2f70ae4d984147bb2af98ffcea49e
     internalID: 0
     vertices: []
     indices: 
@@ -485,23 +571,25 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":224.0,"y":240.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":17.0,"y":1.0},"gridSpriteSize":{"x":320.0,"y":320.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Agis_0: 858086424201570730
-      Agis_1: -6370931440440523898
-      Agis_10: 9077543457994603161
-      Agis_11: 1274538348036656558
-      Agis_12: 7799786883195768703
-      Agis_13: -8258482466192155030
-      Agis_14: -633582079021005476
-      Agis_2: -8584394610199438716
-      Agis_3: 3078804454902804229
-      Agis_4: -1812118881656161925
-      Agis_5: 8066437687192066556
-      Agis_6: 6701719294234715542
-      Agis_7: -4705481355044263178
-      Agis_8: -4909491823623662109
-      Agis_9: -2589681477192054344
+      attack1_0: 2598868237486306103
+      attack1_1: -4914715563372401958
+      attack1_10: 7893519770463183732
+      attack1_11: -2537949245888764866
+      attack1_12: -3395965475811919101
+      attack1_13: 2857754972585627910
+      attack1_14: -8349410169901115046
+      attack1_15: -1279671036096311410
+      attack1_16: 4218111874637407595
+      attack1_2: 2659852609378229497
+      attack1_3: -742131402468218244
+      attack1_4: 4622947799296944477
+      attack1_5: -5698581097663248921
+      attack1_6: -774457592843739951
+      attack1_7: 6747177639697281107
+      attack1_8: -4180130548990269990
+      attack1_9: -8265533776673838408
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

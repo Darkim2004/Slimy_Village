@@ -1,0 +1,1433 @@
+fileFormatVersion: 2
+guid: 448112da46a00c840956bbca1cbcd5bc
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2479431142525295213
+    second: death-1-0_0
+  - first:
+      213: 2956785768790623055
+    second: death-1-0_1
+  - first:
+      213: 3319993801918720268
+    second: death-1-0_2
+  - first:
+      213: -7543049858467282026
+    second: death-1-0_3
+  - first:
+      213: -3723133129869915693
+    second: death-1-0_4
+  - first:
+      213: -1507765897668354346
+    second: death-1-0_5
+  - first:
+      213: -7717125451468485017
+    second: death-1-0_6
+  - first:
+      213: -5533470331426742581
+    second: death-1-0_7
+  - first:
+      213: -8400314711852833155
+    second: death-1-0_8
+  - first:
+      213: 2207978206019917303
+    second: death-1-0_9
+  - first:
+      213: -8784436437648741908
+    second: death-1-0_10
+  - first:
+      213: -792007556631029174
+    second: death-1-0_11
+  - first:
+      213: 7479017316851179935
+    second: death-1-0_12
+  - first:
+      213: 3242551307975757640
+    second: death-1-0_13
+  - first:
+      213: -4359701361559234662
+    second: death-1-0_14
+  - first:
+      213: -2575633340095981526
+    second: death-1-0_15
+  - first:
+      213: -8991376946577490774
+    second: death-1-0_16
+  - first:
+      213: -3633072469694882967
+    second: death-1-0_17
+  - first:
+      213: -3086142922416668438
+    second: death-1-0_18
+  - first:
+      213: -2391892579144956404
+    second: death-1-0_19
+  - first:
+      213: -9116329498951910053
+    second: death-1-0_20
+  - first:
+      213: -4673309900474480897
+    second: death-1-0_21
+  - first:
+      213: -3232046625683596061
+    second: death-1-0_22
+  - first:
+      213: 6482160249734117967
+    second: death-1-0_23
+  - first:
+      213: 3874678177369491035
+    second: death-1-0_24
+  - first:
+      213: 486712417235599586
+    second: death-1-0_25
+  - first:
+      213: -7630209571160652366
+    second: death-1-0_26
+  - first:
+      213: 5273308042746873351
+    second: death-1-0_27
+  - first:
+      213: 5651704421571524598
+    second: death-1-0_28
+  - first:
+      213: -3403513975366810522
+    second: death-1-0_29
+  - first:
+      213: -4038092374179997901
+    second: death-1-0_30
+  - first:
+      213: 7019714541868846272
+    second: death-1-0_31
+  - first:
+      213: -5122108998586643999
+    second: death-1-0_32
+  - first:
+      213: 9139419220809249104
+    second: death-1-0_33
+  - first:
+      213: 774009489055964078
+    second: death-1-0_34
+  - first:
+      213: 9105245424651037308
+    second: death-1-0_35
+  - first:
+      213: -159637405975165104
+    second: death-1-0_36
+  - first:
+      213: 920858358865499489
+    second: death-1-0_37
+  - first:
+      213: -1216238473333873948
+    second: death-1-0_38
+  - first:
+      213: 5139186152225208406
+    second: death-1-0_39
+  - first:
+      213: -616985735405740035
+    second: death-1-0_40
+  - first:
+      213: -8697034647015053682
+    second: death-1-0_41
+  - first:
+      213: 3697436716714862524
+    second: death-1-0_42
+  - first:
+      213: 5172049951967746935
+    second: death-1-0_43
+  - first:
+      213: 2446469435194199829
+    second: death-1-0_44
+  - first:
+      213: -1459241800840535178
+    second: death-1-0_45
+  - first:
+      213: -8790367259301568201
+    second: death-1-0_46
+  - first:
+      213: -5087004455265834052
+    second: death-1-0_47
+  - first:
+      213: 1205053470401595913
+    second: death-1-0_48
+  - first:
+      213: -1678558592545944921
+    second: death-1-0_49
+  - first:
+      213: -69341690870709918
+    second: death-1-0_50
+  - first:
+      213: -811018472131086673
+    second: death-1-0_51
+  - first:
+      213: 3364498269799881559
+    second: death-1-0_52
+  - first:
+      213: -1833603115393483524
+    second: death-1-0_53
+  - first:
+      213: 5662765296918089102
+    second: death-1-0_54
+  - first:
+      213: 8100670583457555542
+    second: death-1-0_55
+  - first:
+      213: 2100531832115908812
+    second: death-1-0_56
+  - first:
+      213: 3989998947471108125
+    second: death-1-0_57
+  - first:
+      213: 8351446589538404983
+    second: death-1-0_58
+  - first:
+      213: 5265346819776455252
+    second: death-1-0_59
+  - first:
+      213: 3760911063157193657
+    second: death-1-0_60
+  - first:
+      213: 1660383180517038605
+    second: death-1-0_61
+  - first:
+      213: -4323820124407139960
+    second: death-1-0_62
+  - first:
+      213: -5165736947249660785
+    second: death-1-0_63
+  - first:
+      213: -2133718148876602379
+    second: death-1-0_64
+  - first:
+      213: -8497175694963279617
+    second: death-1-0_65
+  - first:
+      213: 5139237560964001989
+    second: death-1-0_66
+  - first:
+      213: -8980650071206408214
+    second: death-1-0_67
+  - first:
+      213: 4307302728095506324
+    second: death-1-0_68
+  - first:
+      213: 1624746513811149118
+    second: death-1-0_69
+  - first:
+      213: 3646870495554345596
+    second: death-1-0_70
+  - first:
+      213: -4986735468165177009
+    second: death-1-0_71
+  - first:
+      213: -7548672034668729473
+    second: death-1-0_72
+  - first:
+      213: 4759830762597934270
+    second: death-1-0_73
+  - first:
+      213: 7110625959727478217
+    second: death-1-0_74
+  - first:
+      213: -6813240207409838049
+    second: death-1-0_75
+  - first:
+      213: -1845210501330796150
+    second: death-1-0_76
+  - first:
+      213: 2843808152246447823
+    second: death-1-0_77
+  - first:
+      213: 4768156721845464678
+    second: death-1-0_78
+  - first:
+      213: 3861543980410064596
+    second: death-1-0_79
+  - first:
+      213: -4782851350680005434
+    second: death-1-0_80
+  - first:
+      213: 317148091128821430
+    second: death-1-0_81
+  - first:
+      213: -1863358442212250489
+    second: death-1-0_82
+  - first:
+      213: -9016433091544610550
+    second: death-1-0_83
+  - first:
+      213: -8653251895659878099
+    second: death-1-0_84
+  - first:
+      213: 7301791240429535093
+    second: death-1-0_85
+  - first:
+      213: -6877190794848472470
+    second: death-1-0_86
+  - first:
+      213: 2786926976237109871
+    second: death-1-0_87
+  - first:
+      213: -2162110526382141288
+    second: death-1-0_88
+  - first:
+      213: -1214659780365101256
+    second: death-1-0_89
+  - first:
+      213: -3853431478895820048
+    second: death-1-0_90
+  - first:
+      213: -8244056653143431617
+    second: death-1-0_91
+  - first:
+      213: 5111833081468590964
+    second: death-1-0_92
+  - first:
+      213: 8908910769036232583
+    second: death-1-0_93
+  - first:
+      213: -1111710782109085619
+    second: death-1-0_94
+  - first:
+      213: -6203034185678558897
+    second: death-1-0_95
+  - first:
+      213: 8782482039146677281
+    second: death-1-0_96
+  - first:
+      213: -6065462556437097144
+    second: death-1-0_97
+  - first:
+      213: 8335701675978464723
+    second: death-1-0_98
+  - first:
+      213: 7248698771807775431
+    second: death-1-0_99
+  - first:
+      213: -5613145964864612926
+    second: death-1-0_100
+  - first:
+      213: 2000970677296714374
+    second: death-1-0_101
+  - first:
+      213: -7291020009729980000
+    second: death-1-0_102
+  - first:
+      213: 8119258617934265230
+    second: death-1-0_103
+  - first:
+      213: -109826157875584867
+    second: death-1-0_104
+  - first:
+      213: 809588219380976418
+    second: death-1-0_105
+  - first:
+      213: 5072021554754726201
+    second: death-1-0_106
+  - first:
+      213: 5504172402401027649
+    second: death-1-0_107
+  - first:
+      213: -7276140853857587601
+    second: death-1-0_108
+  - first:
+      213: -2555420448765729207
+    second: death-1-0_109
+  - first:
+      213: -7217525318257742778
+    second: death-1-0_110
+  - first:
+      213: 8829433265218644525
+    second: death-1-0_111
+  - first:
+      213: 6216518493384974160
+    second: death-1-0_112
+  - first:
+      213: -1446021143688466143
+    second: death-1-0_113
+  - first:
+      213: -3890684081045952476
+    second: death-1-0_114
+  - first:
+      213: -4827269235569397913
+    second: death-1-0_115
+  - first:
+      213: -4324546917889974467
+    second: death-1-0_116
+  - first:
+      213: -4409467610005676827
+    second: death-1-0_117
+  - first:
+      213: -8764924173422305948
+    second: death-1-0_118
+  - first:
+      213: 1399769130778014275
+    second: death-1-0_119
+  - first:
+      213: 2049856979753318842
+    second: death-1-0_120
+  - first:
+      213: -5134190349284036835
+    second: death-1-0_121
+  - first:
+      213: -1136104615412050657
+    second: death-1-0_122
+  - first:
+      213: -5693956612886875525
+    second: death-1-0_123
+  - first:
+      213: 4693919470444820960
+    second: death-1-0_124
+  - first:
+      213: -1601804987519239890
+    second: death-1-0_125
+  - first:
+      213: -7667212742275606847
+    second: death-1-0_126
+  - first:
+      213: -1263264015615305691
+    second: death-1-0_127
+  - first:
+      213: 989039853814117487
+    second: death-1-0_128
+  - first:
+      213: -5710507928200571822
+    second: death-1-0_129
+  - first:
+      213: 5805780782901475128
+    second: death-1-0_130
+  - first:
+      213: 7363297518791913226
+    second: death-1-0_131
+  - first:
+      213: 2551797200220008762
+    second: death-1-0_132
+  - first:
+      213: -7408852530804430365
+    second: death-1-0_133
+  - first:
+      213: 8282984441530719863
+    second: death-1-0_134
+  - first:
+      213: 8239762249049454453
+    second: death-1-0_135
+  - first:
+      213: -1917197004672251883
+    second: death-1-0_136
+  - first:
+      213: -4146690279280307388
+    second: death-1-0_137
+  - first:
+      213: 6808999677951161079
+    second: death-1-0_138
+  - first:
+      213: 3719125171347241954
+    second: death-1-0_139
+  - first:
+      213: 9042089272991284707
+    second: death-1-0_140
+  - first:
+      213: 8144687050994017502
+    second: death-1-0_141
+  - first:
+      213: 3737409133333693972
+    second: death-1-0_142
+  - first:
+      213: 4997299589762336230
+    second: death-1-0_143
+  - first:
+      213: 6138161687317467821
+    second: death-1-0_144
+  - first:
+      213: -7652647314018299506
+    second: death-1-0_145
+  - first:
+      213: -8949259858782809258
+    second: death-1-0_146
+  - first:
+      213: 8595278616769368046
+    second: death-1-0_147
+  - first:
+      213: -8535818506639845260
+    second: death-1-0_148
+  - first:
+      213: 169369871010609615
+    second: death-1-0_149
+  - first:
+      213: 8926655950956616054
+    second: death-1-0_150
+  - first:
+      213: -50023898277562471
+    second: death-1-0_151
+  - first:
+      213: 9096106116283047828
+    second: death-1-0_152
+  - first:
+      213: -56712719708955857
+    second: death-1-0_153
+  - first:
+      213: 8152794877073898671
+    second: death-1-0_154
+  - first:
+      213: 171229370945135040
+    second: death-1-0_155
+  - first:
+      213: 3396078878071368449
+    second: death-1-0_156
+  - first:
+      213: 5259682423205806891
+    second: death-1-0_157
+  - first:
+      213: 8513945157471406151
+    second: death-1-0_158
+  - first:
+      213: -5661025042446536209
+    second: death-1-0_159
+  - first:
+      213: -4709287605451648260
+    second: death-1-0_160
+  - first:
+      213: -6993184638190646368
+    second: death-1-0_161
+  - first:
+      213: -3011805059418374010
+    second: death-1-0_162
+  - first:
+      213: -8372773054275386547
+    second: death-1-0_163
+  - first:
+      213: -2785556006718501188
+    second: death-1-0_164
+  - first:
+      213: -2287068869214798098
+    second: death-1-0_165
+  - first:
+      213: 844280005998020218
+    second: death-1-0_166
+  - first:
+      213: -7333857314415903983
+    second: death-1-0_167
+  - first:
+      213: -177945783484862586
+    second: death-1-0_168
+  - first:
+      213: 3502180436111399445
+    second: death-1-0_169
+  - first:
+      213: -6525705777018023791
+    second: death-1-0_170
+  - first:
+      213: -5975755200953962441
+    second: death-1-0_171
+  - first:
+      213: 7550808514262245297
+    second: death-1-0_172
+  - first:
+      213: -3035544052601477227
+    second: death-1-0_173
+  - first:
+      213: 429207934211934967
+    second: death-1-0_174
+  - first:
+      213: 4832910114227845981
+    second: death-1-0_175
+  - first:
+      213: -2667157616233725955
+    second: death-1-0_176
+  - first:
+      213: -8401189533309400990
+    second: death-1-0_177
+  - first:
+      213: 1777754749676930758
+    second: death-1-0_178
+  - first:
+      213: 2856706698850950404
+    second: death-1-0_179
+  - first:
+      213: -5693095034308010482
+    second: death-1-0_180
+  - first:
+      213: 9202434124068307024
+    second: death-1-0_181
+  - first:
+      213: 7507362074453148261
+    second: death-1-0_182
+  - first:
+      213: 7148459547762404937
+    second: death-1-0_183
+  - first:
+      213: -2151313776346216779
+    second: death-1-0_184
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 16384
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: death-1-0_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6ad24fcc75b86220800000000000000
+      internalID: 2479431142525295213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_1
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4302b1bdfc980920800000000000000
+      internalID: 2956785768790623055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_2
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c092dd3d5ccf21e20800000000000000
+      internalID: 3319993801918720268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_3
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6934ff65e14b15790800000000000000
+      internalID: -7543049858467282026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_4
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d98d96f426c45cc0800000000000000
+      internalID: -3723133129869915693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_5
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6de970197e6531be0800000000000000
+      internalID: -1507765897668354346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_6
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76e481af94347e490800000000000000
+      internalID: -7717125451468485017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_7
+      rect:
+        serializedVersion: 2
+        x: 2240
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bce55281d0a2533b0800000000000000
+      internalID: -5533470331426742581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_8
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d76268eb6461c6b80800000000000000
+      internalID: -8400314711852833155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_9
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f51f91ea7054ae10800000000000000
+      internalID: 2207978206019917303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_10
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce9e2f51a99671680800000000000000
+      internalID: -8784436437648741908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_11
+      rect:
+        serializedVersion: 2
+        x: 3520
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4a159fc2593205f0800000000000000
+      internalID: -792007556631029174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_12
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f91e8e7cf9ecac760800000000000000
+      internalID: 7479017316851179935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_13
+      rect:
+        serializedVersion: 2
+        x: 4160
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84f8fdd1c3bdffc20800000000000000
+      internalID: 3242551307975757640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_14
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a979979d5ba3f73c0800000000000000
+      internalID: -4359701361559234662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_15
+      rect:
+        serializedVersion: 2
+        x: 4800
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a281deb9f13814cd0800000000000000
+      internalID: -2575633340095981526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_16
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aacbc913e46383380800000000000000
+      internalID: -8991376946577490774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_17
+      rect:
+        serializedVersion: 2
+        x: 5440
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96bd59076dbb49dc0800000000000000
+      internalID: -3633072469694882967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_18
+      rect:
+        serializedVersion: 2
+        x: 5760
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae0c447fc51db25d0800000000000000
+      internalID: -3086142922416668438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_19
+      rect:
+        serializedVersion: 2
+        x: 6080
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c060c2f3f5a4eced0800000000000000
+      internalID: -2391892579144956404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_20
+      rect:
+        serializedVersion: 2
+        x: 6400
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5d7e8ffe9a4c7180800000000000000
+      internalID: -9116329498951910053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_21
+      rect:
+        serializedVersion: 2
+        x: 6720
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff607e0e761152fb0800000000000000
+      internalID: -4673309900474480897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_22
+      rect:
+        serializedVersion: 2
+        x: 7040
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ec11a2d7b67523d0800000000000000
+      internalID: -3232046625683596061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_23
+      rect:
+        serializedVersion: 2
+        x: 7360
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4a3f86376245f950800000000000000
+      internalID: 6482160249734117967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_24
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b56011df54f95c530800000000000000
+      internalID: 3874678177369491035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_25
+      rect:
+        serializedVersion: 2
+        x: 8000
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e089116d5621c600800000000000000
+      internalID: 486712417235599586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_26
+      rect:
+        serializedVersion: 2
+        x: 8320
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b50f2552dc0c1690800000000000000
+      internalID: -7630209571160652366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_27
+      rect:
+        serializedVersion: 2
+        x: 8640
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7064327c9bd8e2940800000000000000
+      internalID: 5273308042746873351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_28
+      rect:
+        serializedVersion: 2
+        x: 8960
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f776473a33ee6e40800000000000000
+      internalID: 5651704421571524598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_29
+      rect:
+        serializedVersion: 2
+        x: 9280
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6640f2e621a44c0d0800000000000000
+      internalID: -3403513975366810522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_30
+      rect:
+        serializedVersion: 2
+        x: 9600
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33799c26160d5f7c0800000000000000
+      internalID: -4038092374179997901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_31
+      rect:
+        serializedVersion: 2
+        x: 9920
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cc8cbc0f290b6160800000000000000
+      internalID: 7019714541868846272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: death-1-0_32
+      rect:
+        serializedVersion: 2
+        x: 10240
+        y: 0
+        width: 320
+        height: 320
+      alignment: 9
+      pivot: {x: 0.5, y: 0.13}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e9496ef00d9ae8b0800000000000000
+      internalID: -5122108998586643999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 6853c974f840af641a44bce8883fd2a3
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":320.0,"y":320.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      death-1-0_0: 2479431142525295213
+      death-1-0_1: 2956785768790623055
+      death-1-0_10: -8784436437648741908
+      death-1-0_11: -792007556631029174
+      death-1-0_12: 7479017316851179935
+      death-1-0_13: 3242551307975757640
+      death-1-0_14: -4359701361559234662
+      death-1-0_15: -2575633340095981526
+      death-1-0_16: -8991376946577490774
+      death-1-0_17: -3633072469694882967
+      death-1-0_18: -3086142922416668438
+      death-1-0_19: -2391892579144956404
+      death-1-0_2: 3319993801918720268
+      death-1-0_20: -9116329498951910053
+      death-1-0_21: -4673309900474480897
+      death-1-0_22: -3232046625683596061
+      death-1-0_23: 6482160249734117967
+      death-1-0_24: 3874678177369491035
+      death-1-0_25: 486712417235599586
+      death-1-0_26: -7630209571160652366
+      death-1-0_27: 5273308042746873351
+      death-1-0_28: 5651704421571524598
+      death-1-0_29: -3403513975366810522
+      death-1-0_3: -7543049858467282026
+      death-1-0_30: -4038092374179997901
+      death-1-0_31: 7019714541868846272
+      death-1-0_32: -5122108998586643999
+      death-1-0_4: -3723133129869915693
+      death-1-0_5: -1507765897668354346
+      death-1-0_6: -7717125451468485017
+      death-1-0_7: -5533470331426742581
+      death-1-0_8: -8400314711852833155
+      death-1-0_9: 2207978206019917303
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
