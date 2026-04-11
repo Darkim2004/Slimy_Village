@@ -1,0 +1,637 @@
+fileFormatVersion: 2
+guid: de4dd34d980e5b247b9dd36decd61e4e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7157807431566597666
+    second: 20251118darkDwellersCursourB1-Sheet_0
+  - first:
+      213: 2604725668397286800
+    second: 20251118darkDwellersCursourB1-Sheet_1
+  - first:
+      213: -2221228767174788745
+    second: 20251118darkDwellersCursourB1-Sheet_2
+  - first:
+      213: 358409210412071195
+    second: 20251118darkDwellersCursourB1-Sheet_3
+  - first:
+      213: -2431159936147308972
+    second: 20251118darkDwellersCursourB1-Sheet_4
+  - first:
+      213: 8663748705871362620
+    second: 20251118darkDwellersCursourB1-Sheet_5
+  - first:
+      213: 4352597883982548144
+    second: 20251118darkDwellersCursourB1-Sheet_6
+  - first:
+      213: -8730158552135259213
+    second: 20251118darkDwellersCursourB1-Sheet_7
+  - first:
+      213: 1810730969390286052
+    second: 20251118darkDwellersCursourB1-Sheet_8
+  - first:
+      213: 7344738072714140826
+    second: 20251118darkDwellersCursourB1-Sheet_9
+  - first:
+      213: 8595565289241556274
+    second: 20251118darkDwellersCursourB1-Sheet_10
+  - first:
+      213: -6699794339765412896
+    second: 20251118darkDwellersCursourB1-Sheet_11
+  - first:
+      213: 4049578267386728752
+    second: 20251118darkDwellersCursourB1-Sheet_12
+  - first:
+      213: -6727593896765301666
+    second: 20251118darkDwellersCursourB1-Sheet_13
+  - first:
+      213: -7604372879784805519
+    second: 20251118darkDwellersCursourB1-Sheet_14
+  - first:
+      213: -6998702738949839721
+    second: 20251118darkDwellersCursourB1-Sheet_15
+  - first:
+      213: 7120641152286194531
+    second: 20251118darkDwellersCursourB1-Sheet_16
+  - first:
+      213: -3002476450542092713
+    second: 20251118darkDwellersCursourB1-Sheet_17
+  - first:
+      213: -4559337459201012434
+    second: 20251118darkDwellersCursourB1-Sheet_18
+  - first:
+      213: 6695740306427791895
+    second: 20251118darkDwellersCursourB1-Sheet_19
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 43
+        width: 62
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22e9d217fe3a55360800000000000000
+      internalID: 7157807431566597666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 15
+        width: 10
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 095892ae138d52420800000000000000
+      internalID: 2604725668397286800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 15
+        width: 10
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 779faaf643c9c21e0800000000000000
+      internalID: -2221228767174788745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 15
+        width: 10
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b19f6d6274359f400800000000000000
+      internalID: 358409210412071195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 44
+        width: 62
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45e37cd3be8c24ed0800000000000000
+      internalID: -2431159936147308972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 15
+        width: 10
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3a76b4ab81db3870800000000000000
+      internalID: 8663748705871362620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 44
+        width: 62
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bc85e4e6b8876c30800000000000000
+      internalID: 4352597883982548144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 15
+        width: 10
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bba32b1d0f38d680800000000000000
+      internalID: -8730158552135259213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 15
+        width: 10
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e48e461932012910800000000000000
+      internalID: 1810730969390286052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 43
+        width: 62
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9cd960fc50cde560800000000000000
+      internalID: 7344738072714140826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 15
+        width: 10
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 235bbecd615994770800000000000000
+      internalID: 8595565289241556274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 15
+        width: 10
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eb1c168b8c8503a0800000000000000
+      internalID: -6699794339765412896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 41
+        width: 62
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0315ab58afdf23830800000000000000
+      internalID: 4049578267386728752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_13
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 15
+        width: 10
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5cd736cef8c2a2a0800000000000000
+      internalID: -6727593896765301666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 15
+        width: 10
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17bffc0d727d77690800000000000000
+      internalID: -7604372879784805519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 1
+        width: 62
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 794675c80fc9fde90800000000000000
+      internalID: -6998702738949839721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 62
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36bfb07b66991d260800000000000000
+      internalID: 7120641152286194531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_17
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 1
+        width: 62
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75e76f6739f0556d0800000000000000
+      internalID: -3002476450542092713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_18
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 2
+        width: 62
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2d013dbcbaf9b0c0800000000000000
+      internalID: -4559337459201012434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20251118darkDwellersCursourB1-Sheet_19
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 3
+        width: 62
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71ac4e8455c0cec50800000000000000
+      internalID: 6695740306427791895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      20251118darkDwellersCursourB1-Sheet_0: 7157807431566597666
+      20251118darkDwellersCursourB1-Sheet_1: 2604725668397286800
+      20251118darkDwellersCursourB1-Sheet_10: 8595565289241556274
+      20251118darkDwellersCursourB1-Sheet_11: -6699794339765412896
+      20251118darkDwellersCursourB1-Sheet_12: 4049578267386728752
+      20251118darkDwellersCursourB1-Sheet_13: -6727593896765301666
+      20251118darkDwellersCursourB1-Sheet_14: -7604372879784805519
+      20251118darkDwellersCursourB1-Sheet_15: -6998702738949839721
+      20251118darkDwellersCursourB1-Sheet_16: 7120641152286194531
+      20251118darkDwellersCursourB1-Sheet_17: -3002476450542092713
+      20251118darkDwellersCursourB1-Sheet_18: -4559337459201012434
+      20251118darkDwellersCursourB1-Sheet_19: 6695740306427791895
+      20251118darkDwellersCursourB1-Sheet_2: -2221228767174788745
+      20251118darkDwellersCursourB1-Sheet_3: 358409210412071195
+      20251118darkDwellersCursourB1-Sheet_4: -2431159936147308972
+      20251118darkDwellersCursourB1-Sheet_5: 8663748705871362620
+      20251118darkDwellersCursourB1-Sheet_6: 4352597883982548144
+      20251118darkDwellersCursourB1-Sheet_7: -8730158552135259213
+      20251118darkDwellersCursourB1-Sheet_8: 1810730969390286052
+      20251118darkDwellersCursourB1-Sheet_9: 7344738072714140826
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
