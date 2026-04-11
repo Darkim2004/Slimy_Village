@@ -19,8 +19,8 @@ MonoBehaviour:
   animatorController: {fileID: 0}
   attackMode: 0
   attackDamage: 2
-  attackRadius: 1
-  attackHitboxDelay: 0.2
+  attackRadius: 0.6
+  attackHitboxDelay: 0.6
   aggroRange: 5
   attackCooldown: 1
   chaseSpeed: 2

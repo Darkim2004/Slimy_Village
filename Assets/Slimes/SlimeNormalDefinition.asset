@@ -20,7 +20,7 @@ MonoBehaviour:
   attackMode: 0
   attackDamage: 1
   attackRadius: 0.6
-  attackHitboxDelay: 0.6
+  attackHitboxDelay: 0.4
   aggroRange: 4
   attackCooldown: 1.5
   chaseSpeed: 2
