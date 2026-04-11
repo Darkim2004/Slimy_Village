@@ -6712,6 +6712,7 @@ GameObject:
   - component: {fileID: 1085338652}
   - component: {fileID: 1085338653}
   - component: {fileID: 1085338654}
+  - component: {fileID: 1085338655}
   m_Layer: 0
   m_Name: Aegis
   m_TagString: Untagged
@@ -6862,6 +6863,36 @@ MonoBehaviour:
   - {fileID: 1561477905}
   - {fileID: 2021410008}
   damagePerDisabledPillar: 1
+--- !u!114 &1085338655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085338648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4f4c138d9c74576b89f4ad953428d0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AegisProjectileAttackController
+  playerTransform: {fileID: 2081062104}
+  groundTilemap: {fileID: 1786648476}
+  collisionTilemap: {fileID: 427082915}
+  aegisAnimator: {fileID: 1085338649}
+  ringPrefab: {fileID: 338775016509244112, guid: 69c70fb34a108044c90dc0fa09692e19, type: 3}
+  projectilePrefab: {fileID: 168663271785988229, guid: b38c4c189b10eaf469ab84a6b13680a3, type: 3}
+  minProjectiles: 2
+  maxProjectiles: 5
+  cellRadius: 2
+  ringTelegraphSeconds: 0.7
+  attackCooldownSeconds: 2
+  startupDelaySeconds: 0.5
+  preSequenceDelaySeconds: 4.5
+  attackTotalDurationSeconds: 6
+  projectileDamage: 4
+  projectileLifetimeFallback: 0.7
+  attackAnimationState: attack3
+  idleAnimationState: idle
 --- !u!1001 &1131132605
 PrefabInstance:
   m_ObjectHideFlags: 0
