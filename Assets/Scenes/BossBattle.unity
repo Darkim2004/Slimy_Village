@@ -258,7 +258,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 4
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -283,7 +283,7 @@ Transform:
   m_GameObject: {fileID: 89124254}
   serializedVersion: 2
   m_LocalRotation: {x: 0.000000014901159, y: 0.000000029802319, z: -0.00000002235174, w: 1}
-  m_LocalPosition: {x: 72.57, y: 47.86, z: -10}
+  m_LocalPosition: {x: 95.26, y: 59.63, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6881,17 +6881,31 @@ MonoBehaviour:
   aegisAnimator: {fileID: 1085338649}
   ringPrefab: {fileID: 338775016509244112, guid: 69c70fb34a108044c90dc0fa09692e19, type: 3}
   projectilePrefab: {fileID: 168663271785988229, guid: b38c4c189b10eaf469ab84a6b13680a3, type: 3}
+  summonPrefabPool:
+  - {fileID: 9049272925549827451, guid: c87cca0ad9257654d88661b4f1b100eb, type: 3}
+  - {fileID: 592711045340842416, guid: 617bb4f98305f17439e0be086b041c6e, type: 3}
+  - {fileID: 1807237925166742262, guid: 35aee4c885ce5e54abc767189719d80e, type: 3}
+  enableProjectileAttack: 1
+  enableSummonAttack: 1
+  attackCooldownSeconds: 2
+  startupDelaySeconds: 0.5
   minProjectiles: 2
   maxProjectiles: 5
   cellRadius: 2
   ringTelegraphSeconds: 0.7
-  attackCooldownSeconds: 2
-  startupDelaySeconds: 0.5
   preSequenceDelaySeconds: 4.5
   attackTotalDurationSeconds: 6
   projectileDamage: 4
   projectileLifetimeFallback: 0.7
+  minSummons: 2
+  maxSummons: 4
+  summonCellRadius: 2
+  summonRingDelaySeconds: 2
+  summonCountdownSeconds: 0.5
+  summonTotalDurationSeconds: 3.5
+  maxActiveSummons: 12
   attackAnimationState: attack3
+  summonAttackAnimationState: attack4
   idleAnimationState: idle
 --- !u!1001 &1131132605
 PrefabInstance:

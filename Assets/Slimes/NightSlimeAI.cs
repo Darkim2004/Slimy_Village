@@ -54,6 +54,19 @@ public class SNightSlimeAI : EntityBase2D
         slimeDef = def as SlimeDefinition;
     }
 
+    /// <summary>
+    /// Forza immediatamente il target di aggro (utile per summon boss).
+    /// </summary>
+    public void ForceAggroTarget(Transform target)
+    {
+        if (target == null)
+            return;
+
+        playerTarget = target;
+        targetRefreshTimer = targetRefreshInterval;
+        attackCooldownTimer = 0f;
+    }
+
     protected override void TickAI()
     {
         if (state == State.Attack)

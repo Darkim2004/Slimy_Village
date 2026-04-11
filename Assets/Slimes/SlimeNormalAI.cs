@@ -61,6 +61,18 @@ public class SlimeNormalAI : EntityBase2D
             health.onHurtBy -= OnHurtBy;
     }
 
+    /// <summary>
+    /// Forza immediatamente il target di aggro (utile per summon boss).
+    /// </summary>
+    public void ForceAggroTarget(Transform target)
+    {
+        if (target == null)
+            return;
+
+        aggroTarget = target;
+        attackCooldownTimer = 0f;
+    }
+
     // ───────────────────────────── Aggro callback ──────────────────────────────
     private void OnHurtBy(GameObject attacker)
     {

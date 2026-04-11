@@ -6,6 +6,13 @@ using UnityEngine.Tilemaps;
 [DisallowMultipleComponent]
 public class AegisProjectileAttackController : MonoBehaviour
 {
+    private enum AttackType
+    {
+        None,
+        Projectile,
+        Summon
+    }
+
     [Header("References")]
     [SerializeField] private Transform playerTransform;
     [SerializeField] private Tilemap groundTilemap;
@@ -13,26 +20,43 @@ public class AegisProjectileAttackController : MonoBehaviour
     [SerializeField] private Animator aegisAnimator;
     [SerializeField] private GameObject ringPrefab;
     [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private List<GameObject> summonPrefabPool = new List<GameObject>();
+
+    [Header("Attack Cycle")]
+    [SerializeField] private bool enableProjectileAttack = true;
+    [SerializeField] private bool enableSummonAttack = true;
+    [SerializeField, Min(0f)] private float attackCooldownSeconds = 2f;
+    [SerializeField, Min(0f)] private float startupDelaySeconds = 0.5f;
 
     [Header("Projectile Attack")]
     [SerializeField, Min(1)] private int minProjectiles = 2;
     [SerializeField, Min(1)] private int maxProjectiles = 4;
     [SerializeField, Min(0)] private int cellRadius = 3;
     [SerializeField, Min(0f)] private float ringTelegraphSeconds = 1f;
-    [SerializeField, Min(0f)] private float attackCooldownSeconds = 2f;
-    [SerializeField, Min(0f)] private float startupDelaySeconds = 0.5f;
     [SerializeField, Min(0f)] private float preSequenceDelaySeconds = 4.5f;
     [SerializeField, Min(0.1f)] private float attackTotalDurationSeconds = 6f;
     [SerializeField, Min(1)] private int projectileDamage = 1;
     [SerializeField, Min(0.05f)] private float projectileLifetimeFallback = 0.7f;
 
+    [Header("Summon Attack")]
+    [SerializeField, Min(1)] private int minSummons = 2;
+    [SerializeField, Min(1)] private int maxSummons = 4;
+    [SerializeField, Min(0)] private int summonCellRadius = 3;
+    [SerializeField, Min(0f)] private float summonRingDelaySeconds = 2f;
+    [SerializeField, Min(0f)] private float summonCountdownSeconds = 0.5f;
+    [SerializeField, Min(0.1f)] private float summonTotalDurationSeconds = 3.5f;
+    [SerializeField, Min(0)] private int maxActiveSummons = 8;
+
     [Header("Animation")]
     [SerializeField] private string attackAnimationState = "attack3";
+    [SerializeField] private string summonAttackAnimationState = "attack4";
     [SerializeField] private string idleAnimationState = "idle";
 
     private readonly List<Vector3Int> _candidateCells = new List<Vector3Int>();
-    private readonly List<Vector3Int> _selectedCells = new List<Vector3Int>();
+    private readonly List<Vector3Int> _selectedProjectileCells = new List<Vector3Int>();
+    private readonly List<Vector3Int> _selectedSummonCells = new List<Vector3Int>();
     private readonly List<GameObject> _activeRings = new List<GameObject>();
+    private readonly List<GameObject> _activeSummons = new List<GameObject>();
 
     private Coroutine _attackLoopRoutine;
     private Health _aegisHealth;
@@ -92,6 +116,33 @@ public class AegisProjectileAttackController : MonoBehaviour
 
         if (preSequenceDelaySeconds > attackTotalDurationSeconds)
             preSequenceDelaySeconds = attackTotalDurationSeconds;
+
+        if (minSummons < 1)
+            minSummons = 1;
+
+        if (maxSummons < 1)
+            maxSummons = 1;
+
+        if (maxSummons < minSummons)
+            maxSummons = minSummons;
+
+        if (summonCellRadius < 0)
+            summonCellRadius = 0;
+
+        if (summonTotalDurationSeconds < 0.1f)
+            summonTotalDurationSeconds = 0.1f;
+
+        if (summonRingDelaySeconds < 0f)
+            summonRingDelaySeconds = 0f;
+
+        if (summonRingDelaySeconds > summonTotalDurationSeconds)
+            summonRingDelaySeconds = summonTotalDurationSeconds;
+
+        if (summonCountdownSeconds < 0f)
+            summonCountdownSeconds = 0f;
+
+        if (maxActiveSummons < 0)
+            maxActiveSummons = 0;
     }
 
     private IEnumerator AttackLoopRoutine()
@@ -103,8 +154,11 @@ public class AegisProjectileAttackController : MonoBehaviour
         {
             ResolveRuntimeReferences();
 
-            if (CanExecuteAttack())
+            AttackType attackType = ChooseNextAttackType();
+            if (attackType == AttackType.Projectile)
                 yield return ExecuteProjectileAttackRoutine();
+            else if (attackType == AttackType.Summon)
+                yield return ExecuteSummonAttackRoutine();
 
             float cooldown = Mathf.Max(0f, attackCooldownSeconds);
             if (cooldown > 0f)
@@ -114,19 +168,59 @@ public class AegisProjectileAttackController : MonoBehaviour
         }
     }
 
-    private bool CanExecuteAttack()
+    private AttackType ChooseNextAttackType()
     {
         if (_aegisHealth != null && _aegisHealth.IsDead)
-            return false;
+            return AttackType.None;
 
+        bool projectileAvailable = enableProjectileAttack && CanExecuteProjectileAttack();
+        bool summonAvailable = enableSummonAttack && CanExecuteSummonAttack();
+
+        if (!projectileAvailable && !summonAvailable)
+            return AttackType.None;
+
+        if (projectileAvailable && summonAvailable)
+            return Random.value < 0.5f ? AttackType.Projectile : AttackType.Summon;
+
+        return projectileAvailable ? AttackType.Projectile : AttackType.Summon;
+    }
+
+    private bool CanExecuteProjectileAttack()
+    {
         return playerTransform != null
             && groundTilemap != null
             && ringPrefab != null
             && projectilePrefab != null;
     }
 
+    private bool CanExecuteSummonAttack()
+    {
+        return playerTransform != null
+            && groundTilemap != null
+            && ringPrefab != null
+            && HasAnySummonPrefab()
+            && GetRemainingSummonSlots() > 0;
+    }
+
+    private bool HasAnySummonPrefab()
+    {
+        if (summonPrefabPool == null || summonPrefabPool.Count == 0)
+            return false;
+
+        for (int i = 0; i < summonPrefabPool.Count; i++)
+        {
+            if (summonPrefabPool[i] != null)
+                return true;
+        }
+
+        return false;
+    }
+
     private IEnumerator ExecuteProjectileAttackRoutine()
     {
+        if (!CanExecuteProjectileAttack())
+            yield break;
+
         PlayAnimation(attackAnimationState);
 
         float attackStartTime = Time.time;
@@ -136,17 +230,17 @@ public class AegisProjectileAttackController : MonoBehaviour
             yield return new WaitForSeconds(preDelay);
 
         // Campiona la posizione player al termine del pre-delay (4.5s di default).
-        SelectTargetCells();
+        SelectProjectileTargetCells();
 
-        if (_selectedCells.Count > 0)
+        if (_selectedProjectileCells.Count > 0)
         {
-            SpawnTelegraphRings();
+            SpawnTelegraphRings(_selectedProjectileCells);
 
             float telegraph = Mathf.Max(0f, ringTelegraphSeconds);
             if (telegraph > 0f)
                 yield return new WaitForSeconds(telegraph);
 
-            SpawnProjectilesAtSelectedCells();
+            SpawnProjectilesAtCells(_selectedProjectileCells);
             CleanupActiveRings();
         }
 
@@ -158,18 +252,77 @@ public class AegisProjectileAttackController : MonoBehaviour
         PlayAnimation(idleAnimationState);
     }
 
-    private void SelectTargetCells()
+    private IEnumerator ExecuteSummonAttackRoutine()
+    {
+        if (!CanExecuteSummonAttack())
+            yield break;
+
+        PlayAnimation(summonAttackAnimationState);
+
+        float attackStartTime = Time.time;
+
+        float ringDelay = Mathf.Clamp(summonRingDelaySeconds, 0f, summonTotalDurationSeconds);
+        if (ringDelay > 0f)
+            yield return new WaitForSeconds(ringDelay);
+
+        SelectSummonTargetCells();
+
+        if (_selectedSummonCells.Count > 0)
+        {
+            SpawnTelegraphRings(_selectedSummonCells);
+
+            float countdown = Mathf.Max(0f, summonCountdownSeconds);
+            if (countdown > 0f)
+                yield return new WaitForSeconds(countdown);
+
+            SpawnRandomSummonsAtCells(_selectedSummonCells);
+            CleanupActiveRings();
+        }
+
+        float elapsed = Time.time - attackStartTime;
+        float remaining = Mathf.Max(0f, summonTotalDurationSeconds - elapsed);
+        if (remaining > 0f)
+            yield return new WaitForSeconds(remaining);
+
+        PlayAnimation(idleAnimationState);
+    }
+
+    private void SelectProjectileTargetCells()
+    {
+        SelectRandomTargetCells(cellRadius, minProjectiles, maxProjectiles, _selectedProjectileCells);
+    }
+
+    private void SelectSummonTargetCells()
+    {
+        _selectedSummonCells.Clear();
+
+        int remainingSlots = GetRemainingSummonSlots();
+        if (remainingSlots <= 0)
+            return;
+
+        int cappedMax = Mathf.Min(maxSummons, remainingSlots);
+        if (cappedMax <= 0)
+            return;
+
+        int cappedMin = Mathf.Min(minSummons, cappedMax);
+        SelectRandomTargetCells(summonCellRadius, cappedMin, cappedMax, _selectedSummonCells);
+    }
+
+    private void SelectRandomTargetCells(int radius, int minCount, int maxCount, List<Vector3Int> output)
     {
         _candidateCells.Clear();
-        _selectedCells.Clear();
+        output.Clear();
+
+        if (playerTransform == null || groundTilemap == null)
+            return;
 
         Vector3Int playerCell = groundTilemap.WorldToCell(playerTransform.position);
-        int radius = Mathf.Max(0, cellRadius);
-        int radiusSq = radius * radius;
+        int safeRadius = Mathf.Max(0, radius);
+        int radiusSq = safeRadius * safeRadius;
 
-        for (int y = playerCell.y - radius; y <= playerCell.y + radius; y++)
+        for (int y = playerCell.y - safeRadius; y <= playerCell.y + safeRadius; y++)
         {
-            for (int x = playerCell.x - radius; x <= playerCell.x + radius; x++)
+            for (int x = playerCell.x - safeRadius; x <= playerCell.x + safeRadius; x++)
             {
                 int dx = x - playerCell.x;
                 int dy = y - playerCell.y;
@@ -187,9 +340,9 @@ public class AegisProjectileAttackController : MonoBehaviour
         if (_candidateCells.Count == 0)
             return;
 
-        int minCount = Mathf.Clamp(minProjectiles, 1, _candidateCells.Count);
-        int maxCount = Mathf.Clamp(maxProjectiles, minCount, _candidateCells.Count);
-        int count = Random.Range(minCount, maxCount + 1);
+        int clampedMin = Mathf.Clamp(minCount, 1, _candidateCells.Count);
+        int clampedMax = Mathf.Clamp(maxCount, clampedMin, _candidateCells.Count);
+        int count = Random.Range(clampedMin, clampedMax + 1);
 
         for (int i = 0; i < count; i++)
         {
@@ -199,7 +352,7 @@ public class AegisProjectileAttackController : MonoBehaviour
             _candidateCells[i] = _candidateCells[pick];
             _candidateCells[pick] = swap;
 
-            _selectedCells.Add(_candidateCells[i]);
+            output.Add(_candidateCells[i]);
         }
     }
 
@@ -216,13 +369,13 @@ public class AegisProjectileAttackController : MonoBehaviour
         return true;
     }
 
-    private void SpawnTelegraphRings()
+    private void SpawnTelegraphRings(IReadOnlyList<Vector3Int> cells)
     {
         CleanupActiveRings();
 
-        for (int i = 0; i < _selectedCells.Count; i++)
+        for (int i = 0; i < cells.Count; i++)
         {
-            Vector3 pos = groundTilemap.GetCellCenterWorld(_selectedCells[i]);
+            Vector3 pos = groundTilemap.GetCellCenterWorld(cells[i]);
             pos.z = 0f;
 
             GameObject ring = Instantiate(ringPrefab, pos, Quaternion.identity);
@@ -231,11 +384,11 @@ public class AegisProjectileAttackController : MonoBehaviour
         }
     }
 
-    private void SpawnProjectilesAtSelectedCells()
+    private void SpawnProjectilesAtCells(IReadOnlyList<Vector3Int> cells)
     {
-        for (int i = 0; i < _selectedCells.Count; i++)
+        for (int i = 0; i < cells.Count; i++)
         {
-            Vector3 pos = groundTilemap.GetCellCenterWorld(_selectedCells[i]);
+            Vector3 pos = groundTilemap.GetCellCenterWorld(cells[i]);
             pos.z = 0f;
 
             GameObject projectileGo = Instantiate(projectilePrefab, pos, Quaternion.identity);
@@ -247,6 +400,88 @@ public class AegisProjectileAttackController : MonoBehaviour
                 impact = projectileGo.AddComponent<AegisProjectileImpact>();
 
             impact.Initialize(projectileDamage, gameObject, projectileLifetimeFallback);
+        }
+    }
+
+    private void SpawnRandomSummonsAtCells(IReadOnlyList<Vector3Int> cells)
+    {
+        int remainingSlots = GetRemainingSummonSlots();
+        if (remainingSlots <= 0)
+            return;
+
+        int spawnCount = Mathf.Min(cells.Count, remainingSlots);
+        for (int i = 0; i < spawnCount; i++)
+        {
+            GameObject summonPrefab = GetRandomSummonPrefab();
+            if (summonPrefab == null)
+                continue;
+
+            Vector3 pos = groundTilemap.GetCellCenterWorld(cells[i]);
+            pos.z = 0f;
+
+            GameObject summon = Instantiate(summonPrefab, pos, Quaternion.identity);
+            if (summon == null)
+                continue;
+
+            _activeSummons.Add(summon);
+            ForceSummonAggro(summon);
+        }
+    }
+
+    private GameObject GetRandomSummonPrefab()
+    {
+        if (summonPrefabPool == null || summonPrefabPool.Count == 0)
+            return null;
+
+        int start = Random.Range(0, summonPrefabPool.Count);
+        for (int i = 0; i < summonPrefabPool.Count; i++)
+        {
+            int idx = (start + i) % summonPrefabPool.Count;
+            GameObject candidate = summonPrefabPool[idx];
+            if (candidate != null)
+                return candidate;
+        }
+
+        return null;
+    }
+
+    private void ForceSummonAggro(GameObject summon)
+    {
+        if (summon == null || playerTransform == null)
+            return;
+
+        SlimeNormalAI normal = summon.GetComponent<SlimeNormalAI>();
+        if (normal != null)
+        {
+            normal.ForceAggroTarget(playerTransform);
+            return;
+        }
+
+        SNightSlimeAI night = summon.GetComponent<SNightSlimeAI>();
+        if (night != null)
+        {
+            night.ForceAggroTarget(playerTransform);
+            return;
+        }
+
+        summon.SendMessage("ForceAggroTarget", playerTransform, SendMessageOptions.DontRequireReceiver);
+    }
+
+    private int GetRemainingSummonSlots()
+    {
+        if (maxActiveSummons <= 0)
+            return 0;
+
+        CleanupDeadSummons();
+        return Mathf.Max(0, maxActiveSummons - _activeSummons.Count);
+    }
+
+    private void CleanupDeadSummons()
+    {
+        for (int i = _activeSummons.Count - 1; i >= 0; i--)
+        {
+            if (_activeSummons[i] == null)
+                _activeSummons.RemoveAt(i);
         }
     }
 
