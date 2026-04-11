@@ -7,18 +7,20 @@
 - [X] Aggiungere interazioni con blocchi piazzabili come chest e faló
 - [X] Aggiungi interazione con alberi/rocce
 - [X] Implementare un sistema di salvataggio
-- [ ] Aggiungere nuovi nemici 1/2
+- [X] Aggiungere nuovi nemici 1/2 (slime di fuoco)
 - [X] Aggiungi animali
 - [X] Aggiungere menu principale
 - [X] Aggiungere sistema di crafting
 - [X] Aggiungi ricette varie
 - [X] Aggiungere sistema di piazzamento blocchi
-- [ ] Aggiungi boss
+- [X] Aggiungi boss
 - [X] Aggiungi crafting da inventario per crafting table
 - [ ] Aggiungere un modo per rompere oggetti piazzati
 - [ ] Aggiungi che i nemici non possono spawnare alla luce
 - [X] Aggiungi generazione strutture
-- [ ] Aggiungi arena boss battle
+- [X] Aggiungi arena boss battle
+- [ ] Aggiungi attacchi aegis (attacco con prietili e spawn di slime)
+- [ ] Aggiungi suoni
 
 ## Refactoring e Ottimizzazione
 - [ ] Worldgen
