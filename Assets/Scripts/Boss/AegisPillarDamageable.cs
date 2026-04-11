@@ -55,6 +55,20 @@ public class AegisPillarDamageable : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Disabilita immediatamente il pillar per test/debug senza richiedere colpi.
+    /// </summary>
+    public bool ForceDisableForDebug()
+    {
+        if (_isDisabled)
+            return false;
+
+        _hitsTaken = hitsToDisable;
+        SyncRuneVisuals();
+        DisablePillar();
+        return true;
+    }
+
     private void InitializeRuntimeState()
     {
         _allColliders = GetComponentsInChildren<Collider2D>(true);

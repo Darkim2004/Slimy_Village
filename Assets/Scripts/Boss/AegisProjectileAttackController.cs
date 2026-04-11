@@ -50,6 +50,9 @@ public class AegisProjectileAttackController : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private string attackAnimationState = "attack3";
     [SerializeField] private string summonAttackAnimationState = "attack4";
+    [SerializeField] private string deathAnimationState = "death";
+    [SerializeField] private bool freezeDeathOnLastFrame = true;
+    [SerializeField, Min(0f)] private float deathFreezeDelayFallback = 1f;
     [SerializeField] private string idleAnimationState = "idle";
 
     private readonly List<Vector3Int> _candidateCells = new List<Vector3Int>();
@@ -59,7 +62,9 @@ public class AegisProjectileAttackController : MonoBehaviour
     private readonly List<GameObject> _activeSummons = new List<GameObject>();
 
     private Coroutine _attackLoopRoutine;
+    private Coroutine _deathFreezeRoutine;
     private Health _aegisHealth;
+    private bool _deathHandled;
 
     private void Awake()
     {
@@ -73,6 +78,29 @@ public class AegisProjectileAttackController : MonoBehaviour
 
     private void OnEnable()
     {
+        if (_deathFreezeRoutine != null)
+        {
+            StopCoroutine(_deathFreezeRoutine);
+            _deathFreezeRoutine = null;
+        }
+
+        if (aegisAnimator != null)
+            aegisAnimator.speed = 1f;
+
+        if (_aegisHealth != null)
+        {
+            _aegisHealth.onDeath -= HandleAegisDeath;
+            _aegisHealth.onDeath += HandleAegisDeath;
+
+            if (_aegisHealth.IsDead)
+            {
+                HandleAegisDeath();
+                return;
+            }
+
+            _deathHandled = false;
+        }
+
         if (_attackLoopRoutine == null)
             _attackLoopRoutine = StartCoroutine(AttackLoopRoutine());
     }
@@ -84,6 +112,15 @@ public class AegisProjectileAttackController : MonoBehaviour
             StopCoroutine(_attackLoopRoutine);
             _attackLoopRoutine = null;
         }
+
+        if (_deathFreezeRoutine != null)
+        {
+            StopCoroutine(_deathFreezeRoutine);
+            _deathFreezeRoutine = null;
+        }
+
+        if (_aegisHealth != null)
+            _aegisHealth.onDeath -= HandleAegisDeath;
 
         CleanupActiveRings();
     }
@@ -143,6 +180,81 @@ public class AegisProjectileAttackController : MonoBehaviour
 
         if (maxActiveSummons < 0)
             maxActiveSummons = 0;
+
+        if (deathFreezeDelayFallback < 0f)
+            deathFreezeDelayFallback = 0f;
+    }
+
+    private void HandleAegisDeath()
+    {
+        if (_deathHandled)
+            return;
+
+        _deathHandled = true;
+
+        if (_attackLoopRoutine != null)
+        {
+            StopCoroutine(_attackLoopRoutine);
+            _attackLoopRoutine = null;
+        }
+
+        if (_deathFreezeRoutine != null)
+        {
+            StopCoroutine(_deathFreezeRoutine);
+            _deathFreezeRoutine = null;
+        }
+
+        CleanupActiveRings();
+
+        if (aegisAnimator != null)
+            aegisAnimator.speed = 1f;
+
+        PlayAnimation(deathAnimationState);
+
+        if (freezeDeathOnLastFrame)
+            _deathFreezeRoutine = StartCoroutine(FreezeDeathOnLastFrameRoutine());
+    }
+
+    private IEnumerator FreezeDeathOnLastFrameRoutine()
+    {
+        float waitSeconds = GetDeathAnimationLengthOrFallback();
+        if (waitSeconds > 0f)
+            yield return new WaitForSeconds(waitSeconds);
+
+        if (aegisAnimator == null)
+        {
+            _deathFreezeRoutine = null;
+            yield break;
+        }
+
+        int deathStateHash = Animator.StringToHash(deathAnimationState);
+        if (aegisAnimator.HasState(0, deathStateHash))
+        {
+            aegisAnimator.Play(deathStateHash, 0, 0.999f);
+            aegisAnimator.Update(0f);
+        }
+
+        aegisAnimator.speed = 0f;
+        _deathFreezeRoutine = null;
+    }
+
+    private float GetDeathAnimationLengthOrFallback()
+    {
+        if (aegisAnimator == null || aegisAnimator.runtimeAnimatorController == null)
+            return deathFreezeDelayFallback;
+
+        AnimationClip[] clips = aegisAnimator.runtimeAnimatorController.animationClips;
+        for (int i = 0; i < clips.Length; i++)
+        {
+            AnimationClip clip = clips[i];
+            if (clip == null)
+                continue;
+
+            if (string.Equals(clip.name, deathAnimationState, System.StringComparison.Ordinal))
+                return clip.length;
+        }
+
+        return deathFreezeDelayFallback;
     }
 
     private IEnumerator AttackLoopRoutine()

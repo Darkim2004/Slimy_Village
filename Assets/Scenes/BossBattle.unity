@@ -6906,6 +6906,9 @@ MonoBehaviour:
   maxActiveSummons: 12
   attackAnimationState: attack3
   summonAttackAnimationState: attack4
+  deathAnimationState: death
+  freezeDeathOnLastFrame: 1
+  deathFreezeDelayFallback: 1
   idleAnimationState: idle
 --- !u!1001 &1131132605
 PrefabInstance:

@@ -8,6 +8,11 @@ public class AegisBossEncounter : MonoBehaviour
     [SerializeField] private List<Transform> pillarRoots = new List<Transform>();
     [SerializeField, Min(1)] private int damagePerDisabledPillar = 1;
 
+    [Header("Debug Testing")]
+    [SerializeField] private bool enableDebugBreakHotkey;
+    [SerializeField] private KeyCode debugBreakHotkey = KeyCode.F8;
+    [SerializeField, Min(1)] private int debugBreakCount = 1;
+
     private readonly List<AegisPillarDamageable> _pillars = new List<AegisPillarDamageable>();
     private readonly HashSet<AegisPillarDamageable> _processedPillars = new HashSet<AegisPillarDamageable>();
     private bool _eventsBound;
@@ -35,12 +40,55 @@ public class AegisBossEncounter : MonoBehaviour
     private void Update()
     {
         SyncBossHealthFromPillarState();
+
+        if (enableDebugBreakHotkey && Input.GetKeyDown(debugBreakHotkey))
+            DebugBreakPillars(debugBreakCount);
     }
 
     private void OnValidate()
     {
         if (damagePerDisabledPillar < 1)
             damagePerDisabledPillar = 1;
+
+        if (debugBreakCount < 1)
+            debugBreakCount = 1;
+    }
+
+    [ContextMenu("DEBUG/Break 1 Pillar")]
+    private void DebugBreakOnePillarContextMenu()
+    {
+        DebugBreakPillars(1);
+    }
+
+    [ContextMenu("DEBUG/Break N Pillars (debugBreakCount)")]
+    private void DebugBreakConfiguredPillarsContextMenu()
+    {
+        DebugBreakPillars(debugBreakCount);
+    }
+
+    /// <summary>
+    /// Comando di test: rompe istantaneamente un numero specifico di pillar ancora attivi.
+    /// </summary>
+    public int DebugBreakPillars(int count)
+    {
+        if (count <= 0)
+            return 0;
+
+        RebuildPillarsFromSceneReferences();
+
+        int broken = 0;
+        for (int i = 0; i < _pillars.Count && broken < count; i++)
+        {
+            AegisPillarDamageable pillar = _pillars[i];
+            if (pillar == null || pillar.IsDisabled)
+                continue;
+
+            if (pillar.ForceDisableForDebug())
+                broken++;
+        }
+
+        SyncBossHealthFromPillarState();
+        return broken;
     }
 
     private void RebuildPillarsFromSceneReferences()
