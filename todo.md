@@ -19,13 +19,16 @@
 - [ ] Aggiungi che i nemici non possono spawnare alla luce
 - [X] Aggiungi generazione strutture
 - [X] Aggiungi arena boss battle
-- [ ] Aggiungi attacchi aegis (attacco con prietili e spawn di slime)
+- [X] Aggiungi attacchi aegis (attacco con prietili e spawn di slime)
 - [ ] Aggiungi suoni
+- [ ] Aggiungi mini cutscene all'ingresso di aegis ed alla sua morte
 
 ## Refactoring e Ottimizzazione
 - [ ] Worldgen
 - [ ] Risolvi bug che gli alberi respawnano dopo aver chiuso e riaperto il mondo
+- [ ] Aggiusta bug per cui i drop nella dimensione di aegis sono sotto il ground e senza un entità root
 
 ## Idee sparse / Design
 - [X] Luci mini dinamiche per faló torce ecc
 - [X] Aggiungi torce/lamp
+- [ ] Aggiungi la luce dinamica se si ha in mano una torcia
