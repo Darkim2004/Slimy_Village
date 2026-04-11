@@ -50,6 +50,18 @@ public class DamageHitbox2D : MonoBehaviour
 
     private void TryDamage(Collider2D other)
     {
+        var aegisPillar = other.GetComponentInParent<AegisPillarDamageable>();
+        if (aegisPillar != null && !aegisPillar.IsDisabled)
+        {
+            if (_alreadyHit.Contains(aegisPillar)) return;
+
+            bool damaged = aegisPillar.TryRegisterHit(_ownerRoot != null ? _ownerRoot.gameObject : null);
+            if (damaged)
+                _alreadyHit.Add(aegisPillar);
+
+            return;
+        }
+
         var harvestable = other.GetComponentInParent<HarvestableNode>();
         if (harvestable != null && !harvestable.IsDestroyed)
         {

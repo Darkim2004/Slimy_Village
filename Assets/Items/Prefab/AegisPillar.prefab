@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6501709617245670821}
   - component: {fileID: 4233883847299525576}
   - component: {fileID: 6704671015649111717}
+  - component: {fileID: 4068639892575201845}
   m_Layer: 0
   m_Name: AegisPillar
   m_TagString: Untagged
@@ -172,6 +173,27 @@ SortingGroup:
   m_SortingLayer: 3
   m_SortingOrder: 0
   m_SortAtRoot: 0
+--- !u!114 &4068639892575201845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1890759768466265747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75509285409b21d4591bc3575659a9b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AegisPillarDamageable
+  hitsToDisable: 6
+  autoCollectRunesFromChildren: 1
+  runes:
+  - {fileID: 4313664583609342093}
+  - {fileID: 5958493295084982687}
+  - {fileID: 4611925873387340780}
+  - {fileID: 6357594776367266164}
+  - {fileID: 8344762118593488895}
+  - {fileID: 6976840435028686484}
 --- !u!1 &4313664583609342093
 GameObject:
   m_ObjectHideFlags: 0

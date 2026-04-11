@@ -6711,6 +6711,7 @@ GameObject:
   - component: {fileID: 1085338649}
   - component: {fileID: 1085338652}
   - component: {fileID: 1085338653}
+  - component: {fileID: 1085338654}
   m_Layer: 0
   m_Name: Aegis
   m_TagString: Untagged
@@ -6842,6 +6843,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHp: 4
   inventory: {fileID: 0}
+--- !u!114 &1085338654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085338648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 334ff7a35a30b744da8b521811ca87e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AegisBossEncounter
+  aegisHealth: {fileID: 1085338653}
+  pillarRoots:
+  - {fileID: 725766067}
+  - {fileID: 840443195}
+  - {fileID: 1561477905}
+  - {fileID: 2021410008}
+  damagePerDisabledPillar: 1
 --- !u!1001 &1131132605
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8645,6 +8665,7 @@ GameObject:
   - component: {fileID: 1718237636}
   - component: {fileID: 1718237638}
   - component: {fileID: 1718237637}
+  - component: {fileID: 1718237639}
   m_Layer: 5
   m_Name: BossHealthBar
   m_TagString: Untagged
@@ -8712,6 +8733,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1718237635}
   m_CullTransparentMesh: 1
+--- !u!114 &1718237639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1718237635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f60c68991ec55284eab92feb4fb1be12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossHealthBarUI
+  bossHealth: {fileID: 1085338653}
+  fillerImage: {fileID: 1239286574}
+  smoothingSpeed: 0
 --- !u!4 &1733564866 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5886559420366541892, guid: 2fb52b49f1f7a8e429a442957196bfc6, type: 3}
