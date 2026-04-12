@@ -40,6 +40,24 @@ public class HarvestableNode : MonoBehaviour
     [Tooltip("Se true, sul colpo mortale ritarda la distruzione per mostrare il flash.")]
     public bool delayDestroyForHitFlash = true;
 
+    [Header("Hit Audio")]
+    [Tooltip("Se true, riproduce un suono casuale quando il nodo subisce danno.")]
+    public bool enableHitSfx = false;
+
+    [Tooltip("Lista clip per il suono di hit. La clip viene scelta casualmente a ogni colpo.")]
+    public AudioClip[] hitSfxClips;
+
+    [Range(0f, 1f)]
+    [Tooltip("Volume base locale del suono hit (prima del moltiplicatore globale SFX).")]
+    public float hitSfxVolume = 1f;
+
+    [Tooltip("Range di pitch random applicato al suono hit.")]
+    public Vector2 hitSfxPitchRange = new Vector2(0.95f, 1.05f);
+
+    [Min(0f)]
+    [Tooltip("Intervallo minimo tra due riproduzioni hit SFX dello stesso nodo.")]
+    public float hitSfxMinInterval = 0.02f;
+
     public bool IsDestroyed { get; private set; }
 
     private int _currentHp;
@@ -47,6 +65,7 @@ public class HarvestableNode : MonoBehaviour
     private SpriteRenderer[] _flashOverlays;
     private Coroutine _flashRoutine;
     private Material _flashOverlayMaterial;
+    private float _lastHitSfxTime = float.NegativeInfinity;
 
     private const string HitFlashOverlayName = "__HitFlashOverlay";
 
@@ -90,6 +109,7 @@ public class HarvestableNode : MonoBehaviour
         _currentHp -= effective;
 
         PlayHitFlash();
+        PlayHitSfx();
 
         if (_currentHp <= 0)
         {
@@ -123,6 +143,30 @@ public class HarvestableNode : MonoBehaviour
         if (maxHp < 1) maxHp = 1;
         if (requiredHarvestLevel < 0) requiredHarvestLevel = 0;
         if (hitFlashDuration < 0f) hitFlashDuration = 0f;
+        if (hitSfxMinInterval < 0f) hitSfxMinInterval = 0f;
+        if (hitSfxPitchRange.x <= 0f) hitSfxPitchRange.x = 0.1f;
+        if (hitSfxPitchRange.y <= 0f) hitSfxPitchRange.y = 0.1f;
+    }
+
+    private void PlayHitSfx()
+    {
+        if (!enableHitSfx || hitSfxClips == null || hitSfxClips.Length == 0)
+            return;
+
+        if (Time.time < _lastHitSfxTime + hitSfxMinInterval)
+            return;
+
+        int index = Random.Range(0, hitSfxClips.Length);
+        AudioClip clip = hitSfxClips[index];
+        if (clip == null)
+            return;
+
+        float minPitch = Mathf.Min(hitSfxPitchRange.x, hitSfxPitchRange.y);
+        float maxPitch = Mathf.Max(hitSfxPitchRange.x, hitSfxPitchRange.y);
+        float pitch = Random.Range(minPitch, maxPitch);
+
+        GlobalAudioVolume.PlaySfx2D(clip, transform.position, hitSfxVolume, pitch);
+        _lastHitSfxTime = Time.time;
     }
 
     private float GetDestroyDelay()

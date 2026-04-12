@@ -272,6 +272,26 @@ public class WorldGenTilemap : MonoBehaviour
     [Tooltip("Livello harvesting richiesto per rompere rocce.")]
     public int rockRequiredHarvestLevel = 2;
 
+    [Header("Tree Hit Audio")]
+    [Tooltip("Clip casuali riprodotte al colpo su alberi normali e innevati.")]
+    public AudioClip[] treeHitSfxClips;
+
+    [Range(0f, 1f)]
+    [Tooltip("Volume base locale dei suoni hit albero (prima del volume globale SFX).")]
+    public float treeHitSfxVolume = 1f;
+
+    [Tooltip("Range di pitch random per i colpi agli alberi.")]
+    public Vector2 treeHitSfxPitchRange = new Vector2(0.95f, 1.05f);
+
+    [Min(0f)]
+    [Tooltip("Intervallo minimo tra due suoni hit dello stesso albero.")]
+    public float treeHitSfxMinInterval = 0.02f;
+
+    [Tooltip("Se true, logga in editor se mancano clip hit albero configurate.")]
+    public bool warnMissingTreeHitSfx = true;
+
+    private bool _loggedMissingTreeHitSfx;
+
     [Header("Height Noise (Ocean vs Land)")]
     [Tooltip("Higher = more detail; lower = larger blobs")]
     public float heightScale = 6f;
@@ -1480,6 +1500,7 @@ public class WorldGenTilemap : MonoBehaviour
         }
 
         ConfigureHarvestableNode(go, treeHitPoints, treeLootTable, treeRequiredHarvestLevel);
+        ConfigureTreeHitAudio(go);
     }
 
     private void SpawnBushPrefab(Vector3Int cell)
@@ -1561,6 +1582,7 @@ public class WorldGenTilemap : MonoBehaviour
         }
 
         ConfigureHarvestableNode(go, snowTreeHitPoints, snowTreeLootTable, snowTreeRequiredHarvestLevel);
+        ConfigureTreeHitAudio(go);
     }
 
     private void SpawnRockPrefab(Vector3Int cell)
@@ -1617,6 +1639,31 @@ public class WorldGenTilemap : MonoBehaviour
         node.destroyOnDeath = true;
         node.lootTable = lootTable;
         node.SetMaxHpAndReset(Mathf.Max(1, hp));
+    }
+
+    private void ConfigureTreeHitAudio(GameObject go)
+    {
+        if (go == null)
+            return;
+
+        HarvestableNode node = go.GetComponent<HarvestableNode>();
+        if (node == null)
+            return;
+
+        bool hasClips = treeHitSfxClips != null && treeHitSfxClips.Length > 0;
+        node.enableHitSfx = hasClips;
+        node.hitSfxClips = treeHitSfxClips;
+        node.hitSfxVolume = Mathf.Clamp01(treeHitSfxVolume);
+        node.hitSfxPitchRange = treeHitSfxPitchRange;
+        node.hitSfxMinInterval = Mathf.Max(0f, treeHitSfxMinInterval);
+
+#if UNITY_EDITOR
+        if (!hasClips && warnMissingTreeHitSfx && !_loggedMissingTreeHitSfx)
+        {
+            Debug.LogWarning("[WorldGen] Tree hit audio non configurato: assegna treeHitSfxClips per avere suoni random sui colpi.", this);
+            _loggedMissingTreeHitSfx = true;
+        }
+#endif
     }
 
     private void ClearSpawnedProps()

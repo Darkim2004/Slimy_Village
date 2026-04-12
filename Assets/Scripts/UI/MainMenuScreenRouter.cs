@@ -49,8 +49,8 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         public string lastPlayedAtUtc;
     }
 
-    private const string PrefSfxVolume = "MainMenu.SfxVolume";
-    private const string PrefMusicVolume = "MainMenu.MusicVolume";
+    private const string PrefSfxVolume = GlobalAudioVolume.PrefSfxVolume;
+    private const string PrefMusicVolume = GlobalAudioVolume.PrefMusicVolume;
     private const string PrefFullscreen = "MainMenu.IsFullscreen";
     private const string PrefAspectRatioIndex = "MainMenu.AspectRatioIndex";
     private const string PrefPendingWorldName = "MainMenu.PendingWorldName";
@@ -1995,17 +1995,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
     private void ApplyRuntimeAudioVolumes()
     {
-        var sources = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
-        for (int i = 0; i < sources.Length; i++)
-        {
-            var source = sources[i];
-            if (source == null)
-                continue;
-
-            string sourceName = source.gameObject.name.ToLowerInvariant();
-            bool isMusicSource = source.loop || sourceName.Contains("music") || sourceName.Contains("bgm") || sourceName.Contains("theme");
-            source.volume = isMusicSource ? musicVolume : sfxVolume;
-        }
+        GlobalAudioVolume.ApplyToSceneAudioSources(sfxVolume, musicVolume);
     }
 
     private void ToggleDisplayMode()
@@ -2029,8 +2019,7 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
     private void LoadSavedOptions()
     {
-        sfxVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(PrefSfxVolume, 1f));
-        musicVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(PrefMusicVolume, 1f));
+        GlobalAudioVolume.GetSavedVolumes(out sfxVolume, out musicVolume);
         isFullscreen = PlayerPrefs.GetInt(PrefFullscreen, Screen.fullScreen ? 1 : 0) == 1;
 
         int maxIndex = aspectRatioPresets != null ? aspectRatioPresets.Length - 1 : 0;

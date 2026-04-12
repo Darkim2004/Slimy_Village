@@ -21,7 +21,7 @@
 - [X] Aggiungi arena boss battle
 - [X] Aggiungi attacchi aegis (attacco con prietili e spawn di slime)
 - [ ] Aggiungi suoni
-- [ ] Aggiungi mini cutscene all'ingresso di aegis ed alla sua morte
+- [X] Aggiungi mini cutscene all'ingresso di aegis ed alla sua morte
 
 ## Refactoring e Ottimizzazione
 - [ ] Worldgen
