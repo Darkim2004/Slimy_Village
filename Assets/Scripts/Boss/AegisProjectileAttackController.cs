@@ -91,6 +91,9 @@ public class AegisProjectileAttackController : MonoBehaviour
     private Health _aegisHealth;
     private bool _deathHandled;
     private bool _postDeathInteractablesActivated;
+    private bool _combatEnabled = true;
+
+    public bool IsCombatEnabled => _combatEnabled;
 
     [System.Serializable]
     private sealed class AegisMetadataSnapshot
@@ -146,6 +149,39 @@ public class AegisProjectileAttackController : MonoBehaviour
             _deathHandled = false;
             _postDeathInteractablesActivated = false;
         }
+
+        if (_combatEnabled && _attackLoopRoutine == null)
+            _attackLoopRoutine = StartCoroutine(AttackLoopRoutine());
+    }
+
+    public void SetCombatEnabled(bool enabled)
+    {
+        if (_combatEnabled == enabled)
+            return;
+
+        _combatEnabled = enabled;
+
+        if (!_combatEnabled)
+        {
+            if (_attackLoopRoutine != null)
+            {
+                StopCoroutine(_attackLoopRoutine);
+                _attackLoopRoutine = null;
+            }
+
+            CleanupActiveRings();
+
+            if (!_deathHandled)
+                PlayAnimation(idleAnimationState);
+
+            return;
+        }
+
+        if (!isActiveAndEnabled || _deathHandled)
+            return;
+
+        if (_aegisHealth != null && _aegisHealth.IsDead)
+            return;
 
         if (_attackLoopRoutine == null)
             _attackLoopRoutine = StartCoroutine(AttackLoopRoutine());

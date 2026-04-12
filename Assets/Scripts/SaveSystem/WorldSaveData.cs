@@ -14,6 +14,7 @@ public sealed class WorldMetadataData
     public string gameVersion;
     public bool ritualPlatformUnlocked;
     public bool aegisDefeated;
+    public bool aegisIntroPlayed;
     public AegisStateData aegisState;
 }
 
@@ -21,6 +22,7 @@ public sealed class WorldMetadataData
 public sealed class AegisStateData
 {
     public bool defeated;
+    public bool aegisIntroPlayed;
     public List<AegisPillarStateData> pillars = new List<AegisPillarStateData>();
 }
 

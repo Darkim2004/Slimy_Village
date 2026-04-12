@@ -15,7 +15,7 @@ MonoBehaviour:
   timeRule: 0
   allowedBiomes: 02000000
   weight: 1
-  lootTable: {fileID: 0}
+  lootTable: {fileID: 11400000, guid: 378f6587c44f5a54fb4b223f160d5eb5, type: 2}
   animatorController: {fileID: 0}
   attackMode: 0
   attackDamage: 2

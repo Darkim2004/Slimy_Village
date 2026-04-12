@@ -36,6 +36,7 @@ public sealed class WorldSaveSystem : MonoBehaviour
     private float autosaveTimer;
     private bool ritualPlatformUnlocked;
     private bool aegisDefeated;
+    private bool aegisIntroPlayed;
     private AegisStateData aegisState = new AegisStateData();
 
     private string currentWorldId;
@@ -43,6 +44,8 @@ public sealed class WorldSaveSystem : MonoBehaviour
 
     public bool IsRitualPlatformUnlocked => ritualPlatformUnlocked;
     public bool IsAegisDefeated => aegisDefeated;
+    public bool IsAegisIntroPlayed => aegisIntroPlayed;
+    public bool IsInitialized => initialized;
 
     public bool TryGetAegisState(out AegisStateData state)
     {
@@ -225,6 +228,19 @@ public sealed class WorldSaveSystem : MonoBehaviour
             SaveNow("aegis-state");
     }
 
+    public void SetAegisIntroPlayed(bool played, bool saveImmediately = true)
+    {
+        aegisIntroPlayed = played;
+
+        if (aegisState == null)
+            aegisState = new AegisStateData();
+
+        aegisState.aegisIntroPlayed = played;
+
+        if (saveImmediately && initialized)
+            SaveNow("aegis-intro-state");
+    }
+
     public void SetRitualPlatformUnlocked(bool unlocked, bool saveImmediately = true)
     {
         ritualPlatformUnlocked = unlocked;
@@ -251,6 +267,7 @@ public sealed class WorldSaveSystem : MonoBehaviour
         {
             ritualPlatformUnlocked = false;
             aegisDefeated = false;
+            aegisIntroPlayed = false;
             aegisState = new AegisStateData();
 
             if (File.Exists(metadataPath))
@@ -262,11 +279,14 @@ public sealed class WorldSaveSystem : MonoBehaviour
                     ritualPlatformUnlocked = metadata.ritualPlatformUnlocked;
                     aegisDefeated = metadata.aegisDefeated
                         || (metadata.aegisState != null && metadata.aegisState.defeated);
+                    aegisIntroPlayed = metadata.aegisIntroPlayed
+                        || (metadata.aegisState != null && metadata.aegisState.aegisIntroPlayed);
                     aegisState = CloneAegisState(metadata.aegisState) ?? new AegisStateData();
                 }
             }
 
             aegisState.defeated = aegisDefeated;
+            aegisState.aegisIntroPlayed = aegisIntroPlayed;
 
             if (gameScene)
             {
@@ -298,6 +318,7 @@ public sealed class WorldSaveSystem : MonoBehaviour
     {
         ritualPlatformUnlocked = false;
         aegisDefeated = false;
+        aegisIntroPlayed = false;
         aegisState = new AegisStateData();
 
         bool hasPendingWorld = PlayerPrefs.GetInt(PrefHasPendingWorldCreation, 0) == 1;
@@ -385,6 +406,7 @@ public sealed class WorldSaveSystem : MonoBehaviour
         metadata.gameVersion = Application.version;
         metadata.ritualPlatformUnlocked = ritualPlatformUnlocked;
         metadata.aegisDefeated = aegisDefeated;
+        metadata.aegisIntroPlayed = aegisIntroPlayed;
         metadata.aegisState = IsGameSceneActive()
             ? CloneAegisState(aegisState) ?? new AegisStateData()
             : CaptureAegisStateFromScene();
@@ -393,6 +415,7 @@ public sealed class WorldSaveSystem : MonoBehaviour
             metadata.aegisState = new AegisStateData();
 
         metadata.aegisState.defeated = aegisDefeated;
+        metadata.aegisState.aegisIntroPlayed = aegisIntroPlayed;
 
         if (File.Exists(metadataPath))
         {
@@ -414,6 +437,12 @@ public sealed class WorldSaveSystem : MonoBehaviour
                     if (existing.aegisDefeated)
                         metadata.aegisDefeated = true;
 
+                    if (existing.aegisIntroPlayed
+                        || (existing.aegisState != null && existing.aegisState.aegisIntroPlayed))
+                    {
+                        metadata.aegisIntroPlayed = true;
+                    }
+
                     if (existing.aegisState != null)
                     {
                         if (metadata.aegisState == null || metadata.aegisState.pillars == null || metadata.aegisState.pillars.Count == 0)
@@ -433,11 +462,17 @@ public sealed class WorldSaveSystem : MonoBehaviour
 
         ritualPlatformUnlocked = metadata.ritualPlatformUnlocked;
         aegisDefeated = metadata.aegisDefeated;
+        aegisIntroPlayed = metadata.aegisIntroPlayed
+            || (metadata.aegisState != null && metadata.aegisState.aegisIntroPlayed);
         if (metadata.aegisState != null)
+        {
             metadata.aegisState.defeated = aegisDefeated;
+            metadata.aegisState.aegisIntroPlayed = aegisIntroPlayed;
+        }
 
         aegisState = CloneAegisState(metadata.aegisState) ?? new AegisStateData();
         aegisState.defeated = aegisDefeated;
+        aegisState.aegisIntroPlayed = aegisIntroPlayed;
 
         return metadata;
     }
@@ -940,6 +975,7 @@ public sealed class WorldSaveSystem : MonoBehaviour
     {
         var state = new AegisStateData();
         state.defeated = aegisDefeated;
+        state.aegisIntroPlayed = aegisIntroPlayed;
 
         AegisPillarDamageable[] pillars = FindObjectsByType<AegisPillarDamageable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         for (int i = 0; i < pillars.Length; i++)
@@ -966,6 +1002,7 @@ public sealed class WorldSaveSystem : MonoBehaviour
 
         var clone = new AegisStateData();
         clone.defeated = source.defeated;
+        clone.aegisIntroPlayed = source.aegisIntroPlayed;
         clone.pillars = new List<AegisPillarStateData>();
 
         if (source.pillars == null)
