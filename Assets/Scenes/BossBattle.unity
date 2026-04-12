@@ -258,7 +258,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 7
+  orthographic size: 4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -283,7 +283,7 @@ Transform:
   m_GameObject: {fileID: 89124254}
   serializedVersion: 2
   m_LocalRotation: {x: 0.000000014901159, y: 0.000000029802319, z: -0.00000002235174, w: 1}
-  m_LocalPosition: {x: 95.26, y: 74.7, z: -10}
+  m_LocalPosition: {x: 72.57, y: 47.86, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -473,7 +473,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6045476688547057047, guid: 645cf60b53e44e540b7d65375b91f902, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 96.26
+      value: 96.38
       objectReference: {fileID: 0}
     - target: {fileID: 6045476688547057047, guid: 645cf60b53e44e540b7d65375b91f902, type: 3}
       propertyPath: m_LocalPosition.y
@@ -524,6 +524,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 645cf60b53e44e540b7d65375b91f902, type: 3}
+--- !u!4 &235443985 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6045476688547057047, guid: 645cf60b53e44e540b7d65375b91f902, type: 3}
+  m_PrefabInstance: {fileID: 235443984}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &247615356
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4318,6 +4323,72 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1001 &435002213
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4590311947684666797, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 96.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590311947684666797, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 63.27
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590311947684666797, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590311947684666797, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590311947684666797, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590311947684666797, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590311947684666797, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590311947684666797, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590311947684666797, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590311947684666797, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8769627727532613429, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+      propertyPath: m_Name
+      value: Chest
+      objectReference: {fileID: 0}
+    - target: {fileID: 8769627727532613429, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+--- !u!4 &435002214 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4590311947684666797, guid: 210fc33b25d87a9459f01e9d3b024bd3, type: 3}
+  m_PrefabInstance: {fileID: 435002213}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &449676153 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5638529910705524157, guid: 1b2a299b9a0c72a4c91ed1180a28ce31, type: 3}
@@ -6863,9 +6934,9 @@ MonoBehaviour:
   - {fileID: 1561477905}
   - {fileID: 2021410008}
   damagePerDisabledPillar: 1
-  enableDebugBreakHotkey: 0
+  enableDebugBreakHotkey: 1
   debugBreakHotkey: 289
-  debugBreakCount: 1
+  debugBreakCount: 4
 --- !u!114 &1085338655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6913,6 +6984,22 @@ MonoBehaviour:
   freezeDeathOnLastFrame: 1
   deathFreezeDelayFallback: 1
   idleAnimationState: idle
+  activatePostDeathInteractables: 1
+  autoFindPostDeathObjectsByName: 0
+  chestRoot: {fileID: 435002214}
+  ritualPlatformRoot: {fileID: 235443985}
+  chestObjectName: Chest
+  ritualPlatformObjectName: RitualPlatform
+  chestPlaceableDefinition: {fileID: 11400000, guid: 07bb605de94482940966e9bc789ec7ad, type: 2}
+  ritualPlaceableDefinition: {fileID: 11400000, guid: 4792b7a04ebafd74ca8450209843d0a9, type: 2}
+  chestPlaceableDefinitionName: Chest_Placeable
+  ritualPlaceableDefinitionName: Ritual_platform
+  chestRewardItem: {fileID: 11400000, guid: 1f688ebe65eb0944f98a319666070dbc, type: 2}
+  chestRewardItemId: Aegis_book
+  chestRewardAmount: 1
+  clearChestBeforeAddingReward: 1
+  normalWorldSceneName: Game
+  preferredNormalWorldSpawnPointName: SpawnPoint
 --- !u!1001 &1131132605
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19723,6 +19810,10 @@ MonoBehaviour:
     amount: 1
   - item: {fileID: 11400000, guid: a3aa165e95b3fd04f8f1db5f4982f09c, type: 2}
     amount: 1
+  - item: {fileID: 11400000, guid: 1f688ebe65eb0944f98a319666070dbc, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: bba9cb8b359f37741844db6de6564243, type: 2}
+    amount: 1
   grantOnStart: 1
   grantOnKeyPress: 1
   grantKey: 287
@@ -19998,7 +20089,7 @@ Transform:
   m_GameObject: {fileID: 2081062090}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 95.26, y: 74.7, z: 0}
+  m_LocalPosition: {x: 95.26, y: 66.46, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -20094,7 +20185,7 @@ Transform:
   m_GameObject: {fileID: 2081062200}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 95.26, y: 74.7, z: -10}
+  m_LocalPosition: {x: 95.26, y: 66.46, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20406,3 +20497,4 @@ SceneRoots:
   - {fileID: 2081062203}
   - {fileID: 1347843539}
   - {fileID: 235443984}
+  - {fileID: 435002213}

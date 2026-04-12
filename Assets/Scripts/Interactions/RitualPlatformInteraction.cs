@@ -12,6 +12,12 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class RitualPlatformInteraction : MonoBehaviour
 {
+    private enum InteractionMode
+    {
+        ToBossBattle,
+        ReturnToNormalWorld
+    }
+
     [Header("Requirement")]
     [SerializeField] private string requiredKeyItemId = "key";
     [SerializeField] private bool consumeKeyOnFirstActivation = true;
@@ -22,7 +28,10 @@ public class RitualPlatformInteraction : MonoBehaviour
     [SerializeField] private float secondsBetweenRuneActivations = 1f;
 
     [Header("Scene Transition")]
+    [SerializeField] private InteractionMode interactionMode = InteractionMode.ToBossBattle;
     [SerializeField] private string bossBattleSceneName = "BossBattle";
+    [SerializeField] private string normalWorldSceneName = "Game";
+    [SerializeField] private string preferredNormalWorldSpawnPointName = "SpawnPoint";
     [SerializeField] private float spawnWaitTimeoutSeconds = 10f;
 
     private bool interactionInProgress;
@@ -79,6 +88,12 @@ public class RitualPlatformInteraction : MonoBehaviour
 
         try
         {
+            if (interactionMode == InteractionMode.ReturnToNormalWorld)
+            {
+                yield return TransitionToNormalWorld(player);
+                yield break;
+            }
+
             bool alreadyUnlocked = IsRitualUnlocked();
 
             if (!alreadyUnlocked)
@@ -111,6 +126,18 @@ public class RitualPlatformInteraction : MonoBehaviour
 
             interactionInProgress = false;
         }
+    }
+
+    public void ConfigureReturnToWorld(string targetSceneName, string preferredSpawnPointName)
+    {
+        interactionMode = InteractionMode.ReturnToNormalWorld;
+
+        if (!string.IsNullOrWhiteSpace(targetSceneName))
+            normalWorldSceneName = targetSceneName.Trim();
+
+        preferredNormalWorldSpawnPointName = string.IsNullOrWhiteSpace(preferredSpawnPointName)
+            ? string.Empty
+            : preferredSpawnPointName.Trim();
     }
 
     private IEnumerator PlayRuneActivationSequence()
@@ -188,6 +215,89 @@ public class RitualPlatformInteraction : MonoBehaviour
 
         player.transform.position = targetSpawn;
         player.SetRespawnPoint(targetSpawn);
+    }
+
+    private IEnumerator TransitionToNormalWorld(PlayerTopDown player)
+    {
+        if (string.IsNullOrWhiteSpace(normalWorldSceneName))
+        {
+            Debug.LogWarning("[RitualPlatform] Nome scena mondo normale non configurato.", this);
+            yield break;
+        }
+
+        WorldSaveSystem.Instance?.SaveNow("ritual-platform-return-transition");
+
+        PersistRuntimeObjects(player);
+
+        AsyncOperation loadOperation;
+        try
+        {
+            loadOperation = SceneManager.LoadSceneAsync(normalWorldSceneName, LoadSceneMode.Single);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("[RitualPlatform] Impossibile caricare la scena '" + normalWorldSceneName + "': " + ex.Message, this);
+            yield break;
+        }
+
+        if (loadOperation == null)
+        {
+            Debug.LogError("[RitualPlatform] LoadSceneAsync ha restituito null.", this);
+            yield break;
+        }
+
+        while (!loadOperation.isDone)
+            yield return null;
+
+        float timeout = Mathf.Max(1f, spawnWaitTimeoutSeconds);
+        float elapsed = 0f;
+        WorldGenTilemap worldGen = null;
+
+        while (elapsed < timeout)
+        {
+            worldGen = FindFirstObjectByType<WorldGenTilemap>();
+            if (worldGen != null && worldGen.HasGenerated)
+                break;
+
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (player == null)
+            yield break;
+
+        Vector3 targetSpawn = player.transform.position;
+
+        if (TryResolvePreferredNormalWorldSpawnPoint(out Vector3 preferredSpawn))
+        {
+            targetSpawn = preferredSpawn;
+        }
+        else if (worldGen != null && worldGen.HasGenerated)
+        {
+            targetSpawn = worldGen.WorldSpawnPoint;
+        }
+        else
+        {
+            Debug.LogWarning("[RitualPlatform] Spawn point normale non trovato e WorldSpawnPoint non disponibile entro timeout: uso posizione corrente player.", this);
+        }
+
+        player.transform.position = targetSpawn;
+        player.SetRespawnPoint(targetSpawn);
+    }
+
+    private bool TryResolvePreferredNormalWorldSpawnPoint(out Vector3 spawn)
+    {
+        spawn = default;
+
+        if (string.IsNullOrWhiteSpace(preferredNormalWorldSpawnPointName))
+            return false;
+
+        GameObject preferredSpawnObject = GameObject.Find(preferredNormalWorldSpawnPointName);
+        if (preferredSpawnObject == null)
+            return false;
+
+        spawn = preferredSpawnObject.transform.position;
+        return true;
     }
 
     private bool TryConsumeRequiredKeyFromActiveSlot(PlayerTopDown player)

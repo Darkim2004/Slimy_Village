@@ -55,6 +55,24 @@ public class AegisProjectileAttackController : MonoBehaviour
     [SerializeField, Min(0f)] private float deathFreezeDelayFallback = 1f;
     [SerializeField] private string idleAnimationState = "idle";
 
+    [Header("Post Death")]
+    [SerializeField] private bool activatePostDeathInteractables = true;
+    [SerializeField] private bool autoFindPostDeathObjectsByName = true;
+    [SerializeField] private Transform chestRoot;
+    [SerializeField] private Transform ritualPlatformRoot;
+    [SerializeField] private string chestObjectName = "Chest";
+    [SerializeField] private string ritualPlatformObjectName = "RitualPlatform";
+    [SerializeField] private PlaceableDefinition chestPlaceableDefinition;
+    [SerializeField] private PlaceableDefinition ritualPlaceableDefinition;
+    [SerializeField] private string chestPlaceableDefinitionName = "Chest_Placeable";
+    [SerializeField] private string ritualPlaceableDefinitionName = "Ritual_platform";
+    [SerializeField] private ItemDefinition chestRewardItem;
+    [SerializeField] private string chestRewardItemId = "Aegis_book";
+    [SerializeField, Min(1)] private int chestRewardAmount = 1;
+    [SerializeField] private bool clearChestBeforeAddingReward = true;
+    [SerializeField] private string normalWorldSceneName = "Game";
+    [SerializeField] private string preferredNormalWorldSpawnPointName = "SpawnPoint";
+
     private readonly List<Vector3Int> _candidateCells = new List<Vector3Int>();
     private readonly List<Vector3Int> _selectedProjectileCells = new List<Vector3Int>();
     private readonly List<Vector3Int> _selectedSummonCells = new List<Vector3Int>();
@@ -62,9 +80,10 @@ public class AegisProjectileAttackController : MonoBehaviour
     private readonly List<GameObject> _activeSummons = new List<GameObject>();
 
     private Coroutine _attackLoopRoutine;
-    private Coroutine _deathFreezeRoutine;
+    private Coroutine _deathSequenceRoutine;
     private Health _aegisHealth;
     private bool _deathHandled;
+    private bool _postDeathInteractablesActivated;
 
     private void Awake()
     {
@@ -78,10 +97,10 @@ public class AegisProjectileAttackController : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_deathFreezeRoutine != null)
+        if (_deathSequenceRoutine != null)
         {
-            StopCoroutine(_deathFreezeRoutine);
-            _deathFreezeRoutine = null;
+            StopCoroutine(_deathSequenceRoutine);
+            _deathSequenceRoutine = null;
         }
 
         if (aegisAnimator != null)
@@ -99,6 +118,7 @@ public class AegisProjectileAttackController : MonoBehaviour
             }
 
             _deathHandled = false;
+            _postDeathInteractablesActivated = false;
         }
 
         if (_attackLoopRoutine == null)
@@ -113,10 +133,10 @@ public class AegisProjectileAttackController : MonoBehaviour
             _attackLoopRoutine = null;
         }
 
-        if (_deathFreezeRoutine != null)
+        if (_deathSequenceRoutine != null)
         {
-            StopCoroutine(_deathFreezeRoutine);
-            _deathFreezeRoutine = null;
+            StopCoroutine(_deathSequenceRoutine);
+            _deathSequenceRoutine = null;
         }
 
         if (_aegisHealth != null)
@@ -183,6 +203,9 @@ public class AegisProjectileAttackController : MonoBehaviour
 
         if (deathFreezeDelayFallback < 0f)
             deathFreezeDelayFallback = 0f;
+
+        if (chestRewardAmount < 1)
+            chestRewardAmount = 1;
     }
 
     private void HandleAegisDeath()
@@ -198,10 +221,10 @@ public class AegisProjectileAttackController : MonoBehaviour
             _attackLoopRoutine = null;
         }
 
-        if (_deathFreezeRoutine != null)
+        if (_deathSequenceRoutine != null)
         {
-            StopCoroutine(_deathFreezeRoutine);
-            _deathFreezeRoutine = null;
+            StopCoroutine(_deathSequenceRoutine);
+            _deathSequenceRoutine = null;
         }
 
         CleanupActiveRings();
@@ -211,31 +234,171 @@ public class AegisProjectileAttackController : MonoBehaviour
 
         PlayAnimation(deathAnimationState);
 
-        if (freezeDeathOnLastFrame)
-            _deathFreezeRoutine = StartCoroutine(FreezeDeathOnLastFrameRoutine());
+        _deathSequenceRoutine = StartCoroutine(DeathSequenceRoutine());
     }
 
-    private IEnumerator FreezeDeathOnLastFrameRoutine()
+    private IEnumerator DeathSequenceRoutine()
     {
         float waitSeconds = GetDeathAnimationLengthOrFallback();
         if (waitSeconds > 0f)
             yield return new WaitForSeconds(waitSeconds);
 
-        if (aegisAnimator == null)
+        if (freezeDeathOnLastFrame && aegisAnimator != null)
         {
-            _deathFreezeRoutine = null;
-            yield break;
+            int deathStateHash = Animator.StringToHash(deathAnimationState);
+            if (aegisAnimator.HasState(0, deathStateHash))
+            {
+                aegisAnimator.Play(deathStateHash, 0, 0.999f);
+                aegisAnimator.Update(0f);
+            }
+
+            aegisAnimator.speed = 0f;
         }
 
-        int deathStateHash = Animator.StringToHash(deathAnimationState);
-        if (aegisAnimator.HasState(0, deathStateHash))
+        ActivatePostDeathInteractablesOnce();
+        _deathSequenceRoutine = null;
+    }
+
+    private void ActivatePostDeathInteractablesOnce()
+    {
+        if (!activatePostDeathInteractables)
+            return;
+
+        if (_postDeathInteractablesActivated)
+            return;
+
+        _postDeathInteractablesActivated = true;
+
+        ResolvePostDeathReferences();
+
+        if (chestRoot != null)
+            chestRoot.gameObject.SetActive(true);
+
+        if (ritualPlatformRoot != null)
+            ritualPlatformRoot.gameObject.SetActive(true);
+
+        ConfigureChestReward();
+        ConfigureRitualReturnInteraction();
+    }
+
+    private void ResolvePostDeathReferences()
+    {
+        if (!autoFindPostDeathObjectsByName)
+            return;
+
+        if (chestRoot == null)
         {
-            aegisAnimator.Play(deathStateHash, 0, 0.999f);
-            aegisAnimator.Update(0f);
+            GameObject chestGo = FindSceneObjectByName(chestObjectName);
+            if (chestGo != null)
+                chestRoot = chestGo.transform;
         }
 
-        aegisAnimator.speed = 0f;
-        _deathFreezeRoutine = null;
+        if (ritualPlatformRoot == null)
+        {
+            GameObject ritualGo = FindSceneObjectByName(ritualPlatformObjectName);
+            if (ritualGo != null)
+                ritualPlatformRoot = ritualGo.transform;
+        }
+    }
+
+    private GameObject FindSceneObjectByName(string objectName)
+    {
+        if (string.IsNullOrWhiteSpace(objectName))
+            return null;
+
+        Transform[] allTransforms = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < allTransforms.Length; i++)
+        {
+            Transform candidate = allTransforms[i];
+            if (candidate == null)
+                continue;
+
+            if (string.Equals(candidate.name, objectName, System.StringComparison.OrdinalIgnoreCase))
+                return candidate.gameObject;
+        }
+
+        return null;
+    }
+
+    private void ConfigureChestReward()
+    {
+        if (chestRoot == null)
+            return;
+
+        PlaceableDefinition resolvedChestPlaceable = ResolvePlaceableDefinition(chestPlaceableDefinition, chestPlaceableDefinitionName);
+
+        GameObject chestObject = chestRoot.gameObject;
+
+        PlacedObject placedObject = chestObject.GetComponent<PlacedObject>();
+        if (placedObject == null)
+            placedObject = chestObject.AddComponent<PlacedObject>();
+
+        if (resolvedChestPlaceable != null)
+            placedObject.definition = resolvedChestPlaceable;
+
+        ChestInventoryStorage storage = chestObject.GetComponent<ChestInventoryStorage>();
+        if (storage == null)
+            storage = chestObject.AddComponent<ChestInventoryStorage>();
+
+        ItemDefinition reward = ResolveRewardItemDefinition();
+        if (reward == null)
+            return;
+
+        InventorySection chestSection = storage.Section;
+        if (chestSection == null)
+            return;
+
+        if (clearChestBeforeAddingReward)
+            chestSection.Clear();
+
+        chestSection.TryAdd(new ItemStack(reward, chestRewardAmount), out _);
+    }
+
+    private void ConfigureRitualReturnInteraction()
+    {
+        if (ritualPlatformRoot == null)
+            return;
+
+        PlaceableDefinition resolvedRitualPlaceable = ResolvePlaceableDefinition(ritualPlaceableDefinition, ritualPlaceableDefinitionName);
+
+        GameObject ritualPlatformObject = ritualPlatformRoot.gameObject;
+
+        PlacedObject placedObject = ritualPlatformObject.GetComponent<PlacedObject>();
+        if (placedObject == null)
+            placedObject = ritualPlatformObject.AddComponent<PlacedObject>();
+
+        if (resolvedRitualPlaceable != null)
+            placedObject.definition = resolvedRitualPlaceable;
+
+        RitualPlatformInteraction ritualInteraction = ritualPlatformObject.GetComponent<RitualPlatformInteraction>();
+        if (ritualInteraction == null)
+            ritualInteraction = ritualPlatformObject.AddComponent<RitualPlatformInteraction>();
+
+        ritualInteraction.ConfigureReturnToWorld(normalWorldSceneName, preferredNormalWorldSpawnPointName);
+    }
+
+    private PlaceableDefinition ResolvePlaceableDefinition(PlaceableDefinition assignedDefinition, string fallbackDefinitionName)
+    {
+        if (assignedDefinition != null)
+            return assignedDefinition;
+
+        if (string.IsNullOrWhiteSpace(fallbackDefinitionName))
+            return null;
+
+        SaveDefinitionCatalog.TryResolvePlaceable(fallbackDefinitionName, out PlaceableDefinition resolvedDefinition);
+        return resolvedDefinition;
+    }
+
+    private ItemDefinition ResolveRewardItemDefinition()
+    {
+        if (chestRewardItem != null)
+            return chestRewardItem;
+
+        if (string.IsNullOrWhiteSpace(chestRewardItemId))
+            return null;
+
+        SaveDefinitionCatalog.TryResolveItem(chestRewardItemId, out ItemDefinition resolvedItem);
+        return resolvedItem;
     }
 
     private float GetDeathAnimationLengthOrFallback()
