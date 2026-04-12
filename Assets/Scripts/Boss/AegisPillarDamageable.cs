@@ -25,6 +25,7 @@ public class AegisPillarDamageable : MonoBehaviour
     public event Action<AegisPillarDamageable> OnPillarDisabled;
 
     public bool IsDisabled => _isDisabled;
+    public int HitsTaken => _hitsTaken;
     public int HitsRemaining => Mathf.Max(0, hitsToDisable - _hitsTaken);
 
     private readonly List<GameObject> _sortedRunesDescending = new List<GameObject>();
@@ -93,6 +94,17 @@ public class AegisPillarDamageable : MonoBehaviour
         SyncRuneVisuals();
         DisablePillar();
         return true;
+    }
+
+    public void RestoreState(int hitsTaken, bool disabled)
+    {
+        _hitsTaken = Mathf.Clamp(hitsTaken, 0, hitsToDisable);
+        _isDisabled = disabled || _hitsTaken >= hitsToDisable;
+
+        if (_isDisabled)
+            _hitsTaken = hitsToDisable;
+
+        SyncRuneVisuals();
     }
 
     private void InitializeRuntimeState()

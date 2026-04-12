@@ -8,6 +8,13 @@ using UnityEngine.SceneManagement;
 public sealed class WorldSaveSystem : MonoBehaviour
 {
     private const string WorldsFolderName = "worlds";
+    private const string GameSceneName = "Game";
+    private const string BossBattleSceneName = "BossBattle";
+
+    private const string MetadataFileName = "metadata.json";
+    private const string GridFileName = "grid.json";
+    private const string GameEntitiesFileName = "entities.json";
+    private const string BossBattleEntitiesFileName = "boss_entities.json";
 
     private const string PrefPendingWorldName = "MainMenu.PendingWorldName";
     private const string PrefPendingWorldSeed = "MainMenu.PendingWorldSeed";
@@ -28,11 +35,26 @@ public sealed class WorldSaveSystem : MonoBehaviour
     private bool saveInProgress;
     private float autosaveTimer;
     private bool ritualPlatformUnlocked;
+    private bool aegisDefeated;
+    private AegisStateData aegisState = new AegisStateData();
 
     private string currentWorldId;
     private string currentWorldName;
 
     public bool IsRitualPlatformUnlocked => ritualPlatformUnlocked;
+    public bool IsAegisDefeated => aegisDefeated;
+
+    public bool TryGetAegisState(out AegisStateData state)
+    {
+        if (aegisState == null)
+        {
+            state = null;
+            return false;
+        }
+
+        state = CloneAegisState(aegisState);
+        return state != null;
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoBootstrap()
@@ -40,21 +62,21 @@ public sealed class WorldSaveSystem : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
         SceneManager.sceneLoaded += OnSceneLoaded;
 
-        EnsureInstanceInGameScene();
+        EnsureInstanceInSupportedScene();
     }
 
     private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (!scene.IsValid() || scene.name != "Game")
+        if (!scene.IsValid() || !IsSupportedScene(scene.name))
             return;
 
-        EnsureInstanceInGameScene();
+        EnsureInstanceInSupportedScene();
     }
 
-    private static void EnsureInstanceInGameScene()
+    private static void EnsureInstanceInSupportedScene()
     {
         var scene = SceneManager.GetActiveScene();
-        if (!scene.IsValid() || scene.name != "Game")
+        if (!scene.IsValid() || !IsSupportedScene(scene.name))
             return;
 
         if (UnityEngine.Object.FindFirstObjectByType<WorldSaveSystem>() != null)
@@ -62,6 +84,18 @@ public sealed class WorldSaveSystem : MonoBehaviour
 
         var go = new GameObject("WorldSaveSystem");
         go.AddComponent<WorldSaveSystem>();
+    }
+
+    private static bool IsSupportedScene(string sceneName)
+    {
+        return string.Equals(sceneName, GameSceneName, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(sceneName, BossBattleSceneName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool IsGameSceneActive()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        return string.Equals(sceneName, GameSceneName, StringComparison.OrdinalIgnoreCase);
     }
 
     private void Awake()
@@ -85,11 +119,18 @@ public sealed class WorldSaveSystem : MonoBehaviour
     {
         SaveDefinitionCatalog.Refresh();
 
-        worldGen = FindFirstObjectByType<WorldGenTilemap>();
-        while (worldGen == null || !worldGen.HasGenerated)
+        if (IsGameSceneActive())
         {
             worldGen = FindFirstObjectByType<WorldGenTilemap>();
-            yield return null;
+            while (worldGen == null || !worldGen.HasGenerated)
+            {
+                worldGen = FindFirstObjectByType<WorldGenTilemap>();
+                yield return null;
+            }
+        }
+        else
+        {
+            worldGen = FindFirstObjectByType<WorldGenTilemap>();
         }
 
         InitializeWorldContext();
@@ -113,7 +154,11 @@ public sealed class WorldSaveSystem : MonoBehaviour
 
     public bool SaveNow(string reason = "manual")
     {
-        if (saveInProgress || worldGen == null)
+        if (saveInProgress)
+            return false;
+
+        bool gameScene = IsGameSceneActive();
+        if (gameScene && worldGen == null)
             return false;
 
         saveInProgress = true;
@@ -131,12 +176,20 @@ public sealed class WorldSaveSystem : MonoBehaviour
             EnsureDirectory(worldDir);
 
             var metadata = BuildMetadata();
-            var grid = worldGen.CreateGridSnapshot();
             var entities = CaptureDynamicEntities();
 
-            WriteJsonAtomic(Path.Combine(worldDir, "metadata.json"), JsonUtility.ToJson(metadata, true));
-            WriteJsonAtomic(Path.Combine(worldDir, "grid.json"), JsonUtility.ToJson(grid, true));
-            WriteJsonAtomic(Path.Combine(worldDir, "entities.json"), JsonUtility.ToJson(entities, true));
+            WriteJsonAtomic(Path.Combine(worldDir, MetadataFileName), JsonUtility.ToJson(metadata, true));
+
+            if (gameScene)
+            {
+                var grid = worldGen.CreateGridSnapshot();
+                WriteJsonAtomic(Path.Combine(worldDir, GridFileName), JsonUtility.ToJson(grid, true));
+                WriteJsonAtomic(Path.Combine(worldDir, GameEntitiesFileName), JsonUtility.ToJson(entities, true));
+            }
+            else
+            {
+                WriteJsonAtomic(Path.Combine(worldDir, BossBattleEntitiesFileName), JsonUtility.ToJson(entities, true));
+            }
 
             PlayerPrefs.SetString(PrefCurrentWorldId, currentWorldId);
             PlayerPrefs.SetString(PrefCurrentWorldName, currentWorldName);
@@ -159,6 +212,19 @@ public sealed class WorldSaveSystem : MonoBehaviour
         return success;
     }
 
+    public void SetAegisDefeated(bool defeated, bool saveImmediately = true)
+    {
+        aegisDefeated = defeated;
+
+        if (aegisState == null)
+            aegisState = new AegisStateData();
+
+        aegisState.defeated = defeated;
+
+        if (saveImmediately && initialized)
+            SaveNow("aegis-state");
+    }
+
     public void SetRitualPlatformUnlocked(bool unlocked, bool saveImmediately = true)
     {
         ritualPlatformUnlocked = unlocked;
@@ -173,16 +239,19 @@ public sealed class WorldSaveSystem : MonoBehaviour
             return false;
 
         string worldDir = GetWorldDirectory(currentWorldId);
-        string metadataPath = Path.Combine(worldDir, "metadata.json");
-        string gridPath = Path.Combine(worldDir, "grid.json");
-        string entitiesPath = Path.Combine(worldDir, "entities.json");
+        string metadataPath = Path.Combine(worldDir, MetadataFileName);
+        string gridPath = Path.Combine(worldDir, GridFileName);
+        string entitiesPath = Path.Combine(worldDir, GetDynamicEntitiesFileName());
 
-        if (!File.Exists(gridPath))
+        bool gameScene = IsGameSceneActive();
+        if (gameScene && !File.Exists(gridPath))
             return false;
 
         try
         {
             ritualPlatformUnlocked = false;
+            aegisDefeated = false;
+            aegisState = new AegisStateData();
 
             if (File.Exists(metadataPath))
             {
@@ -191,12 +260,20 @@ public sealed class WorldSaveSystem : MonoBehaviour
                 {
                     currentWorldName = string.IsNullOrWhiteSpace(metadata.displayName) ? currentWorldName : metadata.displayName;
                     ritualPlatformUnlocked = metadata.ritualPlatformUnlocked;
+                    aegisDefeated = metadata.aegisDefeated
+                        || (metadata.aegisState != null && metadata.aegisState.defeated);
+                    aegisState = CloneAegisState(metadata.aegisState) ?? new AegisStateData();
                 }
             }
 
-            var grid = JsonUtility.FromJson<WorldGridData>(File.ReadAllText(gridPath));
-            if (grid == null || !worldGen.TryApplyGridSnapshot(grid))
-                return false;
+            aegisState.defeated = aegisDefeated;
+
+            if (gameScene)
+            {
+                var grid = JsonUtility.FromJson<WorldGridData>(File.ReadAllText(gridPath));
+                if (grid == null || worldGen == null || !worldGen.TryApplyGridSnapshot(grid))
+                    return false;
+            }
 
             if (File.Exists(entitiesPath))
             {
@@ -220,6 +297,8 @@ public sealed class WorldSaveSystem : MonoBehaviour
     private void InitializeWorldContext()
     {
         ritualPlatformUnlocked = false;
+        aegisDefeated = false;
+        aegisState = new AegisStateData();
 
         bool hasPendingWorld = PlayerPrefs.GetInt(PrefHasPendingWorldCreation, 0) == 1;
 
@@ -249,6 +328,18 @@ public sealed class WorldSaveSystem : MonoBehaviour
             if (LoadCurrentWorld())
                 return;
         }
+        else if (!string.IsNullOrWhiteSpace(currentWorldId) && !IsGameSceneActive())
+        {
+            if (string.IsNullOrWhiteSpace(currentWorldName))
+                currentWorldName = "New World";
+
+            PlayerPrefs.SetString(PrefCurrentWorldId, currentWorldId);
+            PlayerPrefs.SetString(PrefCurrentWorldName, currentWorldName);
+            PlayerPrefs.Save();
+
+            SaveNow("boss-scene-bootstrap");
+            return;
+        }
 
         if (string.IsNullOrWhiteSpace(currentWorldId))
             currentWorldId = Guid.NewGuid().ToString("N");
@@ -266,15 +357,25 @@ public sealed class WorldSaveSystem : MonoBehaviour
     private bool HasSavedWorld(string worldId)
     {
         string worldDir = GetWorldDirectory(worldId);
-        return File.Exists(Path.Combine(worldDir, "metadata.json"))
-            && File.Exists(Path.Combine(worldDir, "grid.json"));
+        if (IsGameSceneActive())
+        {
+            return File.Exists(Path.Combine(worldDir, MetadataFileName))
+                && File.Exists(Path.Combine(worldDir, GridFileName));
+        }
+
+        return File.Exists(Path.Combine(worldDir, MetadataFileName));
+    }
+
+    private string GetDynamicEntitiesFileName()
+    {
+        return IsGameSceneActive() ? GameEntitiesFileName : BossBattleEntitiesFileName;
     }
 
     private WorldMetadataData BuildMetadata()
     {
         string now = DateTime.UtcNow.ToString("O");
         string worldDir = GetWorldDirectory(currentWorldId);
-        string metadataPath = Path.Combine(worldDir, "metadata.json");
+        string metadataPath = Path.Combine(worldDir, MetadataFileName);
 
         var metadata = new WorldMetadataData();
         metadata.worldId = currentWorldId;
@@ -283,6 +384,15 @@ public sealed class WorldSaveSystem : MonoBehaviour
         metadata.lastPlayedAtUtc = now;
         metadata.gameVersion = Application.version;
         metadata.ritualPlatformUnlocked = ritualPlatformUnlocked;
+        metadata.aegisDefeated = aegisDefeated;
+        metadata.aegisState = IsGameSceneActive()
+            ? CloneAegisState(aegisState) ?? new AegisStateData()
+            : CaptureAegisStateFromScene();
+
+        if (metadata.aegisState == null)
+            metadata.aegisState = new AegisStateData();
+
+        metadata.aegisState.defeated = aegisDefeated;
 
         if (File.Exists(metadataPath))
         {
@@ -293,8 +403,23 @@ public sealed class WorldSaveSystem : MonoBehaviour
                     ? existing.createdAtUtc
                     : now;
 
-                if (existing != null && existing.ritualPlatformUnlocked)
-                    metadata.ritualPlatformUnlocked = true;
+                if (existing != null)
+                {
+                    if (metadata.seed == 0)
+                        metadata.seed = existing.seed;
+
+                    if (existing.ritualPlatformUnlocked)
+                        metadata.ritualPlatformUnlocked = true;
+
+                    if (existing.aegisDefeated)
+                        metadata.aegisDefeated = true;
+
+                    if (existing.aegisState != null)
+                    {
+                        if (metadata.aegisState == null || metadata.aegisState.pillars == null || metadata.aegisState.pillars.Count == 0)
+                            metadata.aegisState = CloneAegisState(existing.aegisState);
+                    }
+                }
             }
             catch
             {
@@ -307,6 +432,12 @@ public sealed class WorldSaveSystem : MonoBehaviour
         }
 
         ritualPlatformUnlocked = metadata.ritualPlatformUnlocked;
+        aegisDefeated = metadata.aegisDefeated;
+        if (metadata.aegisState != null)
+            metadata.aegisState.defeated = aegisDefeated;
+
+        aegisState = CloneAegisState(metadata.aegisState) ?? new AegisStateData();
+        aegisState.defeated = aegisDefeated;
 
         return metadata;
     }
@@ -361,6 +492,9 @@ public sealed class WorldSaveSystem : MonoBehaviour
             if (placed == null || placed.definition == null)
                 continue;
 
+            if (string.IsNullOrWhiteSpace(placed.PersistentInstanceId))
+                continue;
+
             var dto = new PlacedObjectData();
             dto.instanceId = placed.PersistentInstanceId;
             dto.placeableId = SaveDefinitionCatalog.GetPlaceableId(placed.definition);
@@ -368,6 +502,10 @@ public sealed class WorldSaveSystem : MonoBehaviour
             dto.originY = placed.gridOrigin.y;
             dto.sizeX = placed.gridSize.x;
             dto.sizeY = placed.gridSize.y;
+            dto.hasWorldPosition = true;
+            dto.worldX = placed.transform.position.x;
+            dto.worldY = placed.transform.position.y;
+            dto.worldZ = placed.transform.position.z;
 
             var chest = placed.GetComponent<ChestInventoryStorage>();
             if (chest != null && chest.Section != null)
@@ -456,8 +594,13 @@ public sealed class WorldSaveSystem : MonoBehaviour
         var existing = FindObjectsByType<PlacedObject>(FindObjectsSortMode.None);
         for (int i = 0; i < existing.Length; i++)
         {
-            if (existing[i] != null)
-                Destroy(existing[i].gameObject);
+            if (existing[i] == null)
+                continue;
+
+            if (string.IsNullOrWhiteSpace(existing[i].PersistentInstanceId))
+                continue;
+
+            Destroy(existing[i].gameObject);
         }
 
         var grid = FindFirstObjectByType<PlacementGrid>();
@@ -482,6 +625,8 @@ public sealed class WorldSaveSystem : MonoBehaviour
             Vector3 spawnPos;
             if (grid != null)
                 spawnPos = grid.GetAreaWorldCenter(origin, size) + placeable.spawnOffset;
+            else if (dto.hasWorldPosition)
+                spawnPos = new Vector3(dto.worldX, dto.worldY, dto.worldZ);
             else
                 spawnPos = new Vector3(origin.x + 0.5f, origin.y + 0.5f, 0f) + placeable.spawnOffset;
 
@@ -552,6 +697,17 @@ public sealed class WorldSaveSystem : MonoBehaviour
     private void RestoreAiEntities(List<AiEntityData> entities)
     {
         var existing = FindObjectsByType<EntityBase2D>(FindObjectsSortMode.None);
+        var spawnCatalog = BuildSpawnerCatalog();
+
+        for (int i = 0; i < existing.Length; i++)
+        {
+            var entity = existing[i];
+            if (entity == null || entity is PlayerTopDown || entity.definition == null)
+                continue;
+
+            AddSpawnCatalogEntry(spawnCatalog, entity.definition, entity.gameObject, entity.transform.parent);
+        }
+
         for (int i = 0; i < existing.Length; i++)
         {
             var entity = existing[i];
@@ -563,8 +719,6 @@ public sealed class WorldSaveSystem : MonoBehaviour
 
         if (entities == null)
             return;
-
-        var spawnCatalog = BuildSpawnerCatalog();
 
         for (int i = 0; i < entities.Count; i++)
         {
@@ -604,20 +758,79 @@ public sealed class WorldSaveSystem : MonoBehaviour
                 if (entry == null || entry.definition == null || entry.prefab == null)
                     continue;
 
-                string key = SaveDefinitionCatalog.GetEntityId(entry.definition);
-                if (string.IsNullOrWhiteSpace(key) || catalog.ContainsKey(key))
+                AddSpawnCatalogEntry(catalog, entry.definition, entry.prefab, spawner.transform);
+            }
+        }
+
+        var sceneCatalogs = FindObjectsByType<SceneEntitySpawnCatalog>(FindObjectsSortMode.None);
+        for (int i = 0; i < sceneCatalogs.Length; i++)
+        {
+            var sceneCatalog = sceneCatalogs[i];
+            if (sceneCatalog == null || sceneCatalog.Entries == null)
+                continue;
+
+            var entries = sceneCatalog.Entries;
+            for (int j = 0; j < entries.Count; j++)
+            {
+                var entry = entries[j];
+                if (entry == null)
                     continue;
 
-                catalog.Add(key, new SpawnCatalogEntry
-                {
-                    definition = entry.definition,
-                    prefab = entry.prefab,
-                    parent = spawner.transform
-                });
+                Transform parent = entry.parent != null ? entry.parent : sceneCatalog.transform;
+                AddSpawnCatalogEntry(catalog, entry.definition, entry.prefab, parent);
+            }
+        }
+
+        var aegisControllers = FindObjectsByType<AegisProjectileAttackController>(FindObjectsSortMode.None);
+        for (int i = 0; i < aegisControllers.Length; i++)
+        {
+            var controller = aegisControllers[i];
+            if (controller == null)
+                continue;
+
+            var prefabs = controller.GetSummonPrefabPool();
+            if (prefabs == null)
+                continue;
+
+            for (int j = 0; j < prefabs.Count; j++)
+            {
+                GameObject prefab = prefabs[j];
+                if (prefab == null)
+                    continue;
+
+                EntityBase2D entityBase = prefab.GetComponent<EntityBase2D>();
+                if (entityBase == null)
+                    entityBase = prefab.GetComponentInChildren<EntityBase2D>(true);
+
+                if (entityBase == null || entityBase.definition == null)
+                    continue;
+
+                AddSpawnCatalogEntry(catalog, entityBase.definition, prefab, controller.transform);
             }
         }
 
         return catalog;
+    }
+
+    private static void AddSpawnCatalogEntry(
+        Dictionary<string, SpawnCatalogEntry> catalog,
+        EntityDefinition definition,
+        GameObject prefab,
+        Transform parent)
+    {
+        if (catalog == null || definition == null || prefab == null)
+            return;
+
+        string key = SaveDefinitionCatalog.GetEntityId(definition);
+        if (string.IsNullOrWhiteSpace(key) || catalog.ContainsKey(key))
+            return;
+
+        catalog.Add(key, new SpawnCatalogEntry
+        {
+            definition = definition,
+            prefab = prefab,
+            parent = parent
+        });
     }
 
     private InventoryData SerializeInventory(InventoryModel inventory)
@@ -721,6 +934,58 @@ public sealed class WorldSaveSystem : MonoBehaviour
             var stack = new ItemStack(itemDef, Mathf.Max(1, slotData.amount), nbt);
             section.SetSlot(slotData.index, stack);
         }
+    }
+
+    private AegisStateData CaptureAegisStateFromScene()
+    {
+        var state = new AegisStateData();
+        state.defeated = aegisDefeated;
+
+        AegisPillarDamageable[] pillars = FindObjectsByType<AegisPillarDamageable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < pillars.Length; i++)
+        {
+            AegisPillarDamageable pillar = pillars[i];
+            if (pillar == null)
+                continue;
+
+            state.pillars.Add(new AegisPillarStateData
+            {
+                pillarName = pillar.name,
+                hitsTaken = pillar.HitsTaken,
+                disabled = pillar.IsDisabled
+            });
+        }
+
+        return state;
+    }
+
+    private static AegisStateData CloneAegisState(AegisStateData source)
+    {
+        if (source == null)
+            return null;
+
+        var clone = new AegisStateData();
+        clone.defeated = source.defeated;
+        clone.pillars = new List<AegisPillarStateData>();
+
+        if (source.pillars == null)
+            return clone;
+
+        for (int i = 0; i < source.pillars.Count; i++)
+        {
+            AegisPillarStateData pillar = source.pillars[i];
+            if (pillar == null)
+                continue;
+
+            clone.pillars.Add(new AegisPillarStateData
+            {
+                pillarName = pillar.pillarName,
+                hitsTaken = pillar.hitsTaken,
+                disabled = pillar.disabled
+            });
+        }
+
+        return clone;
     }
 
     private static string GetWorldsRootDirectory()

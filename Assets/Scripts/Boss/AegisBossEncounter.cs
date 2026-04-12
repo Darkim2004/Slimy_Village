@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ public class AegisBossEncounter : MonoBehaviour
     private void OnEnable()
     {
         RebuildPillarsFromSceneReferences();
+        ApplyPersistedPillarState();
         BindEvents();
         SyncBossHealthFromPillarState();
     }
@@ -123,6 +125,47 @@ public class AegisBossEncounter : MonoBehaviour
 
                 _pillars.Add(pillar);
             }
+        }
+    }
+
+    private void ApplyPersistedPillarState()
+    {
+        WorldSaveSystem saveSystem = WorldSaveSystem.Instance;
+        if (saveSystem == null)
+            return;
+
+        if (!saveSystem.TryGetAegisState(out AegisStateData state) || state == null || state.pillars == null || state.pillars.Count == 0)
+            return;
+
+        for (int i = 0; i < _pillars.Count; i++)
+        {
+            AegisPillarDamageable pillar = _pillars[i];
+            if (pillar == null)
+                continue;
+
+            AegisPillarStateData matching = null;
+            for (int j = 0; j < state.pillars.Count; j++)
+            {
+                AegisPillarStateData candidate = state.pillars[j];
+                if (candidate == null)
+                    continue;
+
+                if (string.Equals(candidate.pillarName, pillar.name, StringComparison.OrdinalIgnoreCase))
+                {
+                    matching = candidate;
+                    break;
+                }
+            }
+
+            if (matching == null && i < state.pillars.Count)
+                matching = state.pillars[i];
+
+            if (matching == null)
+                continue;
+
+            pillar.RestoreState(matching.hitsTaken, matching.disabled);
+            if (pillar.IsDisabled)
+                _processedPillars.Add(pillar);
         }
     }
 

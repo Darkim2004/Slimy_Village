@@ -26,7 +26,7 @@
 ## Refactoring e Ottimizzazione
 - [ ] Worldgen
 - [ ] Risolvi bug che gli alberi respawnano dopo aver chiuso e riaperto il mondo
-- [ ] Aggiusta bug per cui i drop nella dimensione di aegis sono sotto il ground e senza un entità root
+- [X] Aggiusta bug per cui i drop nella dimensione di aegis sono sotto il ground e senza un entità root
 - [X] Capire perchè la chiusura dei libri tramite bottone non funziona nella scena di aegis
 
 ## Idee sparse / Design

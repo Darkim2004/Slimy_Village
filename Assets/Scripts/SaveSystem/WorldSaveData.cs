@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public sealed class WorldMetadataData
 {
-    public string schemaVersion = "1";
+    public string schemaVersion = "2";
     public string worldId;
     public string displayName;
     public int seed;
@@ -13,6 +13,23 @@ public sealed class WorldMetadataData
     public string lastPlayedAtUtc;
     public string gameVersion;
     public bool ritualPlatformUnlocked;
+    public bool aegisDefeated;
+    public AegisStateData aegisState;
+}
+
+[Serializable]
+public sealed class AegisStateData
+{
+    public bool defeated;
+    public List<AegisPillarStateData> pillars = new List<AegisPillarStateData>();
+}
+
+[Serializable]
+public sealed class AegisPillarStateData
+{
+    public string pillarName;
+    public int hitsTaken;
+    public bool disabled;
 }
 
 [Serializable]
@@ -86,6 +103,10 @@ public sealed class PlacedObjectData
     public int originY;
     public int sizeX;
     public int sizeY;
+    public bool hasWorldPosition;
+    public float worldX;
+    public float worldY;
+    public float worldZ;
     public InventorySectionData chestSection;
 }
 

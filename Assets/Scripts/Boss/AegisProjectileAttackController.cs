@@ -1,11 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 [DisallowMultipleComponent]
 public class AegisProjectileAttackController : MonoBehaviour
 {
+    private const string CurrentWorldIdPrefKey = "MainMenu.CurrentWorldId";
+    private const string WorldsFolderName = "worlds";
+    private const string MetadataFileName = "metadata.json";
+
     private enum AttackType
     {
         None,
@@ -85,6 +90,12 @@ public class AegisProjectileAttackController : MonoBehaviour
     private bool _deathHandled;
     private bool _postDeathInteractablesActivated;
 
+    [System.Serializable]
+    private sealed class AegisMetadataSnapshot
+    {
+        public bool aegisDefeated;
+    }
+
     private void Awake()
     {
         _aegisHealth = GetComponent<Health>();
@@ -110,6 +121,19 @@ public class AegisProjectileAttackController : MonoBehaviour
         {
             _aegisHealth.onDeath -= HandleAegisDeath;
             _aegisHealth.onDeath += HandleAegisDeath;
+
+            if (IsPersistedAegisDefeated())
+            {
+                _deathHandled = true;
+                _postDeathInteractablesActivated = false;
+
+                if (!_aegisHealth.IsDead)
+                    _aegisHealth.SetHp(0);
+
+                ApplyImmediateDeathPresentation();
+                ActivatePostDeathInteractablesOnce();
+                return;
+            }
 
             if (_aegisHealth.IsDead)
             {
@@ -256,7 +280,13 @@ public class AegisProjectileAttackController : MonoBehaviour
         }
 
         ActivatePostDeathInteractablesOnce();
+        PersistAegisDefeatState();
         _deathSequenceRoutine = null;
+    }
+
+    public IReadOnlyList<GameObject> GetSummonPrefabPool()
+    {
+        return summonPrefabPool;
     }
 
     private void ActivatePostDeathInteractablesOnce()
@@ -815,5 +845,60 @@ public class AegisProjectileAttackController : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void PersistAegisDefeatState()
+    {
+        WorldSaveSystem saveSystem = WorldSaveSystem.Instance;
+        if (saveSystem == null)
+            return;
+
+        saveSystem.SetAegisDefeated(true, saveImmediately: true);
+    }
+
+    private bool IsPersistedAegisDefeated()
+    {
+        WorldSaveSystem saveSystem = WorldSaveSystem.Instance;
+        if (saveSystem != null)
+            return saveSystem.IsAegisDefeated;
+
+        string worldId = PlayerPrefs.GetString(CurrentWorldIdPrefKey, string.Empty);
+        if (string.IsNullOrWhiteSpace(worldId))
+            return false;
+
+        string metadataPath = Path.Combine(Application.persistentDataPath, WorldsFolderName, worldId, MetadataFileName);
+        if (!File.Exists(metadataPath))
+            return false;
+
+        try
+        {
+            string json = File.ReadAllText(metadataPath);
+            if (string.IsNullOrWhiteSpace(json))
+                return false;
+
+            AegisMetadataSnapshot snapshot = JsonUtility.FromJson<AegisMetadataSnapshot>(json);
+            return snapshot != null && snapshot.aegisDefeated;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private void ApplyImmediateDeathPresentation()
+    {
+        PlayAnimation(deathAnimationState);
+
+        if (!freezeDeathOnLastFrame || aegisAnimator == null)
+            return;
+
+        int deathStateHash = Animator.StringToHash(deathAnimationState);
+        if (aegisAnimator.HasState(0, deathStateHash))
+        {
+            aegisAnimator.Play(deathStateHash, 0, 0.999f);
+            aegisAnimator.Update(0f);
+        }
+
+        aegisAnimator.speed = 0f;
     }
 }
