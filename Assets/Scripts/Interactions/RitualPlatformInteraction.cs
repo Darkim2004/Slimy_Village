@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -37,6 +36,15 @@ public class RitualPlatformInteraction : MonoBehaviour
     private bool interactionInProgress;
     private HotbarHUD cachedHotbarHUD;
     private InventoryModel cachedInventoryModel;
+
+    private sealed class TransitionPlayerState
+    {
+        public int currentHp;
+        public Vector3 respawnPoint;
+        public ItemStack[] hotbarSlots;
+        public ItemStack[] mainSlots;
+        public ItemStack[] armorSlots;
+    }
 
     private void Awake()
     {
@@ -167,8 +175,7 @@ public class RitualPlatformInteraction : MonoBehaviour
         }
 
         WorldSaveSystem.Instance?.SaveNow("ritual-platform-transition");
-
-        PersistRuntimeObjects(player);
+        TransitionPlayerState transitionState = CapturePlayerState(player);
 
         AsyncOperation loadOperation;
         try
@@ -204,17 +211,27 @@ public class RitualPlatformInteraction : MonoBehaviour
             yield return null;
         }
 
-        if (player == null)
-            yield break;
+        // Lascia completare Start/Awake dei sistemi della scena appena caricata.
+        yield return null;
+        yield return null;
 
-        Vector3 targetSpawn = player.transform.position;
+        PlayerTopDown targetPlayer = FindFirstObjectByType<PlayerTopDown>();
+        if (targetPlayer == null)
+        {
+            Debug.LogWarning("[RitualPlatform] Player non trovato in BossBattle dopo il load.", this);
+            yield break;
+        }
+
+        ApplyPlayerState(targetPlayer, transitionState);
+
+        Vector3 targetSpawn = targetPlayer.transform.position;
         if (bossWorldGen != null && bossWorldGen.HasGenerated)
             targetSpawn = bossWorldGen.WorldSpawnPoint;
         else
             Debug.LogWarning("[RitualPlatform] WorldSpawnPoint BossBattle non disponibile entro timeout: uso posizione corrente player.", this);
 
-        player.transform.position = targetSpawn;
-        player.SetRespawnPoint(targetSpawn);
+        targetPlayer.transform.position = targetSpawn;
+        targetPlayer.SetRespawnPoint(targetSpawn);
     }
 
     private IEnumerator TransitionToNormalWorld(PlayerTopDown player)
@@ -226,8 +243,7 @@ public class RitualPlatformInteraction : MonoBehaviour
         }
 
         WorldSaveSystem.Instance?.SaveNow("ritual-platform-return-transition");
-
-        PersistRuntimeObjects(player);
+        TransitionPlayerState transitionState = CapturePlayerState(player);
 
         AsyncOperation loadOperation;
         try
@@ -263,10 +279,20 @@ public class RitualPlatformInteraction : MonoBehaviour
             yield return null;
         }
 
-        if (player == null)
-            yield break;
+        // In Game la load del save avviene in Start: attendi pochi frame per evitare sovrascritture.
+        yield return null;
+        yield return null;
 
-        Vector3 targetSpawn = player.transform.position;
+        PlayerTopDown targetPlayer = FindFirstObjectByType<PlayerTopDown>();
+        if (targetPlayer == null)
+        {
+            Debug.LogWarning("[RitualPlatform] Player non trovato nel mondo normale dopo il load.", this);
+            yield break;
+        }
+
+        ApplyPlayerState(targetPlayer, transitionState);
+
+        Vector3 targetSpawn = targetPlayer.transform.position;
 
         if (TryResolvePreferredNormalWorldSpawnPoint(out Vector3 preferredSpawn))
         {
@@ -281,8 +307,8 @@ public class RitualPlatformInteraction : MonoBehaviour
             Debug.LogWarning("[RitualPlatform] Spawn point normale non trovato e WorldSpawnPoint non disponibile entro timeout: uso posizione corrente player.", this);
         }
 
-        player.transform.position = targetSpawn;
-        player.SetRespawnPoint(targetSpawn);
+        targetPlayer.transform.position = targetSpawn;
+        targetPlayer.SetRespawnPoint(targetSpawn);
     }
 
     private bool TryResolvePreferredNormalWorldSpawnPoint(out Vector3 spawn)
@@ -353,21 +379,82 @@ public class RitualPlatformInteraction : MonoBehaviour
             cachedInventoryModel = FindFirstObjectByType<InventoryModel>();
     }
 
-    private void PersistRuntimeObjects(PlayerTopDown player)
+    private TransitionPlayerState CapturePlayerState(PlayerTopDown player)
     {
-        if (player != null)
-            DontDestroyOnLoad(player.gameObject);
+        if (player == null)
+            return null;
 
-        if (cachedHotbarHUD == null)
-            cachedHotbarHUD = FindFirstObjectByType<HotbarHUD>();
+        var state = new TransitionPlayerState();
 
-        if (cachedHotbarHUD != null)
+        var health = player.GetComponent<Health>();
+        state.currentHp = health != null ? health.CurrentHp : 1;
+        state.respawnPoint = player.RespawnPoint;
+
+        InventoryModel inventory = player.GetComponentInParent<InventoryModel>();
+        if (inventory == null)
+            inventory = FindFirstObjectByType<InventoryModel>();
+
+        if (inventory != null)
         {
-            Canvas rootCanvas = cachedHotbarHUD.GetComponentInParent<Canvas>();
-            if (rootCanvas != null)
-                DontDestroyOnLoad(rootCanvas.gameObject);
+            state.hotbarSlots = CloneSectionSlots(inventory.Hotbar);
+            state.mainSlots = CloneSectionSlots(inventory.Main);
+            state.armorSlots = CloneSectionSlots(inventory.Armor);
         }
 
+        return state;
+    }
+
+    private static ItemStack[] CloneSectionSlots(InventorySection section)
+    {
+        if (section == null || section.Size <= 0)
+            return Array.Empty<ItemStack>();
+
+        ItemStack[] snapshot = new ItemStack[section.Size];
+        for (int i = 0; i < section.Size; i++)
+        {
+            ItemStack stack = section.GetSlot(i);
+            snapshot[i] = stack != null ? stack.Clone() : null;
+        }
+
+        return snapshot;
+    }
+
+    private void ApplyPlayerState(PlayerTopDown player, TransitionPlayerState state)
+    {
+        if (player == null || state == null)
+            return;
+
+        var health = player.GetComponent<Health>();
+        if (health != null)
+            health.SetHp(state.currentHp);
+
+        player.SetRespawnPoint(state.respawnPoint);
+
+        InventoryModel inventory = player.GetComponentInParent<InventoryModel>();
+        if (inventory == null)
+            inventory = FindFirstObjectByType<InventoryModel>();
+
+        if (inventory == null)
+            return;
+
+        ApplySectionSlots(inventory.Hotbar, state.hotbarSlots);
+        ApplySectionSlots(inventory.Main, state.mainSlots);
+        ApplySectionSlots(inventory.Armor, state.armorSlots);
+    }
+
+    private static void ApplySectionSlots(InventorySection section, ItemStack[] snapshot)
+    {
+        if (section == null)
+            return;
+
+        for (int i = 0; i < section.Size; i++)
+        {
+            ItemStack stack = (snapshot != null && i < snapshot.Length)
+                ? snapshot[i]
+                : null;
+
+            section.SetSlot(i, stack != null ? stack.Clone() : null);
+        }
     }
 
     private bool IsRitualUnlocked()
