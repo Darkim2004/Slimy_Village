@@ -7,6 +7,9 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class WorldDrop : MonoBehaviour
 {
+    private const string WorldDropsRootName = "WorldDropsRoot";
+    private static Transform cachedWorldDropsRoot;
+
     [Header("Item")]
     [Tooltip("Definizione dell'item contenuto in questo drop.")]
     [SerializeField] private ItemDefinition itemDef;
@@ -45,6 +48,10 @@ public class WorldDrop : MonoBehaviour
         if (def == null || qty <= 0) return null;
 
         var go = new GameObject($"Drop_{def.id}");
+        var dropsRoot = GetOrCreateDropsRoot();
+        if (dropsRoot != null)
+            go.transform.SetParent(dropsRoot, false);
+
         go.transform.position = position;
 
         var drop = go.AddComponent<WorldDrop>();
@@ -73,10 +80,10 @@ public class WorldDrop : MonoBehaviour
 
         // Sprite dall'ItemDefinition
         if (itemDef != null && itemDef.icon != null)
-        {
             sr.sprite = itemDef.icon;
-            sr.sortingOrder = 10;
-        }
+
+        // Tiene i drop visibili anche in scene con sorting layer personalizzati.
+        sr.sortingOrder = 10;
 
         // Trova player e il suo inventario
         var player = FindFirstObjectByType<PlayerTopDown>();
@@ -85,6 +92,13 @@ public class WorldDrop : MonoBehaviour
             playerTransform = player.transform;
             playerHealth = player.GetComponent<Health>();
             playerInventory = player.GetComponentInParent<InventoryModel>();
+            var playerSprite = player.GetComponentInChildren<SpriteRenderer>();
+            if (playerSprite != null)
+            {
+                sr.sortingLayerID = playerSprite.sortingLayerID;
+                sr.sortingOrder = Mathf.Max(sr.sortingOrder, playerSprite.sortingOrder + 1);
+            }
+
             if (playerInventory == null)
                 playerInventory = FindFirstObjectByType<InventoryModel>();
         }
@@ -131,5 +145,22 @@ public class WorldDrop : MonoBehaviour
     {
         Gizmos.color = new Color(0f, 1f, 0.5f, 0.35f);
         Gizmos.DrawWireSphere(transform.position, pickupRadius);
+    }
+
+    private static Transform GetOrCreateDropsRoot()
+    {
+        if (cachedWorldDropsRoot != null)
+            return cachedWorldDropsRoot;
+
+        var existing = GameObject.Find(WorldDropsRootName);
+        if (existing != null)
+        {
+            cachedWorldDropsRoot = existing.transform;
+            return cachedWorldDropsRoot;
+        }
+
+        var root = new GameObject(WorldDropsRootName);
+        cachedWorldDropsRoot = root.transform;
+        return cachedWorldDropsRoot;
     }
 }
