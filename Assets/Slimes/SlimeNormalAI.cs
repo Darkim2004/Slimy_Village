@@ -259,6 +259,17 @@ public class SlimeNormalAI : EntityBase2D
         EnterIdle();
     }
 
+    protected override void OnExternalPauseStateChanged(bool paused)
+    {
+        if (!paused)
+            return;
+
+        hitboxPending = false;
+        hitboxDelayTimer = 0f;
+        attackCooldownTimer = 0f;
+        ClearAggro();
+    }
+
     // ───────────────────────────── Wander ─────────────────────────────────────
     private void TickWander()
     {

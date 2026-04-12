@@ -301,6 +301,19 @@ public class SNightSlimeAI : EntityBase2D
         EnterIdle();
     }
 
+    protected override void OnExternalPauseStateChanged(bool paused)
+    {
+        if (!paused)
+            return;
+
+        hitboxPending = false;
+        hitboxDelayTimer = 0f;
+        attackCooldownTimer = 0f;
+        playerTarget = null;
+        targetRefreshTimer = 0f;
+        EnterIdle();
+    }
+
     private bool IsDirectionalAttack()
     {
         return slimeDef != null && slimeDef.attackMode == SlimeAttackMode.Directional;

@@ -49,6 +49,9 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
 
     // movimento “proposto” dalla AI/derivata (in world space)
     protected Vector2 desiredVelocity = Vector2.zero;
+    private bool aiExternallyPaused;
+
+    public bool IsAIPaused => aiExternallyPaused;
 
     protected virtual void Awake()
     {
@@ -116,6 +119,15 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
             return;
         }
 
+        if (aiExternallyPaused)
+        {
+            if (state != State.Idle)
+                EnterIdle();
+
+            PlayAnim();
+            return;
+        }
+
         // Lascia alla derivata decidere desiredVelocity e/o cambiare stato
         TickAI();
 
@@ -149,6 +161,12 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
 
     protected virtual void FixedUpdate()
     {
+        if (aiExternallyPaused)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
         if (state == State.Walk || state == State.Run)
         {
             rb.linearVelocity = desiredVelocity;
@@ -159,6 +177,27 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
         {
             rb.linearVelocity = Vector2.zero;
         }
+    }
+
+    public void SetAIPaused(bool paused)
+    {
+        if (aiExternallyPaused == paused)
+            return;
+
+        aiExternallyPaused = paused;
+
+        if (aiExternallyPaused)
+        {
+            EnterIdle();
+            if (rb != null)
+                rb.linearVelocity = Vector2.zero;
+        }
+
+        OnExternalPauseStateChanged(aiExternallyPaused);
+    }
+
+    protected virtual void OnExternalPauseStateChanged(bool paused)
+    {
     }
 
     // --- Questa è la “porta” per tutte le AI

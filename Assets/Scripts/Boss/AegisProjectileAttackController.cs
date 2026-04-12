@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -62,6 +63,12 @@ public class AegisProjectileAttackController : MonoBehaviour
     [SerializeField, Min(0f)] private float deathFreezeDelayFallback = 1f;
     [SerializeField] private string idleAnimationState = "idle";
 
+    [Header("Death Cutscene")]
+    [SerializeField] private bool enableDeathCutscene = true;
+    [SerializeField] private CinemachineCamera deathCutsceneCamera;
+    [SerializeField, Min(0f)] private float deathFocusPanSeconds = 0.35f;
+    [SerializeField, Min(0f)] private float deathReturnPanSeconds = 0.35f;
+
     [Header("Post Death")]
     [SerializeField] private bool activatePostDeathInteractables = true;
     [SerializeField] private bool autoFindPostDeathObjectsByName = true;
@@ -92,6 +99,11 @@ public class AegisProjectileAttackController : MonoBehaviour
     private bool _deathHandled;
     private bool _postDeathInteractablesActivated;
     private bool _combatEnabled = true;
+    private bool _actorsFrozenByDeathCutscene;
+    private bool _wasPlayerInputLockedBeforeDeathCutscene;
+    private Transform _deathCutscenePivot;
+    private Transform _deathCutsceneOriginalFollow;
+    private readonly List<EntityBase2D> _pausedSlimes = new List<EntityBase2D>();
 
     public bool IsCombatEnabled => _combatEnabled;
 
@@ -205,6 +217,7 @@ public class AegisProjectileAttackController : MonoBehaviour
             _aegisHealth.onDeath -= HandleAegisDeath;
 
         CleanupActiveRings();
+        ReleaseDeathCutsceneState();
     }
 
     private void OnValidate()
@@ -301,25 +314,34 @@ public class AegisProjectileAttackController : MonoBehaviour
 
     private IEnumerator DeathSequenceRoutine()
     {
-        float waitSeconds = GetDeathAnimationLengthOrFallback();
-        if (waitSeconds > 0f)
-            yield return new WaitForSeconds(waitSeconds);
+        float deathDuration = GetDeathAnimationLengthOrFallback();
 
-        if (freezeDeathOnLastFrame && aegisAnimator != null)
+        try
         {
-            int deathStateHash = Animator.StringToHash(deathAnimationState);
-            if (aegisAnimator.HasState(0, deathStateHash))
+            yield return RunDeathCameraFocusSequence(deathDuration);
+
+            if (freezeDeathOnLastFrame && aegisAnimator != null)
             {
-                aegisAnimator.Play(deathStateHash, 0, 0.999f);
-                aegisAnimator.Update(0f);
+                int deathStateHash = Animator.StringToHash(deathAnimationState);
+                if (aegisAnimator.HasState(0, deathStateHash))
+                {
+                    aegisAnimator.Play(deathStateHash, 0, 0.999f);
+                    aegisAnimator.Update(0f);
+                }
+
+                aegisAnimator.speed = 0f;
             }
 
-            aegisAnimator.speed = 0f;
-        }
+            ActivatePostDeathInteractablesOnce();
+            PersistAegisDefeatState();
 
-        ActivatePostDeathInteractablesOnce();
-        PersistAegisDefeatState();
-        _deathSequenceRoutine = null;
+            yield return ReturnCameraToPlayerAfterDeath();
+        }
+        finally
+        {
+            ReleaseDeathCutsceneState();
+            _deathSequenceRoutine = null;
+        }
     }
 
     public IReadOnlyList<GameObject> GetSummonPrefabPool()
@@ -893,6 +915,178 @@ public class AegisProjectileAttackController : MonoBehaviour
                 }
             }
         }
+
+        if (deathCutsceneCamera == null)
+            deathCutsceneCamera = FindFirstObjectByType<CinemachineCamera>();
+    }
+
+    private IEnumerator RunDeathCameraFocusSequence(float deathDuration)
+    {
+        if (!enableDeathCutscene)
+        {
+            if (deathDuration > 0f)
+                yield return new WaitForSeconds(deathDuration);
+            yield break;
+        }
+
+        ResolveRuntimeReferences();
+        FreezeArenaActorsForDeathCutscene();
+
+        if (deathCutsceneCamera == null)
+        {
+            if (deathDuration > 0f)
+                yield return new WaitForSeconds(deathDuration);
+            yield break;
+        }
+
+        EnsureDeathCutscenePivot();
+
+        Vector3 startPosition = playerTransform != null ? playerTransform.position : transform.position;
+        Vector3 aegisPosition = transform.position;
+
+        _deathCutsceneOriginalFollow = deathCutsceneCamera.Follow;
+        _deathCutscenePivot.position = startPosition;
+        deathCutsceneCamera.Follow = _deathCutscenePivot;
+
+        float focusPan = Mathf.Min(Mathf.Max(0f, deathFocusPanSeconds), Mathf.Max(0f, deathDuration));
+        if (focusPan > 0f)
+            yield return PanDeathCutscenePivot(startPosition, aegisPosition, focusPan);
+        else
+            _deathCutscenePivot.position = aegisPosition;
+
+        float holdDuration = Mathf.Max(0f, deathDuration - focusPan);
+        if (holdDuration > 0f)
+            yield return new WaitForSeconds(holdDuration);
+    }
+
+    private IEnumerator ReturnCameraToPlayerAfterDeath()
+    {
+        if (!enableDeathCutscene)
+            yield break;
+
+        if (deathCutsceneCamera == null)
+            yield break;
+
+        if (_deathCutscenePivot == null)
+            yield break;
+
+        Vector3 from = _deathCutscenePivot.position;
+        Vector3 to = playerTransform != null ? playerTransform.position : from;
+        float returnPan = Mathf.Max(0f, deathReturnPanSeconds);
+
+        if (returnPan > 0f)
+            yield return PanDeathCutscenePivot(from, to, returnPan);
+        else
+            _deathCutscenePivot.position = to;
+
+        deathCutsceneCamera.Follow = playerTransform != null ? playerTransform : _deathCutsceneOriginalFollow;
+    }
+
+    private IEnumerator PanDeathCutscenePivot(Vector3 from, Vector3 to, float duration)
+    {
+        if (_deathCutscenePivot == null)
+            yield break;
+
+        _deathCutscenePivot.position = from;
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            _deathCutscenePivot.position = Vector3.Lerp(from, to, t);
+            yield return null;
+        }
+
+        _deathCutscenePivot.position = to;
+    }
+
+    private void FreezeArenaActorsForDeathCutscene()
+    {
+        if (_actorsFrozenByDeathCutscene)
+            return;
+
+        ResolveRuntimeReferences();
+
+        PlayerTopDown player = null;
+        if (playerTransform != null)
+            player = playerTransform.GetComponent<PlayerTopDown>();
+
+        if (player != null)
+        {
+            _wasPlayerInputLockedBeforeDeathCutscene = player.IsInputLocked;
+            if (!_wasPlayerInputLockedBeforeDeathCutscene)
+                player.SetInputLocked(true);
+        }
+        else
+        {
+            _wasPlayerInputLockedBeforeDeathCutscene = false;
+        }
+
+        _pausedSlimes.Clear();
+
+        SlimeNormalAI[] normalSlimes = FindObjectsByType<SlimeNormalAI>(FindObjectsSortMode.None);
+        for (int i = 0; i < normalSlimes.Length; i++)
+            PauseSlimeEntity(normalSlimes[i]);
+
+        SNightSlimeAI[] nightSlimes = FindObjectsByType<SNightSlimeAI>(FindObjectsSortMode.None);
+        for (int i = 0; i < nightSlimes.Length; i++)
+            PauseSlimeEntity(nightSlimes[i]);
+
+        _actorsFrozenByDeathCutscene = true;
+    }
+
+    private void PauseSlimeEntity(EntityBase2D slime)
+    {
+        if (slime == null)
+            return;
+
+        if (_pausedSlimes.Contains(slime))
+            return;
+
+        _pausedSlimes.Add(slime);
+        slime.SetAIPaused(true);
+    }
+
+    private void ReleaseDeathCutsceneState()
+    {
+        if (_actorsFrozenByDeathCutscene)
+        {
+            PlayerTopDown player = null;
+            if (playerTransform != null)
+                player = playerTransform.GetComponent<PlayerTopDown>();
+
+            if (player != null && !_wasPlayerInputLockedBeforeDeathCutscene)
+                player.SetInputLocked(false);
+
+            for (int i = 0; i < _pausedSlimes.Count; i++)
+            {
+                EntityBase2D slime = _pausedSlimes[i];
+                if (slime != null)
+                    slime.SetAIPaused(false);
+            }
+
+            _pausedSlimes.Clear();
+            _actorsFrozenByDeathCutscene = false;
+        }
+
+        if (deathCutsceneCamera != null)
+            deathCutsceneCamera.Follow = playerTransform != null ? playerTransform : _deathCutsceneOriginalFollow;
+
+        if (_deathCutscenePivot != null)
+        {
+            Destroy(_deathCutscenePivot.gameObject);
+            _deathCutscenePivot = null;
+        }
+    }
+
+    private void EnsureDeathCutscenePivot()
+    {
+        if (_deathCutscenePivot != null)
+            return;
+
+        var pivotGo = new GameObject("AegisDeathCameraPivot");
+        _deathCutscenePivot = pivotGo.transform;
     }
 
     private void PersistAegisDefeatState()
