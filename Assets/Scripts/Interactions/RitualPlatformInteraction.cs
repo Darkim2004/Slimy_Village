@@ -368,8 +368,6 @@ public class RitualPlatformInteraction : MonoBehaviour
                 DontDestroyOnLoad(rootCanvas.gameObject);
         }
 
-        if (EventSystem.current != null)
-            DontDestroyOnLoad(EventSystem.current.gameObject);
     }
 
     private bool IsRitualUnlocked()
