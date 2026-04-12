@@ -216,7 +216,20 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Qualcosa
+  m_Text: "Non vi \xE8 pi\xF9 un giorno che io possa chiamare tale.\n\nIo sono \xC6gis\u2026
+    o ci\xF2 che ne resta.\n\nNon nacqui tra oro e splendore, ma tra fame e silenzi
+    vuoti. Ho giurato allora che nessuno avrebbe mai pi\xF9 sofferto come la mia
+    famiglia. Per questo ho cercato di piegare la realt\xE0 stessa\u2026 ignorando
+    il prezzo che ogni magia esige.\n\nE il prezzo \xE8 stato il mio popolo.\n\nLe
+    strade della mia citt\xE0 sono ora percorse da ombre tremolanti di ci\xF2 che
+    erano. Non sono morti. Non sono vivi. \xC8 una colpa che nessun tempo potr\xE0
+    cancellare.\n\nEppure\u2026 non riesco ad accettarlo.\n\nHo trovato un luogo
+    oltre il nostro mondo, dove spazio e tempo vacillano. Se riuscissi a dominarli,
+    potrei tornare indietro. Fermarmi. Salvare tutti.\n\nMa so cosa rischio. Sento
+    gi\xE0 la mia mente incrinarsi sotto il peso di ci\xF2 che sto tentando. Se dovessi
+    perdere me stesso\u2026 se dovessi diventare qualcosa di irriconoscibile\u2014\n\nallora
+    spero che qualcuno mi fermi.\n\nSe stai leggendo queste parole, forse sei gi\xE0
+    qui.\n\n\u2014 \xC6gis"
 --- !u!1 &2449059485515885599
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,7 +298,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2097378981269995227, guid: 4ff69e080d4db5548acd92d52a908399, type: 3}
+  m_Sprite: {fileID: 7331560371064398680, guid: 4ff69e080d4db5548acd92d52a908399, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
