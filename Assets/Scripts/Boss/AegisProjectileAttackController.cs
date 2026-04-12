@@ -10,6 +10,8 @@ public class AegisProjectileAttackController : MonoBehaviour
     private const string CurrentWorldIdPrefKey = "MainMenu.CurrentWorldId";
     private const string WorldsFolderName = "worlds";
     private const string MetadataFileName = "metadata.json";
+    private const string PostDeathChestInstanceId = "bossbattle_postdeath_chest";
+    private const string PostDeathRitualInstanceId = "bossbattle_postdeath_ritual";
 
     private enum AttackType
     {
@@ -363,6 +365,9 @@ public class AegisProjectileAttackController : MonoBehaviour
         if (placedObject == null)
             placedObject = chestObject.AddComponent<PlacedObject>();
 
+        if (string.IsNullOrWhiteSpace(placedObject.PersistentInstanceId))
+            placedObject.SetPersistentInstanceId(PostDeathChestInstanceId);
+
         if (resolvedChestPlaceable != null)
             placedObject.definition = resolvedChestPlaceable;
 
@@ -376,6 +381,10 @@ public class AegisProjectileAttackController : MonoBehaviour
 
         InventorySection chestSection = storage.Section;
         if (chestSection == null)
+            return;
+
+        // Se il boss risulta già sconfitto da salvataggio, non reinserire la reward.
+        if (IsPersistedAegisDefeated())
             return;
 
         if (clearChestBeforeAddingReward)
@@ -396,6 +405,9 @@ public class AegisProjectileAttackController : MonoBehaviour
         PlacedObject placedObject = ritualPlatformObject.GetComponent<PlacedObject>();
         if (placedObject == null)
             placedObject = ritualPlatformObject.AddComponent<PlacedObject>();
+
+        if (string.IsNullOrWhiteSpace(placedObject.PersistentInstanceId))
+            placedObject.SetPersistentInstanceId(PostDeathRitualInstanceId);
 
         if (resolvedRitualPlaceable != null)
             placedObject.definition = resolvedRitualPlaceable;
