@@ -292,6 +292,26 @@ public class WorldGenTilemap : MonoBehaviour
 
     private bool _loggedMissingTreeHitSfx;
 
+    [Header("Rock Hit Audio")]
+    [Tooltip("Clip casuali riprodotte al colpo su rocce.")]
+    public AudioClip[] rockHitSfxClips;
+
+    [Range(0f, 1f)]
+    [Tooltip("Volume base locale dei suoni hit roccia (prima del volume globale SFX).")]
+    public float rockHitSfxVolume = 1f;
+
+    [Tooltip("Range di pitch random per i colpi alle rocce.")]
+    public Vector2 rockHitSfxPitchRange = new Vector2(0.95f, 1.05f);
+
+    [Min(0f)]
+    [Tooltip("Intervallo minimo tra due suoni hit della stessa roccia.")]
+    public float rockHitSfxMinInterval = 0.02f;
+
+    [Tooltip("Se true, logga in editor se mancano clip hit roccia configurate.")]
+    public bool warnMissingRockHitSfx = true;
+
+    private bool _loggedMissingRockHitSfx;
+
     [Header("Height Noise (Ocean vs Land)")]
     [Tooltip("Higher = more detail; lower = larger blobs")]
     public float heightScale = 6f;
@@ -1623,6 +1643,7 @@ public class WorldGenTilemap : MonoBehaviour
         }
 
         ConfigureHarvestableNode(go, rockHitPoints, rockLootTable, rockRequiredHarvestLevel);
+        ConfigureRockHitAudio(go);
     }
 
     private void ConfigureHarvestableNode(GameObject go, int hp, LootTable lootTable, int requiredHarvestLevel)
@@ -1662,6 +1683,31 @@ public class WorldGenTilemap : MonoBehaviour
         {
             Debug.LogWarning("[WorldGen] Tree hit audio non configurato: assegna treeHitSfxClips per avere suoni random sui colpi.", this);
             _loggedMissingTreeHitSfx = true;
+        }
+#endif
+    }
+
+    private void ConfigureRockHitAudio(GameObject go)
+    {
+        if (go == null)
+            return;
+
+        HarvestableNode node = go.GetComponent<HarvestableNode>();
+        if (node == null)
+            return;
+
+        bool hasClips = rockHitSfxClips != null && rockHitSfxClips.Length > 0;
+        node.enableHitSfx = hasClips;
+        node.hitSfxClips = rockHitSfxClips;
+        node.hitSfxVolume = Mathf.Clamp01(rockHitSfxVolume);
+        node.hitSfxPitchRange = rockHitSfxPitchRange;
+        node.hitSfxMinInterval = Mathf.Max(0f, rockHitSfxMinInterval);
+
+#if UNITY_EDITOR
+        if (!hasClips && warnMissingRockHitSfx && !_loggedMissingRockHitSfx)
+        {
+            Debug.LogWarning("[WorldGen] Rock hit audio non configurato: assegna rockHitSfxClips per avere suoni random sui colpi.", this);
+            _loggedMissingRockHitSfx = true;
         }
 #endif
     }

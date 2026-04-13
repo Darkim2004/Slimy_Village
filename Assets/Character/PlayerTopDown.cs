@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+[RequireComponent(typeof(ItemActionSfxDispatcher))]
 public class PlayerTopDown : EntityBase2D
 {
     [Header("Player Stats")]
@@ -44,9 +45,50 @@ public class PlayerTopDown : EntityBase2D
     public bool IsInputLocked => inputLocked;
 
     private HotbarEffectManager hotbarEffects;
+    [Header("Action SFX")]
+    [Tooltip("Dispatcher per suoni legati alle azioni dell'item attivo (attack/eat/harvest/build).")]
+    [SerializeField] private ItemActionSfxDispatcher itemActionSfxDispatcher;
+
+    [Header("Movement SFX - Footsteps")]
+    [Tooltip("Clip casuali riprodotte quando il player cammina.")]
+    [SerializeField] private AudioClip[] walkFootstepClips;
+
+    [Tooltip("Clip casuali riprodotte quando il player corre.")]
+    [SerializeField] private AudioClip[] runFootstepClips;
+
+    [Min(0.02f)]
+    [Tooltip("Intervallo tra i passi in camminata (secondi).")]
+    [SerializeField] private float walkFootstepInterval = 0.42f;
+
+    [Min(0.02f)]
+    [Tooltip("Intervallo tra i passi in corsa (secondi).")]
+    [SerializeField] private float runFootstepInterval = 0.28f;
+
+    [Range(0f, 1f)]
+    [Tooltip("Volume base locale dei passi in camminata (prima del volume globale SFX).")]
+    [SerializeField] private float walkFootstepVolume = 0.55f;
+
+    [Range(0f, 1f)]
+    [Tooltip("Volume base locale dei passi in corsa (prima del volume globale SFX).")]
+    [SerializeField] private float runFootstepVolume = 0.7f;
+
+    [Tooltip("Range di pitch random per i passi in camminata.")]
+    [SerializeField] private Vector2 walkFootstepPitchRange = new Vector2(0.96f, 1.04f);
+
+    [Tooltip("Range di pitch random per i passi in corsa.")]
+    [SerializeField] private Vector2 runFootstepPitchRange = new Vector2(0.96f, 1.06f);
+
+    [Tooltip("Se true, mostra warning una sola volta se mancano clip passo configurate.")]
+    [SerializeField] private bool warnMissingFootstepClips = true;
+
     private HotbarHUD hotbarHUD;
     private InventoryModel inventoryModel;
     private Vector3 respawnPoint;
+    private float nextFootstepAt;
+    private bool footstepWasMoving;
+    private bool footstepWasRunning;
+    private bool loggedMissingWalkFootsteps;
+    private bool loggedMissingRunFootsteps;
 
     protected override void Awake()
     {
@@ -57,6 +99,13 @@ public class PlayerTopDown : EntityBase2D
     private void Start()
     {
         hotbarEffects = FindFirstObjectByType<HotbarEffectManager>();
+
+        if (itemActionSfxDispatcher == null)
+            itemActionSfxDispatcher = GetComponent<ItemActionSfxDispatcher>();
+
+        if (itemActionSfxDispatcher == null)
+            itemActionSfxDispatcher = FindFirstObjectByType<ItemActionSfxDispatcher>();
+
         hotbarHUD = FindFirstObjectByType<HotbarHUD>();
         inventoryModel = GetComponentInParent<InventoryModel>();
         if (inventoryModel == null)
@@ -235,12 +284,16 @@ public class PlayerTopDown : EntityBase2D
         if (inputLocked)
         {
             EnterIdle();
+            UpdateFootstepAudio(false, false);
             return;
         }
 
         // Se sei in stati bloccanti, non leggere input
         if (state == State.Hurt || state == State.Death || state == State.Attack)
+        {
+            UpdateFootstepAudio(false, false);
             return;
+        }
 
         float x = Input.GetAxisRaw(horizontalAxis);
         float y = Input.GetAxisRaw(verticalAxis);
@@ -253,18 +306,32 @@ public class PlayerTopDown : EntityBase2D
         {
             // Non attaccare se si è in build mode
             if (hotbarEffects != null && hotbarEffects.IsBuildModeRequested)
+            {
+                UpdateFootstepAudio(false, false);
                 return;
+            }
 
             if (TryConsumeActiveFood())
+            {
+                UpdateFootstepAudio(false, false);
                 return;
+            }
+
+            if (itemActionSfxDispatcher != null)
+            {
+                ItemDefinition activeItem = hotbarEffects != null ? hotbarEffects.ActiveItemDef : null;
+                itemActionSfxDispatcher.TryPlay(ItemActionSfxAction.AttackSwing, activeItem, transform.position);
+            }
 
             StartAttack();
+            UpdateFootstepAudio(false, false);
             return;
         }
 
         if (input.sqrMagnitude < 0.01f)
         {
             EnterIdle();
+            UpdateFootstepAudio(false, false);
         }
         else
         {
@@ -277,12 +344,112 @@ public class PlayerTopDown : EntityBase2D
                 EnterIdle();
                 if (rb != null)
                     rb.linearVelocity = Vector2.zero;
+
+                UpdateFootstepAudio(false, false);
                 return;
             }
 
             if (run) EnterRun(vel);
             else EnterWalk(vel);
+
+            UpdateFootstepAudio(true, run);
         }
+    }
+
+    private void UpdateFootstepAudio(bool isMoving, bool isRunning)
+    {
+        if (!isMoving)
+        {
+            footstepWasMoving = false;
+            footstepWasRunning = false;
+            nextFootstepAt = 0f;
+            return;
+        }
+
+        AudioClip[] clips = isRunning ? runFootstepClips : walkFootstepClips;
+        if (clips == null || clips.Length == 0)
+        {
+            WarnMissingFootstepClips(isRunning);
+            footstepWasMoving = true;
+            footstepWasRunning = isRunning;
+            return;
+        }
+
+        float now = Time.time;
+        float interval = Mathf.Max(0.02f, isRunning ? runFootstepInterval : walkFootstepInterval);
+
+        if (!footstepWasMoving)
+        {
+            nextFootstepAt = now;
+        }
+        else if (footstepWasRunning != isRunning)
+        {
+            float minInterval = Mathf.Min(Mathf.Max(0.02f, walkFootstepInterval), Mathf.Max(0.02f, runFootstepInterval));
+            nextFootstepAt = Mathf.Min(nextFootstepAt, now + minInterval * 0.5f);
+        }
+
+        if (now >= nextFootstepAt)
+        {
+            PlayFootstepOnce(isRunning, clips);
+            nextFootstepAt = now + interval;
+        }
+
+        footstepWasMoving = true;
+        footstepWasRunning = isRunning;
+    }
+
+    private void PlayFootstepOnce(bool isRunning, AudioClip[] clips)
+    {
+        if (clips == null || clips.Length == 0)
+            return;
+
+        AudioClip clip = PickRandomValidClip(clips);
+        if (clip == null)
+            return;
+
+        Vector2 pitchRange = isRunning ? runFootstepPitchRange : walkFootstepPitchRange;
+        float minPitch = Mathf.Max(0.1f, Mathf.Min(pitchRange.x, pitchRange.y));
+        float maxPitch = Mathf.Max(minPitch, Mathf.Max(pitchRange.x, pitchRange.y));
+        float pitch = UnityEngine.Random.Range(minPitch, maxPitch);
+
+        float volume = Mathf.Clamp01(isRunning ? runFootstepVolume : walkFootstepVolume);
+        GlobalAudioVolume.PlaySfx2D(clip, transform.position, volume, pitch);
+    }
+
+    private static AudioClip PickRandomValidClip(AudioClip[] clips)
+    {
+        int firstIndex = UnityEngine.Random.Range(0, clips.Length);
+        for (int i = 0; i < clips.Length; i++)
+        {
+            int index = (firstIndex + i) % clips.Length;
+            AudioClip clip = clips[index];
+            if (clip != null)
+                return clip;
+        }
+
+        return null;
+    }
+
+    private void WarnMissingFootstepClips(bool isRunning)
+    {
+        if (!warnMissingFootstepClips)
+            return;
+
+        if (isRunning)
+        {
+            if (loggedMissingRunFootsteps)
+                return;
+
+            Debug.LogWarning("[PlayerTopDown] Run footsteps non configurati: assegna runFootstepClips.", this);
+            loggedMissingRunFootsteps = true;
+            return;
+        }
+
+        if (loggedMissingWalkFootsteps)
+            return;
+
+        Debug.LogWarning("[PlayerTopDown] Walk footsteps non configurati: assegna walkFootstepClips.", this);
+        loggedMissingWalkFootsteps = true;
     }
 
     // ══════════════════════════════════════════════════════════
