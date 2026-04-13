@@ -70,10 +70,12 @@ public class AnimalPassiveAI : EntityBase2D
         animalDef = def as AnimalDefinition;
     }
 
-    protected virtual void OnDestroy()
+    protected override void OnDestroy()
     {
         if (health != null)
             health.onHurtBy -= OnHurtBy;
+
+        base.OnDestroy();
     }
 
     protected override void TickAI()

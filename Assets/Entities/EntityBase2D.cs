@@ -17,6 +17,27 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
     public float walkSpeed = 1.6f;
     public float runSpeed = 2.8f;
 
+    [Header("Hit Audio (Non-Player Entities)")]
+    [Tooltip("Se true, riproduce un suono quando questa entita viene colpita (escluso PlayerTopDown).")]
+    public bool enableEntityHitSfx = true;
+
+    [Tooltip("Clip casuali riprodotte quando l'entita subisce danno.")]
+    public AudioClip[] entityHitSfxClips;
+
+    [Range(0f, 1f)]
+    [Tooltip("Volume base locale del suono hit entita (prima del volume globale SFX).")]
+    public float entityHitSfxVolume = 1f;
+
+    [Tooltip("Range di pitch random per i colpi alle entita.")]
+    public Vector2 entityHitSfxPitchRange = new Vector2(0.95f, 1.05f);
+
+    [Min(0f)]
+    [Tooltip("Intervallo minimo tra due suoni hit della stessa entita.")]
+    public float entityHitSfxMinInterval = 0.02f;
+
+    [Tooltip("Se true, logga in editor se mancano clip hit entita configurate.")]
+    public bool warnMissingEntityHitSfx = true;
+
     [Header("Hurt/Death")]
     public float hurtDurationFallback = 0.25f;
     public float deathDurationFallback = 0.8f;
@@ -46,6 +67,8 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
 
     protected readonly Dictionary<string, float> clipLength = new();
     private readonly HashSet<string> missingStateLogged = new();
+    private float _lastEntityHitSfxTime = float.NegativeInfinity;
+    private bool _loggedMissingEntityHitSfx;
 
     // movimento “proposto” dalla AI/derivata (in world space)
     protected Vector2 desiredVelocity = Vector2.zero;
@@ -68,8 +91,20 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
         health.onHurt += EnterHurt;
         health.onDeath += EnterDeath;
         health.onDeath += HandleDropLoot;
+        health.onHurtBy += HandleEntityHitAudio;
 
         EnterIdle();
+    }
+
+    protected virtual void OnDestroy()
+    {
+        if (health == null)
+            return;
+
+        health.onHurt -= EnterHurt;
+        health.onDeath -= EnterDeath;
+        health.onDeath -= HandleDropLoot;
+        health.onHurtBy -= HandleEntityHitAudio;
     }
 
     public virtual void Initialize(EntityDefinition def)
@@ -388,5 +423,57 @@ public abstract class EntityBase2D : MonoBehaviour, ISpawnInitializable
     {
         string clip = $"{baseName}_{d.ToString().ToLower()}";
         return clipLength.TryGetValue(clip, out float len) ? len : fallback;
+    }
+
+    private void HandleEntityHitAudio(GameObject attacker)
+    {
+        if (this is PlayerTopDown)
+            return;
+
+        if (!enableEntityHitSfx)
+            return;
+
+        if (entityHitSfxClips == null || entityHitSfxClips.Length == 0)
+        {
+#if UNITY_EDITOR
+            if (warnMissingEntityHitSfx && !_loggedMissingEntityHitSfx)
+            {
+                Debug.LogWarning("[EntityBase2D] Entity hit audio non configurato: assegna entityHitSfxClips.", this);
+                _loggedMissingEntityHitSfx = true;
+            }
+#endif
+            return;
+        }
+
+        if (Time.time < _lastEntityHitSfxTime + Mathf.Max(0f, entityHitSfxMinInterval))
+            return;
+
+        AudioClip clip = PickRandomValidClip(entityHitSfxClips);
+        if (clip == null)
+            return;
+
+        float minPitch = Mathf.Max(0.1f, Mathf.Min(entityHitSfxPitchRange.x, entityHitSfxPitchRange.y));
+        float maxPitch = Mathf.Max(minPitch, Mathf.Max(entityHitSfxPitchRange.x, entityHitSfxPitchRange.y));
+        float pitch = UnityEngine.Random.Range(minPitch, maxPitch);
+
+        GlobalAudioVolume.PlaySfx2D(clip, transform.position, Mathf.Clamp01(entityHitSfxVolume), pitch);
+        _lastEntityHitSfxTime = Time.time;
+    }
+
+    private static AudioClip PickRandomValidClip(AudioClip[] clips)
+    {
+        if (clips == null || clips.Length == 0)
+            return null;
+
+        int first = UnityEngine.Random.Range(0, clips.Length);
+        for (int i = 0; i < clips.Length; i++)
+        {
+            int index = (first + i) % clips.Length;
+            AudioClip clip = clips[index];
+            if (clip != null)
+                return clip;
+        }
+
+        return null;
     }
 }

@@ -154,7 +154,7 @@ public class PlayerTopDown : EntityBase2D
         return world.IsLandCell(nextCell.x, nextCell.y);
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         foreach (var menu in menuInstances.Values)
         {
@@ -170,6 +170,8 @@ public class PlayerTopDown : EntityBase2D
 
         menuInstances.Clear();
         bookMenuInstances.Clear();
+
+        base.OnDestroy();
     }
 
     /// <summary>

@@ -225,6 +225,15 @@ MonoBehaviour:
   definition: {fileID: 11400000, guid: 489b422ffed4984448404e043704048e, type: 2}
   walkSpeed: 1.6
   runSpeed: 2
+  enableEntityHitSfx: 1
+  entityHitSfxClips:
+  - {fileID: 8300000, guid: bc13715ea667a934e938a22c8a54b425, type: 3}
+  - {fileID: 8300000, guid: 4010c251e23feb346a58c5778c18e867, type: 3}
+  - {fileID: 8300000, guid: cbc59f894c05465418d439aac0b0b9e2, type: 3}
+  entityHitSfxVolume: 1
+  entityHitSfxPitchRange: {x: 0.95, y: 1.05}
+  entityHitSfxMinInterval: 0.02
+  warnMissingEntityHitSfx: 1
   hurtDurationFallback: 0.25
   deathDurationFallback: 0.8
   idleName: idle

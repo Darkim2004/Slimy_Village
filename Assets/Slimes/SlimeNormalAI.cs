@@ -55,10 +55,12 @@ public class SlimeNormalAI : EntityBase2D
         slimeDef = def as SlimeDefinition;
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         if (health != null)
             health.onHurtBy -= OnHurtBy;
+
+        base.OnDestroy();
     }
 
     /// <summary>

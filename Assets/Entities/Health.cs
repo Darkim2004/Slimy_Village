@@ -49,6 +49,7 @@ public class Health : MonoBehaviour
             hp = 0;
             dead = true;
             onHpChanged?.Invoke(hp, maxHp);
+            onHurtBy?.Invoke(attacker);
             onDeath?.Invoke();
         }
         else
