@@ -83,7 +83,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 978398353
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -6345700973451923875, guid: 45f036b7693d19f4f8b38f1c551b8beb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -235,6 +235,15 @@ MonoBehaviour:
   definition: {fileID: 11400000, guid: 4853a6a5b0d825d4da4b9584d8b0b409, type: 2}
   walkSpeed: 1.6
   runSpeed: 2.5
+  enableEntityHitSfx: 1
+  entityHitSfxClips:
+  - {fileID: 8300000, guid: bc13715ea667a934e938a22c8a54b425, type: 3}
+  - {fileID: 8300000, guid: 4010c251e23feb346a58c5778c18e867, type: 3}
+  - {fileID: 8300000, guid: cbc59f894c05465418d439aac0b0b9e2, type: 3}
+  entityHitSfxVolume: 1
+  entityHitSfxPitchRange: {x: 0.95, y: 1.05}
+  entityHitSfxMinInterval: 0.02
+  warnMissingEntityHitSfx: 1
   hurtDurationFallback: 0.25
   deathDurationFallback: 0.8
   idleName: idle
