@@ -31,14 +31,17 @@ public class GenericAreaSpawner2D : MonoBehaviour
         if (!world.HasGenerated) { GameDebug.Log(GameDebugCategory.Spawner, "Spawner: world not generated"); return; }
         if (entries == null || entries.Length == 0) { GameDebug.Log(GameDebugCategory.Spawner, "Spawner: no entries"); return; }
 
-        if (transform.childCount >= maxAlive) { GameDebug.Log(GameDebugCategory.Spawner, "Spawner: maxAlive reached"); return; }
+        Vector3Int playerCell = world.GroundTilemap.WorldToCell(player.position);
+        int spawnRadiusCells = rules.SpawnRadiusCells;
+        int despawnedCount = DespawnEntitiesOutsideSpawnRadius(playerCell, spawnRadiusCells);
+
+        if (transform.childCount - despawnedCount >= maxAlive) { GameDebug.Log(GameDebugCategory.Spawner, "Spawner: maxAlive reached"); return; }
 
         timer -= Time.deltaTime;
         if (timer > 0f) { return; }
         timer = spawnInterval;
 
-        Vector3Int playerCell = world.GroundTilemap.WorldToCell(player.position);
-        int half = Mathf.Max(1, rules.windowSize / 2);
+        int half = spawnRadiusCells;
         int minD2 = rules.minDistanceFromPlayerCells * rules.minDistanceFromPlayerCells;
 
         Camera cam = camOverride != null ? camOverride : Camera.main;
@@ -76,6 +79,31 @@ public class GenericAreaSpawner2D : MonoBehaviour
 
             return;
         }
+    }
+
+    private int DespawnEntitiesOutsideSpawnRadius(Vector3Int playerCell, int spawnRadiusCells)
+    {
+        int despawnedCount = 0;
+
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            Transform child = transform.GetChild(i);
+            if (child == null) continue;
+
+            EntityBase2D entity = child.GetComponent<EntityBase2D>();
+            if (entity == null || entity is PlayerTopDown) continue;
+
+            Vector3Int entityCell = world.GroundTilemap.WorldToCell(entity.transform.position);
+            int dx = Mathf.Abs(entityCell.x - playerCell.x);
+            int dy = Mathf.Abs(entityCell.y - playerCell.y);
+
+            if (Mathf.Max(dx, dy) <= spawnRadiusCells) continue;
+
+            Destroy(child.gameObject);
+            despawnedCount++;
+        }
+
+        return despawnedCount;
     }
 
     private SpawnEntry PickEntryFor(WorldGenTilemap.Biome biome)

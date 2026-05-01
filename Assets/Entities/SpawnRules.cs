@@ -5,6 +5,7 @@ public class SpawnRules
 {
     [Header("Window (cells)")]
     public int windowSize = 32;
+    public int SpawnRadiusCells => Mathf.Max(1, windowSize / 2);
 
     [Header("Min distance from player (cells)")]
     public int minDistanceFromPlayerCells = 16;
