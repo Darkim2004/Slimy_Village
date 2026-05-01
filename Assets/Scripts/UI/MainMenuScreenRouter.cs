@@ -2127,7 +2127,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         if (EventSystem.current == null)
             return;
 
-        if (WasPointerUsedThisFrame() && EventSystem.current.currentSelectedGameObject != null)
+        if (WasPointerUsedThisFrame()
+            && EventSystem.current.currentSelectedGameObject != null
+            && !IsSelectedInputField())
             EventSystem.current.SetSelectedGameObject(null);
 
         if (IsKeyboardNavigationInputThisFrame() && EventSystem.current.currentSelectedGameObject == null)
@@ -2145,6 +2147,15 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
             || Input.GetMouseButtonDown(0)
             || Input.GetMouseButtonDown(1)
             || Mathf.Abs(Input.mouseScrollDelta.y) > 0.01f;
+    }
+
+    private bool IsSelectedInputField()
+    {
+        if (EventSystem.current == null || EventSystem.current.currentSelectedGameObject == null)
+            return false;
+
+        var inputField = EventSystem.current.currentSelectedGameObject.GetComponent<InputField>();
+        return inputField != null && inputField.isActiveAndEnabled && inputField.interactable;
     }
 
     private bool IsKeyboardNavigationInputThisFrame()
