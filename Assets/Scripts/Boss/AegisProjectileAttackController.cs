@@ -101,6 +101,7 @@ public class AegisProjectileAttackController : MonoBehaviour
     private bool _combatEnabled = true;
     private bool _actorsFrozenByDeathCutscene;
     private bool _wasPlayerInputLockedBeforeDeathCutscene;
+    private bool _deathCutsceneCameraOverrideActive;
     private Transform _deathCutscenePivot;
     private Transform _deathCutsceneOriginalFollow;
     private readonly List<EntityBase2D> _pausedSlimes = new List<EntityBase2D>();
@@ -947,6 +948,7 @@ public class AegisProjectileAttackController : MonoBehaviour
         _deathCutsceneOriginalFollow = deathCutsceneCamera.Follow;
         _deathCutscenePivot.position = startPosition;
         deathCutsceneCamera.Follow = _deathCutscenePivot;
+        _deathCutsceneCameraOverrideActive = true;
 
         float focusPan = Mathf.Min(Mathf.Max(0f, deathFocusPanSeconds), Mathf.Max(0f, deathDuration));
         if (focusPan > 0f)
@@ -980,6 +982,7 @@ public class AegisProjectileAttackController : MonoBehaviour
             _deathCutscenePivot.position = to;
 
         deathCutsceneCamera.Follow = playerTransform != null ? playerTransform : _deathCutsceneOriginalFollow;
+        _deathCutsceneCameraOverrideActive = false;
     }
 
     private IEnumerator PanDeathCutscenePivot(Vector3 from, Vector3 to, float duration)
@@ -1070,8 +1073,11 @@ public class AegisProjectileAttackController : MonoBehaviour
             _actorsFrozenByDeathCutscene = false;
         }
 
-        if (deathCutsceneCamera != null)
+        if (_deathCutsceneCameraOverrideActive && deathCutsceneCamera != null)
             deathCutsceneCamera.Follow = playerTransform != null ? playerTransform : _deathCutsceneOriginalFollow;
+
+        _deathCutsceneCameraOverrideActive = false;
+        _deathCutsceneOriginalFollow = null;
 
         if (_deathCutscenePivot != null)
         {
