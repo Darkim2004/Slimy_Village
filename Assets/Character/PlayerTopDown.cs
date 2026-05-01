@@ -483,7 +483,8 @@ public class PlayerTopDown : EntityBase2D
     // ══════════════════════════════════════════════════════════
     private void UpdateInteraction()
     {
-        bool mouseInteractPressed = IsMouseInteractPressed();
+        bool rawMouseInteractPressed = Input.GetMouseButtonDown(1);
+        bool mouseInteractPressed = IsMouseInteractPressed(rawMouseInteractPressed);
         bool interactPressed = Input.GetKeyDown(interactKey) || mouseInteractPressed;
 
         if (state == State.Death || state == State.Hurt)
@@ -503,7 +504,9 @@ public class PlayerTopDown : EntityBase2D
             return;
         }
 
-        if (TryHandleBookInteraction(mouseInteractPressed))
+        CacheSelectedBookMenuIfNeeded();
+
+        if (TryHandleBookInteraction(rawMouseInteractPressed))
         {
             if (WorldInteractionTooltipUI.Instance != null)
                 WorldInteractionTooltipUI.Instance.Hide();
@@ -592,9 +595,9 @@ public class PlayerTopDown : EntityBase2D
         return true;
     }
 
-    private bool IsMouseInteractPressed()
+    private bool IsMouseInteractPressed(bool rawRightClickPressed)
     {
-        if (!Input.GetMouseButtonDown(1))
+        if (!rawRightClickPressed)
             return false;
 
         if (hotbarEffects != null && hotbarEffects.IsBuildModeRequested)
@@ -606,11 +609,10 @@ public class PlayerTopDown : EntityBase2D
         return true;
     }
 
-    private bool TryHandleBookInteraction(bool rightClickPressed)
+    private bool TryHandleBookInteraction(bool rawRightClickPressed)
     {
-        var activeDef = hotbarEffects != null ? hotbarEffects.ActiveItemDef : null;
+        var activeDef = ResolveSelectedHotbarItemDef();
         bool isBookSelected = activeDef != null && activeDef.IsBook;
-        bool rawRightClickPressed = Input.GetMouseButtonDown(1);
 
         if (!isBookSelected)
         {
@@ -624,7 +626,7 @@ public class PlayerTopDown : EntityBase2D
         {
             activeBookMenu.SetBook(activeDef);
 
-            if (rightClickPressed || rawRightClickPressed)
+            if (rawRightClickPressed)
             {
                 activeBookMenu.Hide();
                 activeBookMenu = null;
@@ -635,15 +637,42 @@ public class PlayerTopDown : EntityBase2D
             return true;
         }
 
-        if (!rightClickPressed)
+        if (!rawRightClickPressed)
             return false;
 
         activeBookMenu = ResolveBookMenuFor(activeDef);
         if (activeBookMenu == null)
-            return false;
+            return true;
 
         activeBookMenu.Show(activeDef);
         return true;
+    }
+
+    private void CacheSelectedBookMenuIfNeeded()
+    {
+        if (activeBookMenu != null)
+            return;
+
+        var activeDef = ResolveSelectedHotbarItemDef();
+        if (activeDef == null || !activeDef.IsBook)
+            return;
+
+        activeBookMenu = ResolveBookMenuFor(activeDef);
+    }
+
+    private ItemDefinition ResolveSelectedHotbarItemDef()
+    {
+        if (hotbarHUD != null)
+        {
+            var selectedStack = hotbarHUD.SelectedStack;
+            if (selectedStack != null && !selectedStack.IsEmpty)
+                return selectedStack.def;
+
+            if (inventoryModel != null && inventoryModel.Hotbar != null)
+                return null;
+        }
+
+        return hotbarEffects != null ? hotbarEffects.ActiveItemDef : null;
     }
 
     private BookReadingMenuUI ResolveBookMenuFor(ItemDefinition bookDef)
