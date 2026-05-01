@@ -12,14 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 360cc822f75e8ea47a02e4491f3151f7, type: 3}
   m_Name: Campfire_Item
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
-  id: 
-  displayName: 
+  id: campfire
+  displayName: Campfire
   description: 
   category: 2
   icon: {fileID: 6911056676163173146, guid: 9177ba721a2e6d844b6d5180382e9847, type: 3}
   attackDamage: 0
+  healAmount: 0
+  isHarvestTool: 0
+  harvestToolLevel: 1
   isArmor: 0
   armorDefense: 0
   placeableData: {fileID: 11400000, guid: f9e5eef05b3ed4e4b9c2b63d7cf72442, type: 2}
+  bookMenuPrefab: {fileID: 0}
   isStackable: 1
   maxStack: 64

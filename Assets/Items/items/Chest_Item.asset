@@ -12,14 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 360cc822f75e8ea47a02e4491f3151f7, type: 3}
   m_Name: Chest_Item
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
-  id: 
-  displayName: 
+  id: chest
+  displayName: Chest
   description: 
   category: 2
   icon: {fileID: 7147842635118902238, guid: 271b56c9b1d536641ba87f4177160172, type: 3}
   attackDamage: 0
+  healAmount: 0
+  isHarvestTool: 0
+  harvestToolLevel: 1
   isArmor: 0
   armorDefense: 0
   placeableData: {fileID: 11400000, guid: 07bb605de94482940966e9bc789ec7ad, type: 2}
+  bookMenuPrefab: {fileID: 0}
   isStackable: 1
   maxStack: 64

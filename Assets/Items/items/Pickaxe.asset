@@ -12,16 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 360cc822f75e8ea47a02e4491f3151f7, type: 3}
   m_Name: Pickaxe
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
-  id: sword
-  displayName: Sword
+  id: pickaxe
+  displayName: Pickaxe
   description: 
   category: 1
   icon: {fileID: -488721925442295091, guid: d9858c6d0fde7e84aa249275650b1723, type: 3}
   attackDamage: 0
+  healAmount: 0
   isHarvestTool: 1
   harvestToolLevel: 2
   isArmor: 0
   armorDefense: 0
   placeableData: {fileID: 0}
+  bookMenuPrefab: {fileID: 0}
   isStackable: 0
   maxStack: 1
