@@ -19844,6 +19844,7 @@ GameObject:
   - component: {fileID: 2081062099}
   - component: {fileID: 2081062098}
   - component: {fileID: 2081062097}
+  - component: {fileID: 2081062110}
   - component: {fileID: 2081062096}
   - component: {fileID: 2081062095}
   - component: {fileID: 2081062094}
@@ -20009,6 +20010,54 @@ MonoBehaviour:
   interactionMenusRoot: {fileID: 0}
   respawnDelay: 1
   dropSpreadRadius: 0.3
+  itemActionSfxDispatcher: {fileID: 2081062110}
+  walkFootstepClips:
+  - {fileID: 8300000, guid: 987c7f5ef76b7604e85da82acf38bfd2, type: 3}
+  - {fileID: 8300000, guid: 5deb64c04c41d5e40836b8154b718e04, type: 3}
+  - {fileID: 8300000, guid: 9f471dcb70f6eb7408f70245b46d1bc4, type: 3}
+  - {fileID: 8300000, guid: 6c2fc2652d43fd74e8d36ee8559e46dc, type: 3}
+  - {fileID: 8300000, guid: 5bd529ac6f222c240b4239c7c30a5cd0, type: 3}
+  runFootstepClips:
+  - {fileID: 8300000, guid: a9b768f1930428e48ab9e36646257c62, type: 3}
+  - {fileID: 8300000, guid: 43c15254085301846ac364e41035add7, type: 3}
+  - {fileID: 8300000, guid: 658fe45bff099f143a8e1a647df2805d, type: 3}
+  - {fileID: 8300000, guid: fa5442d627c47fc40b2563da7ebbc9f3, type: 3}
+  - {fileID: 8300000, guid: 52a3e87e2b05522448f1d46e1a894e0d, type: 3}
+  walkFootstepInterval: 0.42
+  runFootstepInterval: 0.33
+  walkFootstepVolume: 0.2
+  runFootstepVolume: 0.2
+  walkFootstepPitchRange: {x: 0.96, y: 1.04}
+  runFootstepPitchRange: {x: 0.96, y: 1.06}
+  warnMissingFootstepClips: 1
+--- !u!114 &2081062110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2081062090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91fdc6f28ecf3a743a69395558b3492e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ItemActionSfxDispatcher
+  rules:
+  - ruleName: Sword Swing
+    enabled: 1
+    action: 0
+    itemMatchMode: 2
+    itemId: sword
+    itemCategory: 1
+    clips:
+    - {fileID: 8300000, guid: a8398c66da3853d45a18b367e6e11d59, type: 3}
+    - {fileID: 8300000, guid: 862758c39d374ce409a1a7d6ace90652, type: 3}
+    - {fileID: 8300000, guid: ad86983440f8fa8428a840a95791df27, type: 3}
+    volume: 0.5
+    pitchRange: {x: 0.95, y: 1.05}
+    minInterval: 0.03
+  warnWhenNoMatchingRule: 0
+  warnWhenRuleHasNoClips: 1
 --- !u!114 &2081062098
 MonoBehaviour:
   m_ObjectHideFlags: 0
