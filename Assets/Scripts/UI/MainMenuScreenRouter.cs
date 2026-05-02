@@ -136,6 +136,8 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     [SerializeField] private string loadGameWorldRowTextObjectName = "Text";
     [SerializeField] private string loadGameTitle = "Load Game";
     [SerializeField] private string loadGameEmptyLabel = "Nessun mondo salvato trovato.";
+    [SerializeField] private Font loadGameEmptyFont;
+    [SerializeField] private Color loadGameEmptyColor = new Color(1f, 1f, 1f, 0.85f);
     [SerializeField] private string loadGamePlayLabel = "Play";
     [SerializeField] private string loadGameDeleteLabel = "Delete";
     [SerializeField] private string loadGameLastPlayedLabel = "Ultima partita";
@@ -867,10 +869,12 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
         layoutElement.flexibleHeight = 0f;
 
         var text = emptyGo.GetComponent<Text>();
-        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        text.font = loadGameEmptyFont != null
+            ? loadGameEmptyFont
+            : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         text.alignment = TextAnchor.MiddleCenter;
         text.fontSize = 24;
-        text.color = new Color(1f, 1f, 1f, 0.85f);
+        text.color = loadGameEmptyColor;
         text.text = loadGameEmptyLabel;
     }
 

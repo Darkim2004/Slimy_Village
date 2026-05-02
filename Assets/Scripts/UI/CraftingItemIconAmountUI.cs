@@ -71,12 +71,13 @@ public class CraftingItemIconAmountUI : MonoBehaviour, IPointerEnterHandler, IPo
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (InventoryTooltipUI.Instance == null) return;
+        var tooltip = InventoryTooltipUI.GetOrCreateActiveInstance(transform);
+        if (tooltip == null) return;
 
         if (currentItem != null)
-            InventoryTooltipUI.Instance.RequestShow(currentItem.displayName);
+            tooltip.RequestShow(currentItem.displayName);
         else
-            InventoryTooltipUI.Instance.Hide();
+            tooltip.Hide();
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -179,7 +180,8 @@ public class CraftingItemIconAmountUI : MonoBehaviour, IPointerEnterHandler, IPo
 
     private static void HideTooltip()
     {
-        if (InventoryTooltipUI.Instance != null)
-            InventoryTooltipUI.Instance.Hide();
+        var tooltip = InventoryTooltipUI.Instance;
+        if (tooltip != null)
+            tooltip.Hide();
     }
 }
