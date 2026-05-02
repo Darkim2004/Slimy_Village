@@ -135,6 +135,12 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnte
         AdaptFontSizeToSlot();
     }
 
+    private void OnDisable()
+    {
+        SetHighlight(false);
+        HideTooltip();
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         if (controller == null || section == null) return;
@@ -172,19 +178,23 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnte
 
     private void ShowTooltipForCurrentSlot()
     {
-        if (InventoryTooltipUI.Instance == null || section == null) return;
+        if (section == null) return;
+
+        var tooltip = InventoryTooltipUI.GetOrCreateActiveInstance(transform);
+        if (tooltip == null) return;
 
         var stack = section.GetSlot(index);
         if (stack != null && !stack.IsEmpty && stack.def != null)
-            InventoryTooltipUI.Instance.RequestShow(stack.def.displayName);
+            tooltip.RequestShow(stack.def.displayName);
         else
-            InventoryTooltipUI.Instance.Hide();
+            tooltip.Hide();
     }
 
     private void HideTooltip()
     {
-        if (InventoryTooltipUI.Instance != null)
-            InventoryTooltipUI.Instance.Hide();
+        var tooltip = InventoryTooltipUI.Instance;
+        if (tooltip != null)
+            tooltip.Hide();
     }
 
     private void SetEmptyVisual()
