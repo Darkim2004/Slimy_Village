@@ -5839,7 +5839,9 @@ MonoBehaviour:
   loadGameContentObjectName: Content
   loadGameWorldRowTextObjectName: Nome
   loadGameTitle: Load Game
-  loadGameEmptyLabel: Nessun mondo salvato trovato.
+  loadGameEmptyLabel: No world found
+  loadGameEmptyFont: {fileID: 12800000, guid: 836cf469cd749e54e9fe3f8f61fc3aa8, type: 3}
+  loadGameEmptyColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
   loadGamePlayLabel: Play
   loadGameDeleteLabel: Delete
   loadGameLastPlayedLabel: Ultima partita
