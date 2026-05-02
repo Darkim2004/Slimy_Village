@@ -292,6 +292,26 @@ public class WorldGenTilemap : MonoBehaviour
 
     private bool _loggedMissingTreeHitSfx;
 
+    [Header("Bush Hit Audio")]
+    [Tooltip("Clip casuali riprodotte al colpo su cespugli.")]
+    public AudioClip[] bushHitSfxClips;
+
+    [Range(0f, 1f)]
+    [Tooltip("Volume base locale dei suoni hit cespuglio (prima del volume globale SFX).")]
+    public float bushHitSfxVolume = 1f;
+
+    [Tooltip("Range di pitch random per i colpi ai cespugli.")]
+    public Vector2 bushHitSfxPitchRange = new Vector2(0.95f, 1.05f);
+
+    [Min(0f)]
+    [Tooltip("Intervallo minimo tra due suoni hit dello stesso cespuglio.")]
+    public float bushHitSfxMinInterval = 0.02f;
+
+    [Tooltip("Se true, logga in editor se mancano clip hit cespuglio configurate.")]
+    public bool warnMissingBushHitSfx = true;
+
+    private bool _loggedMissingBushHitSfx;
+
     [Header("Rock Hit Audio")]
     [Tooltip("Clip casuali riprodotte al colpo su rocce.")]
     public AudioClip[] rockHitSfxClips;
@@ -1561,6 +1581,7 @@ public class WorldGenTilemap : MonoBehaviour
         EnsureBushHitCollider(go);
 
         ConfigureHarvestableNode(go, bushHitPoints, bushLootTable, bushRequiredHarvestLevel);
+        ConfigureBushHitAudio(go);
     }
 
     private void SpawnSnowTreePrefab(Vector3Int cell)
@@ -1683,6 +1704,31 @@ public class WorldGenTilemap : MonoBehaviour
         {
             Debug.LogWarning("[WorldGen] Tree hit audio non configurato: assegna treeHitSfxClips per avere suoni random sui colpi.", this);
             _loggedMissingTreeHitSfx = true;
+        }
+#endif
+    }
+
+    private void ConfigureBushHitAudio(GameObject go)
+    {
+        if (go == null)
+            return;
+
+        HarvestableNode node = go.GetComponent<HarvestableNode>();
+        if (node == null)
+            return;
+
+        bool hasClips = bushHitSfxClips != null && bushHitSfxClips.Length > 0;
+        node.enableHitSfx = hasClips;
+        node.hitSfxClips = bushHitSfxClips;
+        node.hitSfxVolume = Mathf.Clamp01(bushHitSfxVolume);
+        node.hitSfxPitchRange = bushHitSfxPitchRange;
+        node.hitSfxMinInterval = Mathf.Max(0f, bushHitSfxMinInterval);
+
+#if UNITY_EDITOR
+        if (!hasClips && warnMissingBushHitSfx && !_loggedMissingBushHitSfx)
+        {
+            Debug.LogWarning("[WorldGen] Bush hit audio non configurato: assegna bushHitSfxClips per avere suoni random sui colpi.", this);
+            _loggedMissingBushHitSfx = true;
         }
 #endif
     }

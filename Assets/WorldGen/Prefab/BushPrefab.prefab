@@ -175,3 +175,12 @@ MonoBehaviour:
   hitFlashDuration: 0.12
   hitFlashStrength: 0.9
   delayDestroyForHitFlash: 1
+  enableHitSfx: 1
+  hitSfxClips:
+  - {fileID: 8300000, guid: dd665be18313edf4697650faeaa4b572, type: 3}
+  - {fileID: 8300000, guid: 843b0fb9077ddcf4f8c30c696f4713ac, type: 3}
+  - {fileID: 8300000, guid: e9c55001155aab0459e348b671d158bd, type: 3}
+  - {fileID: 8300000, guid: 3c4d795653281cf4ca93a629b094c3ef, type: 3}
+  hitSfxVolume: 1
+  hitSfxPitchRange: {x: 0.95, y: 1.05}
+  hitSfxMinInterval: 0.02
