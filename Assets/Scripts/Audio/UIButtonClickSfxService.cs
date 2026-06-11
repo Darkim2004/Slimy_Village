@@ -21,7 +21,7 @@ public class UIButtonClickSfxService : MonoBehaviour
 
     [Range(0f, 1f)]
     [Tooltip("Volume base locale del click UI (prima del volume globale SFX).")]
-    [SerializeField] private float buttonClickVolume = 0.5f;
+    [SerializeField] private float buttonClickVolume = 1f;
 
     [Tooltip("Range di pitch random per variare il click UI.")]
     [SerializeField] private Vector2 buttonClickPitchRange = new Vector2(0.98f, 1.02f);
@@ -51,7 +51,7 @@ public class UIButtonClickSfxService : MonoBehaviour
 
     private static UIButtonClickSfxService _instance;
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void AutoBootstrap()
     {
         UIButtonClickSfxService existing = FindFirstObjectByType<UIButtonClickSfxService>(FindObjectsInactive.Include);
@@ -108,6 +108,7 @@ public class UIButtonClickSfxService : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         BindAllButtons();
+        _nextRebindAt = 0f;
     }
 
     private void BindAllButtons()
@@ -124,10 +125,16 @@ public class UIButtonClickSfxService : MonoBehaviour
         if (button == null)
             return;
 
-        if (_boundButtons.ContainsKey(button))
+        UnityAction action;
+        if (_boundButtons.TryGetValue(button, out action))
+        {
+            button.onClick.RemoveListener(action);
+            button.onClick.AddListener(action);
             return;
+        }
 
-        UnityAction action = PlayButtonClick;
+        action = PlayButtonClick;
+        button.onClick.RemoveListener(action);
         button.onClick.AddListener(action);
         _boundButtons.Add(button, action);
     }

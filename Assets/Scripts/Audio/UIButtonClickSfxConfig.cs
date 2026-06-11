@@ -9,7 +9,7 @@ public class UIButtonClickSfxConfig : ScriptableObject
 
     [Range(0f, 1f)]
     [Tooltip("Volume base locale del click UI (prima del volume globale SFX).")]
-    public float buttonClickVolume = 0.5f;
+    public float buttonClickVolume = 1f;
 
     [Tooltip("Range di pitch random per variare il click UI.")]
     public Vector2 buttonClickPitchRange = new Vector2(0.98f, 1.02f);

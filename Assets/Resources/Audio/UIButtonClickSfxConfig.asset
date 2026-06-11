@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: UIButtonClickSfxConfig
   m_EditorClassIdentifier: Assembly-CSharp::UIButtonClickSfxConfig
   buttonClickClips: []
-  buttonClickVolume: 0.5
+  buttonClickVolume: 1
   buttonClickPitchRange: {x: 0.98, y: 1.02}
   clickMinInterval: 0.02
   rebindInterval: 0.5
