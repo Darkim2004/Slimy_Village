@@ -17,6 +17,11 @@ public static class GlobalAudioVolume
         return Mathf.Clamp01(PlayerPrefs.GetFloat(PrefSfxVolume, 1f));
     }
 
+    public static float GetSavedMusicVolume()
+    {
+        return Mathf.Clamp01(PlayerPrefs.GetFloat(PrefMusicVolume, 1f));
+    }
+
     public static void ApplyToSceneAudioSources()
     {
         GetSavedVolumes(out float sfxVolume, out float musicVolume);
@@ -34,6 +39,13 @@ public static class GlobalAudioVolume
             AudioSource source = sources[i];
             if (source == null)
                 continue;
+
+            MusicAudioSource musicSource = source.GetComponent<MusicAudioSource>();
+            if (musicSource != null)
+            {
+                musicSource.ApplyVolume(clampedMusic);
+                continue;
+            }
 
             source.volume = IsMusicSource(source) ? clampedMusic : clampedSfx;
         }
@@ -71,7 +83,7 @@ public static class GlobalAudioVolume
         if (source == null)
             return false;
 
-        if (source.loop)
+        if (source.GetComponent<MusicAudioSource>() != null)
             return true;
 
         string sourceName = source.gameObject.name.ToLowerInvariant();

@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f28d44dbb68a486b9e219d8744144a3b, type: 3}
+  m_Name: SceneMusicConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SceneMusicConfig
+  tracks:
+  - sceneName: MainMenu
+    clip: {fileID: 8300000, guid: 2d941bde1b5747c438fde5d563310a0a, type: 3}
+    baseVolume: 0.75
+    useDayNightCycle: 0
+    dayClip: {fileID: 0}
+    nightClip: {fileID: 0}
+    dayBaseVolume: 1
+    nightBaseVolume: 1
+    nightSwitchThreshold: 0.5
+  - sceneName: Game
+    clip: {fileID: 8300000, guid: 55529e3905afa9d41b501e5f9ccd9a78, type: 3}
+    baseVolume: 0.65
+    useDayNightCycle: 1
+    dayClip: {fileID: 8300000, guid: 55529e3905afa9d41b501e5f9ccd9a78, type: 3}
+    nightClip: {fileID: 8300000, guid: 315aae8c206ce7942b91c6e7edc69a2d, type: 3}
+    dayBaseVolume: 0.65
+    nightBaseVolume: 0.65
+    nightSwitchThreshold: 0.5
+  - sceneName: BossBattle
+    clip: {fileID: 8300000, guid: 4334fec58f2cfdf4cabcd1faf8877b32, type: 3}
+    baseVolume: 0.75
+    useDayNightCycle: 0
+    dayClip: {fileID: 0}
+    nightClip: {fileID: 0}
+    dayBaseVolume: 1
+    nightBaseVolume: 1
+    nightSwitchThreshold: 0.5
+  stopWhenSceneHasNoTrack: 1
+  warnMissingTracks: 1
