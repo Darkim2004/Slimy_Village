@@ -1431,56 +1431,60 @@ public class WorldGenTilemap : MonoBehaviour
     }
 
     /// <summary>
-    /// Cerca una cella valida per lo spawn del player il piu vicino possibile a world (0,0),
-    /// espandendo la ricerca ad anelli verso l'esterno.
+    /// Cerca la cella valida piu vicina al centro logico della mappa.
     /// La cella deve essere terra (non Ocean) e non bloccata (alberi/rocce).
     /// </summary>
     private Vector3 FindWorldSpawnPoint()
     {
-        Vector3Int worldOriginCell = groundTilemap != null
-            ? groundTilemap.WorldToCell(Vector3.zero)
-            : new Vector3Int(0, 0, 0);
+        if (TryFindClosestSpawnCell(IsValidSpawnCell, out Vector2Int spawnCell))
+            return CellCenterWorld(spawnCell.x, spawnCell.y);
 
-        int sx = Mathf.Clamp(worldOriginCell.x, 0, Mathf.Max(0, width - 1));
-        int sy = Mathf.Clamp(worldOriginCell.y, 0, Mathf.Max(0, height - 1));
-
-        // Prova prima la cella mappa corrispondente a world (0,0).
-        if (IsValidSpawnCell(sx, sy))
-            return CellCenterWorld(sx, sy);
-
-        // Ricerca ad anelli (distanza crescente da world 0,0).
-        int maxRadius = Mathf.Max(width, height);
-        for (int r = 1; r < maxRadius; r++)
+        if (TryFindClosestSpawnCell((x, y) => IsInside(x, y) && IsLandCell(x, y), out spawnCell))
         {
-            int minX = sx - r;
-            int maxX = sx + r;
-            int minY = sy - r;
-            int maxY = sy + r;
+            Debug.LogWarning("[WorldGen] Nessuna cella di spawn libera trovata! Uso la cella di terra piu vicina al centro mappa.", this);
+            return CellCenterWorld(spawnCell.x, spawnCell.y);
+        }
 
-            // Bordo alto + basso
-            for (int x = minX; x <= maxX; x++)
+        int centerX = Mathf.Clamp(Mathf.RoundToInt((width - 1) * 0.5f), 0, Mathf.Max(0, width - 1));
+        int centerY = Mathf.Clamp(Mathf.RoundToInt((height - 1) * 0.5f), 0, Mathf.Max(0, height - 1));
+
+        Debug.LogWarning("[WorldGen] Nessuna cella di terra trovata per lo spawn! Uso il centro mappa.", this);
+        return CellCenterWorld(centerX, centerY);
+    }
+
+    private bool TryFindClosestSpawnCell(Func<int, int, bool> predicate, out Vector2Int cell)
+    {
+        cell = Vector2Int.zero;
+
+        if (predicate == null || width <= 0 || height <= 0)
+            return false;
+
+        float centerX = (width - 1) * 0.5f;
+        float centerY = (height - 1) * 0.5f;
+        float bestDistanceSqr = float.PositiveInfinity;
+        bool found = false;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
             {
-                if (IsValidSpawnCell(x, minY))
-                    return CellCenterWorld(x, minY);
+                if (!predicate(x, y))
+                    continue;
 
-                if (minY != maxY && IsValidSpawnCell(x, maxY))
-                    return CellCenterWorld(x, maxY);
-            }
+                float dx = x - centerX;
+                float dy = y - centerY;
+                float distanceSqr = dx * dx + dy * dy;
 
-            // Bordo sinistro + destro (senza ricontrollare gli angoli)
-            for (int y = minY + 1; y <= maxY - 1; y++)
-            {
-                if (IsValidSpawnCell(minX, y))
-                    return CellCenterWorld(minX, y);
+                if (found && distanceSqr >= bestDistanceSqr)
+                    continue;
 
-                if (minX != maxX && IsValidSpawnCell(maxX, y))
-                    return CellCenterWorld(maxX, y);
+                bestDistanceSqr = distanceSqr;
+                cell = new Vector2Int(x, y);
+                found = true;
             }
         }
 
-        // Fallback: cella interna piu vicina a world (0,0).
-        Debug.LogWarning("[WorldGen] Nessuna cella valida per spawn! Uso la cella piu vicina a world (0,0).");
-        return CellCenterWorld(sx, sy);
+        return found;
     }
 
     private bool IsValidSpawnCell(int x, int y)

@@ -59,6 +59,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
     private const string PrefHasPendingWorldCreation = "MainMenu.HasPendingWorldCreation";
     private const string PrefCurrentWorldId = "MainMenu.CurrentWorldId";
     private const string PrefCurrentWorldName = "MainMenu.CurrentWorldName";
+    private const int PresentationSeed = 12;
+
+    private static bool presentationSeedOverrideEnabled;
 
     [Header("Auto Find")]
     [SerializeField] private string canvasName = "Canvas";
@@ -193,6 +196,12 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
     private MenuScreen currentScreen;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetPresentationSeedOverride()
+    {
+        presentationSeedOverrideEnabled = false;
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoBootstrap()
     {
@@ -305,6 +314,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F10))
+            presentationSeedOverrideEnabled = !presentationSeedOverrideEnabled;
+
         HandleMixedNavigationSelection();
 
         if ((currentScreen == MenuScreen.LoadGame || currentScreen == MenuScreen.Options || currentScreen == MenuScreen.Credits || currentScreen == MenuScreen.WorldCreation) && Input.GetKeyDown(KeyCode.Escape))
@@ -1689,6 +1701,9 @@ public sealed class MainMenuScreenRouter : MonoBehaviour
 
     private int GetResolvedWorldSeed()
     {
+        if (presentationSeedOverrideEnabled)
+            return PresentationSeed;
+
         string rawSeed = worldSeedInputField != null ? worldSeedInputField.text : string.Empty;
         string trimmedSeed = string.IsNullOrWhiteSpace(rawSeed) ? string.Empty : rawSeed.Trim();
 
