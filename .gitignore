@@ -10,6 +10,7 @@
 
 # Visual Studio / Rider
 .vs/
+.vscode/
 .idea/
 *.csproj
 *.sln
