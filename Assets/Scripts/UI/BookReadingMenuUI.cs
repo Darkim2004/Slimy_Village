@@ -27,11 +27,11 @@ public class BookReadingMenuUI : MonoBehaviour
 
     private void Awake()
     {
-        if (panelRoot == null)
-            panelRoot = gameObject;
-
+        EnsureReferences();
         RegisterCloseButton();
-        Hide();
+
+        if (!isOpen)
+            Hide();
     }
 
     private void OnDestroy()
@@ -55,11 +55,14 @@ public class BookReadingMenuUI : MonoBehaviour
             return;
         }
 
+        EnsureReferences();
+        isOpen = true;
+
         if (panelRoot != null)
             panelRoot.SetActive(true);
 
+        RegisterCloseButton();
         EnsureRuntimePresentation();
-        isOpen = true;
     }
 
     public void SetBook(ItemDefinition book)
@@ -76,9 +79,16 @@ public class BookReadingMenuUI : MonoBehaviour
     public void Hide()
     {
         isOpen = false;
+        EnsureReferences();
 
         if (panelRoot != null)
             panelRoot.SetActive(false);
+    }
+
+    private void EnsureReferences()
+    {
+        if (panelRoot == null)
+            panelRoot = gameObject;
     }
 
     private void RegisterCloseButton()

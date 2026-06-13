@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,17 +22,22 @@ public class PlayerTopDown : EntityBase2D
     [SerializeField] private float interactRadius = 1.0f;
     [Tooltip("UI fallback se il PlaceableDefinition non ha un menu specifico.")]
     [SerializeField] private WorldInteractionMenuPlaceholderUI interactionMenu;
-    [Tooltip("UI menu usato per leggere i libri dalla hotbar. Se null, viene cercato/creato automaticamente.")]
+    [Tooltip("UI fallback usata per leggere libri senza menu dedicato. Deve essere gia presente in scena.")]
     [SerializeField] private BookReadingMenuUI bookReadingMenu;
-    [Tooltip("Parent runtime per i menu specifici instanziati da prefab. Se null usa il primo Canvas trovato.")]
+    [Tooltip("Menu libro gia presenti in scena, anche inattivi. Se vuoto vengono cercati automaticamente.")]
+    [SerializeField] private BookReadingMenuUI[] bookReadingMenus;
+    [Tooltip("Parent runtime per i menu interazione instanziati da prefab. Se null usa il primo Canvas trovato.")]
     [SerializeField] private Transform interactionMenusRoot;
     private PlacedObject currentInteractable;
     private PlaceableInteractionMenuBase activeInteractionMenu;
     private BookReadingMenuUI activeBookMenu;
+    private ItemDefinition activeBookDef;
     private readonly Dictionary<PlaceableInteractionMenuBase, PlaceableInteractionMenuBase> menuInstances =
         new Dictionary<PlaceableInteractionMenuBase, PlaceableInteractionMenuBase>();
-    private readonly Dictionary<BookReadingMenuUI, BookReadingMenuUI> bookMenuInstances =
-        new Dictionary<BookReadingMenuUI, BookReadingMenuUI>();
+    private readonly List<BookReadingMenuUI> sceneBookMenus = new List<BookReadingMenuUI>();
+    private readonly Dictionary<string, BookReadingMenuUI> bookMenusByKey =
+        new Dictionary<string, BookReadingMenuUI>();
+    private readonly HashSet<ItemDefinition> missingBookMenuWarnings = new HashSet<ItemDefinition>();
     private WorldGenTilemap worldGen;
 
     [Header("Respawn")]
@@ -116,8 +122,7 @@ public class PlayerTopDown : EntityBase2D
         if (interactionMenu == null)
             interactionMenu = FindFirstObjectByType<WorldInteractionMenuPlaceholderUI>();
 
-        if (bookReadingMenu == null)
-            bookReadingMenu = FindFirstObjectByType<BookReadingMenuUI>();
+        RebuildBookMenuLookup();
 
         // Inizializza respawnPoint dal WorldGen
         if (worldGen != null && worldGen.HasGenerated)
@@ -162,14 +167,9 @@ public class PlayerTopDown : EntityBase2D
                 Destroy(menu.gameObject);
         }
 
-        foreach (var menu in bookMenuInstances.Values)
-        {
-            if (menu != null)
-                Destroy(menu.gameObject);
-        }
-
         menuInstances.Clear();
-        bookMenuInstances.Clear();
+        sceneBookMenus.Clear();
+        bookMenusByKey.Clear();
 
         base.OnDestroy();
     }
@@ -616,10 +616,18 @@ public class PlayerTopDown : EntityBase2D
 
         if (!isBookSelected)
         {
-            if (activeBookMenu != null)
-                activeBookMenu.Hide();
-            activeBookMenu = null;
+            ClearActiveBookMenu();
             return false;
+        }
+
+        if (activeBookMenu != null && activeBookMenu.IsOpen && activeBookDef != activeDef)
+        {
+            SetActiveBookMenuFor(activeDef);
+
+            if (activeBookMenu != null)
+                activeBookMenu.Show(activeDef);
+
+            return true;
         }
 
         if (activeBookMenu != null && activeBookMenu.IsOpen)
@@ -628,8 +636,7 @@ public class PlayerTopDown : EntityBase2D
 
             if (rawRightClickPressed)
             {
-                activeBookMenu.Hide();
-                activeBookMenu = null;
+                ClearActiveBookMenu();
                 return true;
             }
 
@@ -640,7 +647,7 @@ public class PlayerTopDown : EntityBase2D
         if (!rawRightClickPressed)
             return false;
 
-        activeBookMenu = ResolveBookMenuFor(activeDef);
+        SetActiveBookMenuFor(activeDef);
         if (activeBookMenu == null)
             return true;
 
@@ -650,14 +657,17 @@ public class PlayerTopDown : EntityBase2D
 
     private void CacheSelectedBookMenuIfNeeded()
     {
-        if (activeBookMenu != null)
-            return;
-
         var activeDef = ResolveSelectedHotbarItemDef();
         if (activeDef == null || !activeDef.IsBook)
             return;
 
-        activeBookMenu = ResolveBookMenuFor(activeDef);
+        if (activeBookMenu != null && activeBookDef == activeDef)
+            return;
+
+        if (activeBookMenu != null && activeBookMenu.IsOpen)
+            return;
+
+        SetActiveBookMenuFor(activeDef);
     }
 
     private ItemDefinition ResolveSelectedHotbarItemDef()
@@ -681,54 +691,157 @@ public class PlayerTopDown : EntityBase2D
             return null;
 
         if (bookDef.bookMenuPrefab != null)
-            return GetOrCreateBookMenuInstance(bookDef.bookMenuPrefab);
+        {
+            EnsureBookMenuLookup();
 
-        if (bookReadingMenu == null)
-            bookReadingMenu = FindFirstObjectByType<BookReadingMenuUI>();
+            if (TryResolveSceneBookMenu(bookDef, out var dedicatedMenu))
+                return dedicatedMenu;
+
+            if (missingBookMenuWarnings.Add(bookDef))
+            {
+                string expectedName = bookDef.bookMenuPrefab.gameObject.name;
+                Debug.LogWarning(
+                    $"[PlayerTopDown] Menu libro non trovato in scena per '{bookDef.id}'. " +
+                    $"Aggiungi una istanza inattiva del prefab '{expectedName}' nel Canvas UI.",
+                    this);
+            }
+
+            return null;
+        }
 
         if (bookReadingMenu == null)
         {
-            var go = new GameObject("BookReadingMenuUI_Runtime");
-
-            Transform parent = interactionMenusRoot;
-            if (parent == null)
-            {
-                var canvas = FindFirstObjectByType<Canvas>();
-                if (canvas != null)
-                    parent = canvas.transform;
-            }
-
-            if (parent != null)
-                go.transform.SetParent(parent, false);
-
-            bookReadingMenu = go.AddComponent<BookReadingMenuUI>();
+            EnsureBookMenuLookup();
         }
 
         return bookReadingMenu;
     }
 
-    private BookReadingMenuUI GetOrCreateBookMenuInstance(BookReadingMenuUI menuPrefab)
+    private void EnsureBookMenuLookup()
     {
-        if (menuPrefab == null)
-            return null;
+        if (bookMenusByKey.Count == 0 && sceneBookMenus.Count == 0)
+            RebuildBookMenuLookup();
+    }
 
-        if (bookMenuInstances.TryGetValue(menuPrefab, out var instance) && instance != null)
-            return instance;
+    private void RebuildBookMenuLookup()
+    {
+        sceneBookMenus.Clear();
+        bookMenusByKey.Clear();
 
-        Transform parent = interactionMenusRoot;
-        if (parent == null)
+        RegisterBookMenu(bookReadingMenu);
+
+        if (bookReadingMenus != null)
         {
-            var canvas = FindFirstObjectByType<Canvas>();
-            if (canvas != null)
-                parent = canvas.transform;
+            foreach (var menu in bookReadingMenus)
+                RegisterBookMenu(menu);
         }
 
-        instance = Instantiate(menuPrefab, parent);
-        instance.gameObject.name = menuPrefab.gameObject.name + "_Runtime";
-        instance.Hide();
+        var foundMenus = FindObjectsByType<BookReadingMenuUI>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
 
-        bookMenuInstances[menuPrefab] = instance;
-        return instance;
+        foreach (var menu in foundMenus)
+            RegisterBookMenu(menu);
+
+        if (bookReadingMenu == null && sceneBookMenus.Count > 0)
+            bookReadingMenu = sceneBookMenus[0];
+    }
+
+    private void RegisterBookMenu(BookReadingMenuUI menu)
+    {
+        if (menu == null)
+            return;
+
+        if (!sceneBookMenus.Contains(menu))
+            sceneBookMenus.Add(menu);
+
+        RegisterBookMenuKey(menu.name, menu);
+
+        if (menu.gameObject != null)
+            RegisterBookMenuKey(menu.gameObject.name, menu);
+    }
+
+    private void RegisterBookMenuKey(string key, BookReadingMenuUI menu)
+    {
+        string normalizedKey = NormalizeBookMenuKey(key);
+        if (string.IsNullOrEmpty(normalizedKey))
+            return;
+
+        if (!bookMenusByKey.ContainsKey(normalizedKey) || bookMenusByKey[normalizedKey] == null)
+            bookMenusByKey[normalizedKey] = menu;
+    }
+
+    private bool TryResolveSceneBookMenu(ItemDefinition bookDef, out BookReadingMenuUI menu)
+    {
+        menu = null;
+
+        if (bookDef == null)
+            return false;
+
+        if (TryGetBookMenuByKey(bookDef.id, out menu))
+            return true;
+
+        if (TryGetBookMenuByKey(bookDef.name, out menu))
+            return true;
+
+        if (bookDef.bookMenuPrefab != null)
+        {
+            if (TryGetBookMenuByKey(bookDef.bookMenuPrefab.name, out menu))
+                return true;
+
+            if (TryGetBookMenuByKey(bookDef.bookMenuPrefab.gameObject.name, out menu))
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool TryGetBookMenuByKey(string key, out BookReadingMenuUI menu)
+    {
+        return bookMenusByKey.TryGetValue(NormalizeBookMenuKey(key), out menu) && menu != null;
+    }
+
+    private static string NormalizeBookMenuKey(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+            return string.Empty;
+
+        string normalized = key.Trim();
+
+        if (normalized.EndsWith("(Clone)", StringComparison.OrdinalIgnoreCase))
+            normalized = normalized.Substring(0, normalized.Length - "(Clone)".Length).TrimEnd();
+
+        if (normalized.EndsWith("_Runtime", StringComparison.OrdinalIgnoreCase))
+            normalized = normalized.Substring(0, normalized.Length - "_Runtime".Length).TrimEnd();
+
+        return normalized.ToLowerInvariant();
+    }
+
+    private void SetActiveBookMenuFor(ItemDefinition bookDef)
+    {
+        if (bookDef == null || !bookDef.IsBook)
+        {
+            ClearActiveBookMenu();
+            return;
+        }
+
+        if (activeBookMenu != null && activeBookDef == bookDef)
+            return;
+
+        if (activeBookMenu != null && activeBookMenu.IsOpen)
+            activeBookMenu.Hide();
+
+        activeBookMenu = ResolveBookMenuFor(bookDef);
+        activeBookDef = activeBookMenu != null ? bookDef : null;
+    }
+
+    private void ClearActiveBookMenu()
+    {
+        if (activeBookMenu != null)
+            activeBookMenu.Hide();
+
+        activeBookMenu = null;
+        activeBookDef = null;
     }
 
     private void CloseBookMenus()
@@ -736,16 +849,16 @@ public class PlayerTopDown : EntityBase2D
         if (activeBookMenu != null && activeBookMenu.IsOpen)
             activeBookMenu.Hide();
 
-        if (bookReadingMenu != null && bookReadingMenu.IsOpen)
-            bookReadingMenu.Hide();
+        EnsureBookMenuLookup();
 
-        foreach (var menu in bookMenuInstances.Values)
+        foreach (var menu in sceneBookMenus)
         {
             if (menu != null && menu.IsOpen)
                 menu.Hide();
         }
 
         activeBookMenu = null;
+        activeBookDef = null;
     }
 
     private bool TryConsumeActiveFood()
@@ -831,7 +944,7 @@ public class PlayerTopDown : EntityBase2D
         if (bookReadingMenu != null && bookReadingMenu.IsOpen)
             return true;
 
-        foreach (var menu in bookMenuInstances.Values)
+        foreach (var menu in sceneBookMenus)
         {
             if (menu != null && menu.IsOpen)
                 return true;
